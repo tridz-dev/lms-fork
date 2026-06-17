@@ -12,8 +12,15 @@ export const useTutorDashboardStore = defineStore('tutor-dashboard-store', () =>
 		auto: false,
 	})
 
+	const sessionCanceller = createResource({
+		url: 'smart_learning.api.booking_api.cancel_session',
+		auto: false,
+	})
+
 	return {
 		dashboardData,
 		sessionCompleter,
+		sessionCanceller,
 	}
 })
+
