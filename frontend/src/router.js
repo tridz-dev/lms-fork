@@ -332,6 +332,9 @@ router.beforeEach(async (to, from, next) => {
 		if (tutorOnlyRoutes.includes(to.name) && !isTutor) {
 			return next({ name: 'Courses' })
 		}
+		if (to.name === 'Home' && isTutor) {
+			return next({ name: 'TutorDashboard' })
+		}
 		if (to.name === 'BookSession' && isTutor) {
 			return next({ name: 'TutorDashboard' })
 		}

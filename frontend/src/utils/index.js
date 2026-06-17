@@ -432,6 +432,7 @@ const getSidebarItems = (forMobile = false) => {
 					label: 'Home',
 					icon: 'Home',
 					to: 'Home',
+					activeFor: ['Home', 'TutorDashboard'],
 					condition: () => {
 						return userResource?.data
 					},
@@ -600,7 +601,7 @@ const getSidebarItems = (forMobile = false) => {
 					icon: 'Home',
 					to: 'TutorDashboard',
 					activeFor: ['TutorDashboard'],
-					condition: () => !forMobile && userResource?.data?.roles?.includes('Tutor'),
+					condition: () => false,
 				},
 				{
 					label: 'Availability',
