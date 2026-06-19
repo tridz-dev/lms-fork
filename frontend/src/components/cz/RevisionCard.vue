@@ -162,42 +162,18 @@ async function handleRevise() {
 async function goToLesson() {
 	resolving.value = true
 	try {
-		const lessonName = props.recommendation.lesson
-		const response = await call('frappe.client.get', {
-			doctype: 'Course Lesson',
-			name: lessonName,
-		})
-		
-		if (response) {
-			const course = response.course
-			const refResponse = await call('frappe.client.get_list', {
-				doctype: 'Lesson Reference',
-				filters: { lesson: lessonName },
-				fields: ['parent', 'idx'],
-				limit: 1
-			})
-			if (refResponse && refResponse.length) {
-				const chapterName = refResponse[0].parent
-				const lessonIdx = refResponse[0].idx
-				
-				const chapResponse = await call('frappe.client.get_list', {
-					doctype: 'Chapter Reference',
-					filters: { chapter: chapterName, parent: course },
-					fields: ['idx'],
-					limit: 1
-				})
-				if (chapResponse && chapResponse.length) {
-					const chapIdx = chapResponse[0].idx
-					const lessonNumber = `${chapIdx}-${lessonIdx}`
-					router.push({
-						name: 'Lesson',
-						params: {
-							courseName: course,
-							lessonNumber: lessonNumber
-						}
-					})
+		const courseName = props.recommendation.course_name
+		const lessonIndex = props.recommendation.lesson_index
+		if (courseName && lessonIndex) {
+			const parts = lessonIndex.split('-')
+			router.push({
+				name: 'Lesson',
+				params: {
+					courseName: courseName,
+					chapterNumber: parts[0],
+					lessonNumber: parts[1],
 				}
-			}
+			})
 		}
 	} catch (e) {
 		console.error("Failed to navigate to lesson:", e)

@@ -119,6 +119,7 @@ declare module 'vue' {
     TutorCard: typeof import('./src/components/cz/TutorCard.vue')['default']
     TutorFilters: typeof import('./src/components/cz/TutorFilters.vue')['default']
     TutorList: typeof import('./src/components/cz/TutorList.vue')['default']
+    TutorMatchCard: typeof import('./src/components/cz/TutorMatchCard.vue')['default']
     UnsplashImageBrowser: typeof import('./src/components/UnsplashImageBrowser.vue')['default']
     UpcomingEvaluations: typeof import('./src/components/UpcomingEvaluations.vue')['default']
     Uploader: typeof import('./src/components/Controls/Uploader.vue')['default']

@@ -215,6 +215,37 @@
 							<p class="text-sm font-medium">{{ __('No recent activity recorded.') }}</p>
 						</div>
 					</div>
+
+					<!-- Recommended Tutors Widget -->
+					<div class="bg-surface-white rounded-2xl border border-outline-gray-2 shadow-sm p-6 space-y-4">
+						<div class="flex items-center justify-between border-b border-outline-gray-2 pb-4">
+							<div class="flex items-center gap-2">
+								<div
+									class="p-2 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 rounded-xl">
+									<Sparkles class="h-5 w-5" />
+								</div>
+								<h3 class="text-lg font-bold text-ink-gray-9">{{ __('Recommended Tutors') }}</h3>
+							</div>
+							<router-link :to="{ name: 'TutorSearch' }"
+								class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-0.5">
+								{{ __('View all') }}
+								<ChevronRight class="h-3 w-3" />
+							</router-link>
+						</div>
+
+						<div v-if="dashboardData.data?.recommended_tutors?.length" class="space-y-4">
+							<TutorMatchCard
+								v-for="tutor in dashboardData.data.recommended_tutors"
+								:key="tutor.name"
+								:tutor="tutor"
+							/>
+						</div>
+
+						<div v-else
+							class="text-center py-8 text-ink-gray-4 border border-dashed rounded-xl border-outline-gray-3">
+							<p class="text-xs font-medium">{{ __('No recommended tutors currently available.') }}</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -241,6 +272,7 @@ import {
 	Activity
 } from 'lucide-vue-next'
 import RevisionCard from '@/components/cz/RevisionCard.vue'
+import TutorMatchCard from '@/components/cz/TutorMatchCard.vue'
 
 const dayjs = inject<any>('$dayjs')
 const router = useRouter()

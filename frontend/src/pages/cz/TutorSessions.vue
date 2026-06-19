@@ -89,30 +89,48 @@
 						<!-- Action Buttons (Launch meeting & Mark Completed) -->
 						<div class="flex justify-end items-center pt-3 border-t mt-4">
 							<div class="flex items-center gap-2">
-								<a
-									v-if="b.booking_status === 'Confirmed' && b.meeting_link"
-									:href="b.meeting_link"
-									target="_blank"
-									class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-150"
-								>
-									<Video class="w-3.5 h-3.5" />
-									{{ __('Launch Class') }}
-								</a>
-								<Button
-									v-if="profile && b.booking_status === 'Confirmed' && isSessionEnded(b.end_datetime) && b.meeting_link"
-									variant="solid"
-									class="text-xs font-semibold"
-									@click="promptCompletion(b)"
-								>
-									{{ __('Mark Completed') }}
-								</Button>
-								<span v-else-if="b.booking_status === 'Confirmed' && !b.meeting_link" class="text-xs text-ink-gray-4 italic">
-									{{ __('Meeting generating...') }}
-								</span>
+								<template v-if="b.booking_status === 'Confirmed'">
+									<a
+										v-if="b.meeting_link"
+										:href="b.meeting_link"
+										target="_blank"
+										class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-150 animate-fade-in"
+									>
+										<Video class="w-3.5 h-3.5" />
+										{{ __('Launch Class') }}
+									</a>
+									<span v-else class="text-xs text-ink-gray-4 italic mr-2">
+										{{ __('Meeting generating...') }}
+									</span>
+
+									<!-- Actions Dropdown -->
+									<Dropdown
+										v-if="profile"
+										:options="[
+											{
+												label: __('Mark Completed'),
+												onClick: () => promptCompletion(b),
+											},
+											{
+												label: __('Cancel Session'),
+												onClick: () => promptCancellation(b),
+											},
+										]"
+									>
+										<template v-slot="{ open }">
+											<Button class="p-2 hover:bg-surface-gray-2 rounded-md transition-colors border border-outline-gray-2 flex items-center justify-center">
+												<MoreHorizontal class="w-4 h-4 text-ink-gray-7" />
+											</Button>
+										</template>
+									</Dropdown>
+								</template>
+
 								<span v-else-if="b.booking_status === 'Completed'" class="text-xs text-green-600 font-medium italic">
 									{{ __('Class concluded') }}
 								</span>
-								<span v-else-if="b.booking_status === 'Confirmed' && !isSessionEnded(b.end_datetime)" class="text-xs text-ink-gray-4 italic">—</span>
+								<span v-else-if="b.booking_status === 'Cancelled'" class="text-xs text-red-500 font-medium italic">
+									{{ __('Cancelled') }}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -157,16 +175,51 @@
 				</div>
 			</template>
 		</Dialog>
+
+		<!-- Cancel Session Confirmation Dialog -->
+		<Dialog
+			v-model="showCancelDialog"
+			:options="{
+				title: __('Cancel Session'),
+				size: 'md',
+			}"
+		>
+			<template #body-content>
+				<p class="text-sm text-ink-gray-7 leading-relaxed">
+					{{ __('Are you sure you want to cancel this session?') }}
+					<br />
+					<span class="text-red-500 font-semibold mt-1 block">{{ __('This action will cancel the booking and release the slot.') }}</span>
+				</p>
+			</template>
+			<template #actions>
+				<div class="flex gap-2 justify-end">
+					<Button
+						variant="minimal"
+						@click="showCancelDialog = false"
+					>
+						{{ __('Cancel') }}
+					</Button>
+					<Button
+						variant="solid"
+						theme="red"
+						:loading="dashboardStore.sessionCanceller.loading"
+						@click="confirmCancellation"
+					>
+						{{ __('Confirm') }}
+					</Button>
+				</div>
+			</template>
+		</Dialog>
 	</div>
 </template>
 
 <script setup>
 import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import { Breadcrumbs, LoadingIndicator, Badge, TabButtons, Button, Dialog, toast } from 'frappe-ui'
+import { Breadcrumbs, LoadingIndicator, Badge, TabButtons, Button, Dialog, Dropdown, toast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import { sessionStore } from '@/stores/session'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
-import { Video } from 'lucide-vue-next'
+import { Video, MoreHorizontal } from 'lucide-vue-next'
 import { convertToLocal, isSessionUpcoming, isSessionEnded } from '@/utils/timezone'
 
 const dashboardStore = useTutorDashboardStore()
@@ -176,6 +229,9 @@ const socket = inject('$socket')
 const activeTab = ref('upcoming')
 const showCompleteDialog = ref(false)
 const selectedBookingForCompletion = ref(null)
+
+const showCancelDialog = ref(false)
+const selectedBookingForCancellation = ref(null)
 
 let pollInterval = null
 
@@ -257,6 +313,32 @@ async function confirmCompletion() {
 	} finally {
 		showCompleteDialog.value = false
 		selectedBookingForCompletion.value = null
+	}
+}
+
+function promptCancellation(booking) {
+	selectedBookingForCancellation.value = booking
+	showCancelDialog.value = true
+}
+
+async function confirmCancellation() {
+	if (!selectedBookingForCancellation.value) return
+	const bookingName = selectedBookingForCancellation.value.name
+	try {
+		await dashboardStore.sessionCanceller.submit({ booking_name: bookingName })
+		
+		// In-place local state update of booking_status to 'Cancelled'
+		const found = sessions.value.find(s => s.name === bookingName)
+		if (found) {
+			found.booking_status = 'Cancelled'
+		}
+		
+		toast.success(__('Session cancelled successfully.'))
+	} catch (err) {
+		toast.error(err.messages?.[0] || err.message || __('Failed to cancel session.'))
+	} finally {
+		showCancelDialog.value = false
+		selectedBookingForCancellation.value = null
 	}
 }
 
