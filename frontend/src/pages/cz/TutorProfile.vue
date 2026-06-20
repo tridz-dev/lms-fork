@@ -826,11 +826,106 @@ function openEditModal(rule) {
 	showModal.value = true
 }
 
+function formatWeekdays(weekdaysList) {
+	if (!weekdaysList || weekdaysList.length === 0) return ''
+	const daysOrder = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+	const sortedDays = [...weekdaysList].sort((a, b) => daysOrder.indexOf(a.toLowerCase().trim()) - daysOrder.indexOf(b.toLowerCase().trim()))
+	const capitalized = sortedDays.map(d => d.charAt(0).toUpperCase() + d.slice(1).toLowerCase())
+	if (capitalized.length === 1) {
+		return capitalized[0]
+	}
+	if (capitalized.length === 2) {
+		return `${capitalized[0]} and ${capitalized[1]}`
+	}
+	return capitalized.slice(0, -1).join(', ') + `, and ${capitalized[capitalized.length - 1]}`
+}
+
+function checkOverlap(formData, existingRules) {
+	if (!formData.active) return null
+
+	const newFrom = new Date(formData.effective_from)
+	const newTo = formData.effective_to ? new Date(formData.effective_to) : null
+	const newStart = formData.start_time
+	const newEnd = formData.end_time
+
+	const getMinutes = (t) => {
+		if (!t) return 0
+		const parts = t.split(':')
+		return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10)
+	}
+	const nStart = getMinutes(newStart)
+	const nEnd = getMinutes(newEnd)
+
+	const newWeekdays = formData.weekdays.map(d => d.toLowerCase().trim())
+
+	for (const rule of existingRules) {
+		if (editingRule.value && editingRule.value.name === rule.name) {
+			continue
+		}
+		if (rule.docstatus !== 1 || !rule.active) {
+			continue
+		}
+
+		const rFrom = new Date(rule.effective_from)
+		const rTo = rule.effective_to ? new Date(rule.effective_to) : null
+
+		let overlapDates = true
+		if (newTo && newTo < rFrom) {
+			overlapDates = false
+		}
+		if (rTo && rTo < newFrom) {
+			overlapDates = false
+		}
+
+		if (!overlapDates) {
+			continue
+		}
+
+		const rStart = getMinutes(rule.start_time)
+		const rEnd = getMinutes(rule.end_time)
+
+		if (nStart >= rEnd || nEnd <= rStart) {
+			continue
+		}
+
+		const rWeekdays = Array.isArray(rule.weekday)
+			? rule.weekday.map(w => w.weekday.toLowerCase().trim())
+			: []
+		const commonWeekdays = newWeekdays.filter(w => rWeekdays.includes(w))
+
+		if (commonWeekdays.length > 0) {
+			return {
+				rule: rule,
+				commonWeekdays: commonWeekdays
+			}
+		}
+	}
+
+	return null
+}
+
 async function handleSave(formData) {
 	if (profile.value?.verification_status !== 'Verified') {
 		frappeToast.warning(__('Tutor Profile not verified. To create the availability rule, Tutor Profile must be verified.'))
 		return
 	}
+
+	if (formData.active) {
+		const overlap = checkOverlap(formData, rules.value)
+		if (overlap) {
+			const daysStr = formatWeekdays(overlap.commonWeekdays)
+			const startStr = formatTime(overlap.rule.start_time)
+			const endStr = formatTime(overlap.rule.end_time)
+			frappeToast.error(
+				__('You already have an active availability rule on {0} from {1} to {2}. Please edit the existing rule or choose a different time.')
+					.replace('{0}', daysStr)
+					.replace('{1}', startStr)
+					.replace('{2}', endStr)
+			)
+			return
+		}
+	}
+
 	savingRule.value = true
 	try {
 		const weekdayRows = formData.weekdays.map((day) => ({ weekday: day }))
