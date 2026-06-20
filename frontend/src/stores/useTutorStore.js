@@ -16,16 +16,14 @@ export const useTutorStore = defineStore('tutor-store', () => {
 
 	// Fetch tutors
 	const tutorsList = createResource({
-		url: 'frappe.client.get_list',
+		url: 'smart_learning.api.tutor_api.search_tutors',
 		params: {
-			doctype: 'Tutor Profile',
-			filters: {
-				active: 1,
-				verification_status: 'Verified',
-			},
-			fields: ['name', 'tutor_name', 'bio', 'years_of_experience', 'timezone'],
+			page_length: 100,
 		},
 		auto: true,
+		transform(res) {
+			return res?.success ? res.data : []
+		},
 	})
 
 	// Fetch available slots

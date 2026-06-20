@@ -23,15 +23,10 @@ export const systemSettings = createResource({
 })
 
 export const subjectsList = createResource({
-	url: 'frappe.client.get_list',
-	params: {
-		doctype: 'Subject',
-		fields: ['name', 'subject'],
-		order_by: 'subject asc',
-		limit: 1000,
-	},
+	url: 'smart_learning.api.tutor_api.get_subjects_list',
 	auto: true,
-	transform(data) {
+	transform(res) {
+		const data = res || []
 		return data.map((item) => ({
 			label: item.subject || item.name,
 			value: item.name,
@@ -40,15 +35,10 @@ export const subjectsList = createResource({
 })
 
 export const boardsList = createResource({
-	url: 'frappe.client.get_list',
-	params: {
-		doctype: 'Board',
-		fields: ['name', 'board'],
-		order_by: 'board asc',
-		limit: 1000,
-	},
+	url: 'smart_learning.api.tutor_api.get_boards_list',
 	auto: true,
-	transform(data) {
+	transform(res) {
+		const data = res || []
 		return data.map((item) => ({
 			label: item.board || item.name,
 			value: item.name,
@@ -57,15 +47,10 @@ export const boardsList = createResource({
 })
 
 export const classesList = createResource({
-	url: 'frappe.client.get_list',
-	params: {
-		doctype: 'Class',
-		fields: ['name', 'class'],
-		order_by: 'class asc',
-		limit: 1000,
-	},
+	url: 'smart_learning.api.tutor_api.get_classes_list',
 	auto: true,
-	transform(data) {
+	transform(res) {
+		const data = res || []
 		return data.map((item) => ({
 			label: item.class || item.name,
 			value: item.name,
@@ -74,19 +59,13 @@ export const classesList = createResource({
 })
 
 export const allTutorsList = createResource({
-	url: 'frappe.client.get_list',
+	url: 'smart_learning.api.tutor_api.search_tutors',
 	params: {
-		doctype: 'Tutor Profile',
-		filters: {
-			active: 1,
-			verification_status: 'Verified',
-		},
-		fields: ['name', 'tutor_name'],
-		order_by: 'tutor_name asc',
-		limit: 1000,
+		page_length: 1000,
 	},
 	auto: true,
-	transform(data) {
+	transform(res) {
+		const data = res?.success ? res.data : []
 		return data.map((item) => ({
 			label: item.tutor_name || item.name,
 			value: item.tutor_name,
