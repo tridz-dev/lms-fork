@@ -254,9 +254,9 @@ const breadcrumbItems = computed(() => {
 
 // ── Tutor detail resource (booking flow) ───────────────────────────────────
 const tutorDetails = createResource({
-	url: 'frappe.client.get',
+	url: 'smart_learning.api.tutor_api.get_tutor_profile',
 	makeParams() {
-		return { doctype: 'Tutor Profile', name: tutorName.value }
+		return { tutor_name: tutorName.value }
 	},
 })
 
