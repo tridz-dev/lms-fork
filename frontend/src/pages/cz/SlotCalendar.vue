@@ -75,7 +75,7 @@
 				</div>
 
 				<!-- ══════════════ WEEK VIEW ══════════════ -->
-				<div v-if="activeView === 'week'" class="space-y-3">
+				<div v-if="activeView === 'calendar'" class="space-y-3">
 					<!-- Week Navigation -->
 					<div class="flex items-center justify-between">
 						<Button variant="outline" class="text-xs font-semibold" @click="prevWeek">
@@ -355,11 +355,11 @@ import dayjs from '@/utils/dayjs'
 const dashboardStore = useTutorDashboardStore()
 
 // ── View state ────────────────────────────────────────────────────────────
-const activeView = ref('week')        // 'week' | 'list'
+const activeView = ref('calendar')        // 'week' | 'list'
 const activeTab = ref('available')    // list view filter
 
 const viewButtons = computed(() => [
-	{ value: 'week', label: __('Week') },
+	{ value: 'calendar', label: __('Calender') },
 	{ value: 'list', label: __('List') },
 ])
 

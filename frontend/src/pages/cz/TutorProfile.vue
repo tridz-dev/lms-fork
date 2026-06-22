@@ -50,9 +50,9 @@
 					/>
 				</div>
 
-				<!-- TAB: Overview -->
-				<div v-if="activeTab === 'overview'" class="space-y-6 max-w-3xl">
-					<form @submit.prevent="saveProfile" class="space-y-5">
+				<!-- TAB: Profile Details -->
+				<div v-if="activeTab === 'profile'" class="space-y-6 max-w-3xl">
+					<form @submit.prevent="saveProfile" class="space-y-6">
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<FormControl
 								v-model="form.tutor_name"
@@ -93,41 +93,8 @@
 							:label="__('Biography')"
 						/>
 
-						<div class="flex items-start gap-3 mt-4 pb-2">
-							<Checkbox
-								id="activeToggle"
-								v-model="form.active"
-								:disabled="isReadOnly"
-							/>
-							<div class="space-y-1">
-								<label class="text-sm font-medium text-ink-gray-9 select-none" :class="{ 'cursor-pointer': !isReadOnly }" for="activeToggle">
-									{{ __('Active Status') }}
-								</label>
-								<p class="text-xs text-ink-gray-5">
-									{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
-								</p>
-							</div>
-						</div>
-
-						<!-- Submit -->
-						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
-							<Button
-								:loading="saving"
-								variant="solid"
-								type="submit"
-								class="rounded-md text-xs font-semibold px-5"
-							>
-								{{ profile ? __('Update Profile') : __('Create Profile') }}
-							</Button>
-						</div>
-					</form>
-				</div>
-
-				<!-- TAB: Subjects -->
-				<div v-if="activeTab === 'subjects'" class="space-y-6 max-w-3xl">
-					<form @submit.prevent="saveProfile" class="space-y-5">
 						<!-- Subjects -->
-						<div>
+						<div class="border-t pt-5">
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Subjects Taught') }}</label>
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 								<Checkbox
@@ -144,7 +111,7 @@
 						</div>
 
 						<!-- Boards -->
-						<div>
+						<div class="border-t pt-5">
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Boards Supported') }}</label>
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 								<Checkbox
@@ -161,7 +128,7 @@
 						</div>
 
 						<!-- Classes -->
-						<div>
+						<div class="border-t pt-5">
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Classes Target') }}</label>
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 								<Checkbox
@@ -177,24 +144,10 @@
 							</div>
 						</div>
 
-						<!-- Submit -->
-						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
-							<Button
-								:loading="saving"
-								variant="solid"
-								type="submit"
-								class="rounded-md text-xs font-semibold px-5"
-							>
-								{{ __('Update Subjects') }}
-							</Button>
-						</div>
-					</form>
-				</div>
-
-				<!-- TAB: Qualifications -->
-				<div v-if="activeTab === 'qualifications'" class="space-y-6 max-w-3xl">
-					<form @submit.prevent="saveProfile" class="space-y-5">
-						<div class="space-y-4">
+						<!-- Qualifications -->
+						<div class="border-t pt-5 space-y-4">
+							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Qualifications') }}</label>
+							
 							<div v-if="qualifications.length" class="space-y-2.5">
 								<div
 									v-for="(q, idx) in qualifications"
@@ -281,6 +234,22 @@
 							</div>
 						</div>
 
+						<div class="flex items-start gap-3 mt-4 pb-2 border-t pt-5">
+							<Checkbox
+								id="activeToggle"
+								v-model="form.active"
+								:disabled="isReadOnly"
+							/>
+							<div class="space-y-1">
+								<label class="text-sm font-medium text-ink-gray-9 select-none" :class="{ 'cursor-pointer': !isReadOnly }" for="activeToggle">
+									{{ __('Active Status') }}
+								</label>
+								<p class="text-xs text-ink-gray-5">
+									{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
+								</p>
+							</div>
+						</div>
+
 						<!-- Submit -->
 						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
 							<Button
@@ -289,7 +258,7 @@
 								type="submit"
 								class="rounded-md text-xs font-semibold px-5"
 							>
-								{{ __('Update Qualifications') }}
+								{{ __('Update Profile') }}
 							</Button>
 						</div>
 					</form>
@@ -311,7 +280,7 @@
 
 					<div class="flex justify-between items-center">
 						<div>
-							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Weekly Availability Rules') }}</h3>
+							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Weekly Availability Slots') }}</h3>
 							<p class="text-sm text-ink-gray-5 mt-0.5">{{ __('Set up your recurring weekly slot generation patterns.') }}</p>
 						</div>
 						<Button
@@ -322,7 +291,7 @@
 							<template #prefix>
 								<Plus class="w-3.5 h-3.5" />
 							</template>
-							{{ __('Add Rule') }}
+							{{ __('Create Slots') }}
 						</Button>
 					</div>
 
@@ -399,7 +368,7 @@
 							variant="solid"
 							class="text-xs font-semibold mx-auto"
 						>
-							{{ __('Create Rule') }}
+							{{ __('Create Slots') }}
 						</Button>
 					</div>
 				</div>
@@ -448,6 +417,226 @@
 				</p>
 			</template>
 		</Dialog>
+
+		<!-- Profile Creation Modal -->
+		<Dialog
+			v-model="isCreating"
+			:options="{
+				title: __('Create Tutor Profile'),
+				size: 'xl',
+			}"
+		>
+			<template #body-content>
+				<div class="space-y-5 max-h-[70vh] overflow-y-auto px-1 py-1">
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<FormControl
+							v-model="form.tutor_name"
+							type="text"
+							:label="__('Display Name')"
+							:required="true"
+							placeholder="e.g. Dr. John Doe"
+						/>
+						<FormControl
+							v-model="form.timezone"
+							type="select"
+							:options="tzOptions"
+							:label="__('Timezone')"
+							:required="true"
+						/>
+					</div>
+
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<FormControl
+							v-model.number="form.years_of_experience"
+							type="number"
+							min="0"
+							:required="true"
+							placeholder="e.g. 5"
+							:label="__('Years of Experience')"
+						/>
+					</div>
+
+					<FormControl
+						v-model="form.bio"
+						type="textarea"
+						rows="4"
+						placeholder="Write a short summary about your background, credentials and tutoring approach..."
+						:label="__('Biography')"
+					/>
+
+					<!-- Subjects -->
+					<div class="border-t pt-5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Subjects Taught') }}</label>
+						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
+							<Checkbox
+								v-for="sub in allSubjects"
+								:key="sub"
+								:value="sub"
+								v-model="selectedSubjects"
+								:label="sub"
+								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
+							/>
+							<p v-if="!allSubjects.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No subjects found.') }}</p>
+						</div>
+					</div>
+
+					<!-- Boards -->
+					<div class="border-t pt-5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Boards Supported') }}</label>
+						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
+							<Checkbox
+								v-for="brd in allBoards"
+								:key="brd"
+								:value="brd"
+								v-model="selectedBoards"
+								:label="brd"
+								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
+							/>
+							<p v-if="!allBoards.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No boards found.') }}</p>
+						</div>
+					</div>
+
+					<!-- Classes -->
+					<div class="border-t pt-5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Classes Target') }}</label>
+						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
+							<Checkbox
+								v-for="cls in allClasses"
+								:key="cls"
+								:value="cls"
+								v-model="selectedClasses"
+								:label="cls"
+								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
+							/>
+							<p v-if="!allClasses.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No classes found.') }}</p>
+						</div>
+					</div>
+
+					<!-- Qualifications -->
+					<div class="border-t pt-5 space-y-4">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Qualifications') }}</label>
+						
+						<div v-if="qualifications.length" class="space-y-2.5">
+							<div
+								v-for="(q, idx) in qualifications"
+								:key="idx"
+								class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3"
+							>
+								<div class="space-y-1">
+									<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
+										<span class="font-semibold">{{ q.qualification }}</span>
+										<span class="text-ink-gray-4">·</span>
+										<span>{{ q.institution }}</span>
+										<span class="text-ink-gray-4">·</span>
+										<span class="font-medium text-ink-gray-5">{{ q.year_of_passing }}</span>
+									</div>
+									<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
+										<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
+										<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
+										<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
+									</div>
+								</div>
+								<button
+									type="button"
+									@click="removeQualification(idx)"
+									class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5"
+								>
+									{{ __('Remove') }}
+								</button>
+							</div>
+						</div>
+						<div
+							v-else
+							class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center"
+						>
+							{{ __('No qualifications added yet. At least one is required.') }}
+						</div>
+
+						<!-- Add row form container -->
+						<div class="space-y-3 pt-3 border-t">
+							<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+								<TextInput
+									v-model="newQual.qualification"
+									type="text"
+									:placeholder="__('Qualification (e.g. B.Tech)')"
+								/>
+								<TextInput
+									v-model="newQual.institution"
+									type="text"
+									:placeholder="__('Institution')"
+								/>
+								<TextInput
+									v-model.number="newQual.year_of_passing"
+									type="number"
+									:placeholder="__('Year of Passing')"
+								/>
+							</div>
+							<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+								<Select
+									v-model="newQual.level"
+									:options="levelOptions"
+									placeholder="Select Level"
+								/>
+								<TextInput
+									v-model="newQual.class_per"
+									type="text"
+									:placeholder="__('Class / Percentage')"
+								/>
+								<TextInput
+									v-model="newQual.maj_opt_subj"
+									type="text"
+									:placeholder="__('Major/Optional Subjects')"
+								/>
+							</div>
+							<div class="flex justify-end">
+								<Button
+									type="button"
+									variant="outline"
+									@click="addQualification"
+									class="rounded-md text-xs font-semibold px-4 h-9 justify-center"
+								>
+									{{ __('Add Row') }}
+								</Button>
+							</div>
+						</div>
+					</div>
+
+					<div class="flex items-start gap-3 mt-4 pb-2 border-t pt-5">
+						<Checkbox
+							id="activeToggleModal"
+							v-model="form.active"
+						/>
+						<div class="space-y-1">
+							<label class="text-sm font-medium text-ink-gray-9 select-none cursor-pointer" for="activeToggleModal">
+								{{ __('Active Status') }}
+							</label>
+							<p class="text-xs text-ink-gray-5">
+								{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
+							</p>
+						</div>
+					</div>
+				</div>
+			</template>
+			<template #actions>
+				<div class="flex justify-end gap-2.5">
+					<Button
+						variant="outline"
+						@click="isCreating = false"
+						class="text-xs font-semibold"
+					>
+						{{ __('Cancel') }}
+					</Button>
+					<Button
+						variant="solid"
+						:loading="saving"
+						@click="saveProfile"
+						class="text-xs font-semibold"
+					>
+						{{ __('Create Profile') }}
+					</Button>
+				</div>
+			</template>
+		</Dialog>
 	</div>
 </template>
 
@@ -466,10 +655,10 @@ const route = useRoute()
 const router = useRouter()
 const dashboardStore = useTutorDashboardStore()
 
-const activeTab = ref(route.query.tab || 'overview')
+const activeTab = ref(route.query.tab || 'profile')
 
 watch(() => route.query.tab, (newTab) => {
-	if (newTab && ['overview', 'subjects', 'qualifications', 'availability'].includes(newTab)) {
+	if (newTab && ['profile', 'availability'].includes(newTab)) {
 		activeTab.value = newTab
 	}
 })
@@ -479,9 +668,7 @@ watch(activeTab, (newTab) => {
 })
 
 const profileTabs = [
-	{ value: 'overview', label: __('Overview') },
-	{ value: 'subjects', label: __('Subjects') },
-	{ value: 'qualifications', label: __('Qualifications') },
+	{ value: 'profile', label: __('Profile Details') },
 	{ value: 'availability', label: __('Availability') }
 ]
 
