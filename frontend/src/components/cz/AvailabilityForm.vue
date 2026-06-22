@@ -5,7 +5,10 @@
 				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">{{
 					__('Weekdays') }}</label>
 				<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 border border-gray-100 rounded-lg p-4">
-					<Checkbox v-for="day in weekdays" :key="day" :value="day" v-model="form.weekdays" :label="day"
+					<Checkbox v-for="day in weekdays" :key="day" :value="day"
+						:modelValue="form.weekdays.includes(day)"
+						@update:modelValue="val => { if (val) { form.weekdays.push(day) } else { form.weekdays = form.weekdays.filter(d => d !== day) } }"
+						:label="day"
 						class="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900" />
 				</div>
 				<p v-if="weekdayError" class="text-xs text-red-500 mt-1.5">{{ __('Please select at least one weekday.')
@@ -14,9 +17,10 @@
 		</div>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-			<FormControl v-model="form.start_time" type="time" :label="__('Start Time')" :required="true" />
-			<FormControl v-model="form.end_time" type="time" :label="__('End Time')" :required="true" />
+			<FormControl v-model="form.start_time" type="time" :label="__('Start Time')" :required="true" step="900" />
+			<FormControl v-model="form.end_time" type="time" :label="__('End Time')" :required="true" step="900" />
 		</div>
+		<p v-if="timeError" class="text-xs text-red-500 mt-1.5">{{ timeError }}</p>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<FormControl v-model="form.effective_from" type="date" :label="__('Effective From')" :required="true" />
@@ -25,14 +29,9 @@
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div>
-				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{
-					__('Timezone') }}</label>
-				<div
-					class="text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg p-2.5 flex items-center justify-between">
-					<span>{{ profileTimezone || 'Asia/Kolkata' }}</span>
-					<span
-						class="text-[10px] bg-gray-200 text-gray-600 font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">{{
-							__('Source: Tutor Profile') }}</span>
+				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Timezone') }}</label>
+				<div class="text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg p-2.5">
+					{{ profileTimezone || 'Asia/Kolkata' }}
 				</div>
 			</div>
 
@@ -95,11 +94,13 @@ const form = reactive({
 })
 
 const weekdayError = ref(false)
+const timeError = ref('')
 
 watch(
 	() => props.rule,
 	(newRule) => {
 		weekdayError.value = false
+		timeError.value = ''
 		if (newRule) {
 			Object.assign(form, {
 				weekdays: Array.isArray(newRule.weekdays) ? [...newRule.weekdays] : [],
@@ -125,12 +126,26 @@ watch(
 	{ immediate: true }
 )
 
+function isValid15MinInterval(timeStr) {
+	if (!timeStr) return false
+	const parts = timeStr.split(':')
+	const minutes = parseInt(parts[1], 10)
+	return !isNaN(minutes) && minutes % 15 === 0
+}
+
 function submitForm() {
 	if (!form.weekdays || form.weekdays.length === 0) {
 		weekdayError.value = true
 		return
 	}
 	weekdayError.value = false
+
+	if (!isValid15MinInterval(form.start_time) || !isValid15MinInterval(form.end_time)) {
+		timeError.value = __('Start Time and End Time must be in 15-minute intervals (e.g. 00:00, 00:15, 00:30, 00:45).')
+		return
+	}
+	timeError.value = ''
+
 	emit('save', { ...form })
 }
 </script>
