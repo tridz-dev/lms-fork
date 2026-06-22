@@ -71,6 +71,10 @@
 							<span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
 							{{ __('Locked') }} ({{ countByStatus('Temporarily Locked') }})
 						</span>
+						<span class="flex items-center gap-1.5">
+							<span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+							{{ __('Blocked') }} ({{ countByStatus('Blocked') }})
+						</span>
 					</div>
 				</div>
 
@@ -220,7 +224,7 @@
 											variant="outline"
 											class="text-xs font-semibold text-red-600 hover:text-red-700"
 										>
-											{{ __('Remove Slot') }}
+											{{ __('Mark Unavailable') }}
 										</Button>
 										<a
 											v-else-if="slot.status === 'Booked' && getBookingForSlot(slot.name)?.meeting_link"
@@ -309,7 +313,7 @@
 							class="text-xs font-semibold text-red-600 hover:text-red-700"
 							@click="deleteSlotFromDialog(selectedSlot.name)"
 						>
-							{{ __('Remove Slot') }}
+							{{ __('Mark Unavailable') }}
 						</Button>
 					</div>
 					<div v-else-if="selectedSlot.status === 'Temporarily Locked'" class="text-xs text-ink-gray-4 italic border-t pt-3">
@@ -322,11 +326,11 @@
 		<Dialog
 			v-model="showDeleteConfirmDialog"
 			:options="{
-				title: __('Confirm Deletion'),
+				title: __('Mark Unavailable'),
 				size: 'sm',
 				actions: [
 					{
-						label: __('Delete'),
+						label: __('Confirm'),
 						variant: 'solid',
 						theme: 'red',
 						onClick: confirmDeleteSlot,
@@ -336,7 +340,7 @@
 		>
 			<template #body-content>
 				<p class="text-sm text-ink-gray-7">
-					{{ __('Are you sure you want to delete this available slot?') }}
+					{{ __('Are you sure you want to mark this available slot as unavailable?') }}
 				</p>
 			</template>
 		</Dialog>
@@ -454,6 +458,7 @@ function slotChipClass(status) {
 		case 'Available':         return 'bg-green-100 text-green-800 hover:bg-green-200'
 		case 'Booked':            return 'bg-blue-100 text-blue-800 hover:bg-blue-200'
 		case 'Temporarily Locked': return 'bg-amber-100 text-amber-800 hover:bg-amber-200'
+		case 'Blocked':            return 'bg-red-100 text-red-800 hover:bg-red-200'
 		default:                  return 'bg-gray-100 text-gray-600 hover:bg-gray-200'
 	}
 }
@@ -462,11 +467,13 @@ function slotChipClass(status) {
 const tabButtons = computed(() => {
 	const availCount = slots.value.filter(s => s.status === 'Available' || s.status === 'Temporarily Locked').length
 	const bookedCount = slots.value.filter(s => s.status === 'Booked').length
-	const expiredCount = slots.value.filter(s => s.status === 'Expired' || s.status === 'Cancelled' || s.status === 'Blocked').length
+	const expiredCount = slots.value.filter(s => s.status === 'Expired' || s.status === 'Cancelled').length
+	const blockedCount = slots.value.filter(s => s.status === 'Blocked').length
 	return [
 		{ value: 'available', label: `${__('Available')} (${availCount})` },
 		{ value: 'booked',    label: `${__('Booked')} (${bookedCount})` },
 		{ value: 'expired',   label: `${__('Expired')} (${expiredCount})` },
+		{ value: 'blocked',   label: `${__('Blocked')} (${blockedCount})` },
 	]
 })
 
@@ -475,8 +482,10 @@ const filteredSlots = computed(() => {
 		return slots.value.filter(s => s.status === 'Available' || s.status === 'Temporarily Locked')
 	} else if (activeTab.value === 'booked') {
 		return slots.value.filter(s => s.status === 'Booked')
+	} else if (activeTab.value === 'blocked') {
+		return slots.value.filter(s => s.status === 'Blocked')
 	} else {
-		return slots.value.filter(s => s.status === 'Expired' || s.status === 'Cancelled' || s.status === 'Blocked')
+		return slots.value.filter(s => s.status === 'Expired' || s.status === 'Cancelled')
 	}
 })
 
@@ -515,6 +524,7 @@ function getStatusTheme(status) {
 		case 'Available':          return 'green'
 		case 'Booked':             return 'blue'
 		case 'Temporarily Locked': return 'orange'
+		case 'Blocked':             return 'red'
 		default:                   return 'gray'
 	}
 }
@@ -554,15 +564,17 @@ async function confirmDeleteSlot() {
 	showDeleteConfirmDialog.value = false
 	slotToDelete.value = null
 	try {
-		await call('frappe.client.delete_doc', {
+		await call('frappe.client.set_value', {
 			doctype: 'Tutor Availability Slot',
 			name,
+			fieldname: 'status',
+			value: 'Blocked',
 		})
-		toast.success(__('Slot removed.'))
+		toast.success(__('Slot marked unavailable.'))
 		await dashboardStore.dashboardData.submit()
 	} catch (e) {
-		console.error('Failed to delete slot:', e)
-		toast.error(__('Failed to delete slot.'))
+		console.error('Failed to mark slot unavailable:', e)
+		toast.error(__('Failed to mark slot unavailable.'))
 	}
 }
 
