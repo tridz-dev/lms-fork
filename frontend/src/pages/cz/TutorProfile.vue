@@ -34,40 +34,10 @@
 
 			<!-- Profile Edit/View Form -->
 			<div v-else class="space-y-6 bg-surface-white">
-				<!-- Header Notice if Profile is Verified -->
 				<div class="flex justify-between items-start border-b pb-4">
 					<div>
 						<h2 class="text-xl font-semibold text-ink-gray-9">{{ form.tutor_name || __('Tutor Profile') }}</h2>
 						<p class="text-sm text-ink-gray-5 mt-1">{{ __('Manage your tutoring profile details visible to students.') }}</p>
-					</div>
-					<div class="flex items-center gap-3">
-						<Button
-							v-if="profile && profile.verification_status === 'Not Verified'"
-							@click="submitForReview"
-							:loading="submittingForReview"
-							variant="solid"
-							class="text-xs font-semibold"
-						>
-							{{ __('Submit for Review') }}
-						</Button>
-						<Badge
-							v-if="profile"
-							:label="profile.verification_status"
-							:theme="profile.verification_status === 'Verified' ? 'green' : 'gray'"
-							size="md"
-						/>
-					</div>
-				</div>
-
-				<!-- Lock Notice -->
-				<div
-					v-if="profile && profile.verification_status === 'Verified'"
-					class="p-4 bg-surface-gray-2 border rounded-md text-sm text-ink-gray-7 flex items-start gap-2.5"
-				>
-					<Lock class="w-4 h-4 mt-0.5 shrink-0 text-ink-gray-5" />
-					<div>
-						<span class="font-semibold text-ink-gray-9">{{ __('Profile verified') }}</span>. 
-						{{ __('Contact administrator to modify profile details.') }}
 					</div>
 				</div>
 
@@ -122,6 +92,22 @@
 							placeholder="Write a short summary about your background, credentials and tutoring approach..."
 							:label="__('Biography')"
 						/>
+
+						<div class="flex items-start gap-3 mt-4 pb-2">
+							<Checkbox
+								id="activeToggle"
+								v-model="form.active"
+								:disabled="isReadOnly"
+							/>
+							<div class="space-y-1">
+								<label class="text-sm font-medium text-ink-gray-9 select-none" :class="{ 'cursor-pointer': !isReadOnly }" for="activeToggle">
+									{{ __('Active Status') }}
+								</label>
+								<p class="text-xs text-ink-gray-5">
+									{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
+								</p>
+							</div>
+						</div>
 
 						<!-- Submit -->
 						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
@@ -332,7 +318,6 @@
 							@click="openAddModal"
 							variant="solid"
 							class="text-xs font-semibold"
-							:disabled="profile && profile.verification_status !== 'Verified'"
 						>
 							<template #prefix>
 								<Plus class="w-3.5 h-3.5" />
@@ -359,11 +344,6 @@
 										</p>
 									</div>
 									<div class="flex gap-1.5">
-										<Badge
-											:label="rule.docstatus === 1 ? __('Submitted') : __('Draft')"
-											:theme="rule.docstatus === 1 ? 'blue' : 'gray'"
-											size="sm"
-										/>
 										<Badge
 											:label="rule.active ? __('Active') : __('Inactive')"
 											:theme="rule.active ? 'green' : 'red'"
@@ -418,74 +398,10 @@
 							@click="openAddModal"
 							variant="solid"
 							class="text-xs font-semibold mx-auto"
-							:disabled="profile && profile.verification_status !== 'Verified'"
 						>
 							{{ __('Create Rule') }}
 						</Button>
 					</div>
-				</div>
-
-				<!-- TAB: Settings -->
-				<div v-if="activeTab === 'settings'" class="space-y-6 max-w-3xl">
-					<!-- Verified lock notice -->
-					<div
-						v-if="isReadOnly"
-						class="p-4 bg-surface-gray-2 border rounded-md text-sm text-ink-gray-7 flex items-start gap-2.5"
-					>
-						<Lock class="w-4 h-4 mt-0.5 shrink-0 text-ink-gray-5" />
-						<div>
-							<span class="font-semibold text-ink-gray-9">{{ __('Settings locked') }}</span>.
-							{{ __('Profile is verified. Contact administrator to change settings.') }}
-						</div>
-					</div>
-
-					<form @submit.prevent="saveProfile" class="space-y-5">
-						<div class="border rounded-md p-5 bg-surface-white space-y-4">
-							<h3 class="text-sm font-semibold text-ink-gray-9">{{ __('Marketplace Settings') }}</h3>
-							
-							<div class="flex items-start justify-between">
-								<div class="space-y-0.5">
-									<label class="text-sm font-medium text-ink-gray-9 select-none" :class="{ 'cursor-pointer': !isReadOnly }" for="activeToggle">
-										{{ __('Active Status') }}
-									</label>
-									<p class="text-xs text-ink-gray-5">
-										{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
-									</p>
-								</div>
-								<Checkbox
-									id="activeToggle"
-									v-model="form.active"
-									:disabled="isReadOnly"
-									class="cursor-pointer"
-								/>
-							</div>
-
-							<div class="border-t pt-4 flex items-center justify-between">
-								<div class="space-y-0.5">
-									<span class="text-sm font-medium text-ink-gray-9">{{ __('Verification Status') }}</span>
-									<p class="text-xs text-ink-gray-5">{{ __('Profile verification status determines bookability.') }}</p>
-								</div>
-								<Badge
-									v-if="profile"
-									:label="profile.verification_status"
-									:theme="profile.verification_status === 'Verified' ? 'green' : 'gray'"
-									size="md"
-								/>
-							</div>
-						</div>
-
-						<!-- Submit — hidden when verified -->
-						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
-							<Button
-								:loading="saving"
-								variant="solid"
-								type="submit"
-								class="rounded-md text-xs font-semibold px-5"
-							>
-								{{ __('Save Settings') }}
-							</Button>
-						</div>
-					</form>
 				</div>
 
 			</div>
@@ -553,7 +469,7 @@ const dashboardStore = useTutorDashboardStore()
 const activeTab = ref(route.query.tab || 'overview')
 
 watch(() => route.query.tab, (newTab) => {
-	if (newTab && ['overview', 'subjects', 'qualifications', 'availability', 'settings'].includes(newTab)) {
+	if (newTab && ['overview', 'subjects', 'qualifications', 'availability'].includes(newTab)) {
 		activeTab.value = newTab
 	}
 })
@@ -566,8 +482,7 @@ const profileTabs = [
 	{ value: 'overview', label: __('Overview') },
 	{ value: 'subjects', label: __('Subjects') },
 	{ value: 'qualifications', label: __('Qualifications') },
-	{ value: 'availability', label: __('Availability') },
-	{ value: 'settings', label: __('Settings') }
+	{ value: 'availability', label: __('Availability') }
 ]
 
 const breadcrumbs = computed(() => [
@@ -577,25 +492,7 @@ const breadcrumbs = computed(() => [
 const loadingOptions = computed(() => subjectsList.loading || boardsList.loading || classesList.loading)
 const saving = ref(false)
 const isCreating = ref(false)
-const submittingForReview = ref(false)
 
-async function submitForReview() {
-	submittingForReview.value = true
-	try {
-		const res = await call('smart_learning.api.tutor_api.submit_tutor_profile_for_review')
-		if (res && res.success) {
-			frappeToast.success(res.message || __('Profile submitted for review.'))
-			await dashboardStore.dashboardData.submit()
-		} else {
-			frappeToast.error(res.error || __('Failed to submit profile for review.'))
-		}
-	} catch (e) {
-		console.error('Submit for review failed:', e)
-		frappeToast.error(e.message || __('An error occurred.'))
-	} finally {
-		submittingForReview.value = false
-	}
-}
 
 const allSubjects = computed(() => (subjectsList.data || []).map(item => item.value))
 const allBoards = computed(() => (boardsList.data || []).map(item => item.value))
@@ -651,7 +548,7 @@ const settings_slot_duration = computed(() => {
 })
 
 const isReadOnly = computed(() => {
-	return profile.value?.verification_status === 'Verified'
+	return false
 })
 
 onMounted(async () => {
