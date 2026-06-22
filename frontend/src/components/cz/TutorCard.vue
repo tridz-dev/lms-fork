@@ -19,12 +19,11 @@
 					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-0.5">
 						{{ __('Match Score') }}
 					</span>
-					<span
-						class="inline-block text-xs font-bold px-2 py-0.5 rounded border"
-						:class="scoreBadgeClasses"
-					>
-						{{ tutor.score }}
-					</span>
+					<Badge
+						:label="tutor.score.toString()"
+						:theme="scoreTheme"
+						size="sm"
+					/>
 				</div>
 				<!-- Default timezone display when no score -->
 				<div v-else class="text-right shrink-0">
@@ -122,10 +121,10 @@ const currency = computed(
 	() => systemSettings.data?.currency || 'INR'
 )
 
-const scoreBadgeClasses = computed(() => {
+const scoreTheme = computed(() => {
 	const s = props.tutor.score ?? 0
-	if (s >= 70) return 'bg-green-50 text-green-700 border-green-200'
-	if (s >= 40) return 'bg-amber-50 text-amber-700 border-amber-200'
-	return 'bg-gray-100 text-gray-500 border-gray-200'
+	if (s >= 70) return 'green'
+	if (s >= 40) return 'amber'
+	return 'gray'
 })
 </script>

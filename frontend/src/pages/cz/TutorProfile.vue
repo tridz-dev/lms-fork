@@ -84,55 +84,44 @@
 				<div v-if="activeTab === 'overview'" class="space-y-6 max-w-3xl">
 					<form @submit.prevent="saveProfile" class="space-y-5">
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<div>
-								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Display Name') }}</label>
-								<input
-									v-model="form.tutor_name"
-									:disabled="isReadOnly"
-									type="text"
-									required
-									placeholder="e.g. Dr. John Doe"
-									class="w-full text-sm border border-outline-gray-2 rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
-								/>
-							</div>
-							<div>
-								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Timezone') }}</label>
-								<select
-									v-model="form.timezone"
-									:disabled="isReadOnly"
-									required
-									class="w-full text-sm border border-outline-gray-2 rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
-								>
-									<option v-for="tz in timezoneOptions" :key="tz" :value="tz">{{ tz }}</option>
-								</select>
-							</div>
+							<FormControl
+								v-model="form.tutor_name"
+								:disabled="isReadOnly"
+								type="text"
+								:label="__('Display Name')"
+								:required="true"
+								placeholder="e.g. Dr. John Doe"
+							/>
+							<FormControl
+								v-model="form.timezone"
+								:disabled="isReadOnly"
+								type="select"
+								:options="tzOptions"
+								:label="__('Timezone')"
+								:required="true"
+							/>
 						</div>
 
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<div>
-								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Years of Experience') }}</label>
-								<input
-									v-model.number="form.years_of_experience"
-									:disabled="isReadOnly"
-									type="number"
-									min="0"
-									required
-									placeholder="e.g. 5"
-									class="w-full text-sm border border-outline-gray-2 rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
-								/>
-							</div>
-						</div>
-
-						<div>
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Biography') }}</label>
-							<textarea
-								v-model="form.bio"
+							<FormControl
+								v-model.number="form.years_of_experience"
 								:disabled="isReadOnly"
-								rows="4"
-								placeholder="Write a short summary about your background, credentials and tutoring approach..."
-								class="w-full text-sm border border-outline-gray-2 rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+								type="number"
+								min="0"
+								:required="true"
+								placeholder="e.g. 5"
+								:label="__('Years of Experience')"
 							/>
 						</div>
+
+						<FormControl
+							v-model="form.bio"
+							:disabled="isReadOnly"
+							type="textarea"
+							rows="4"
+							placeholder="Write a short summary about your background, credentials and tutoring approach..."
+							:label="__('Biography')"
+						/>
 
 						<!-- Submit -->
 						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
@@ -154,21 +143,16 @@
 						<!-- Subjects -->
 						<div>
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Subjects Taught') }}</label>
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-surface-gray-2 p-4 rounded-md border">
-								<label
+							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
+								<Checkbox
 									v-for="sub in allSubjects"
 									:key="sub"
-									class="flex items-center gap-2 text-sm text-ink-gray-7 cursor-pointer select-none"
-								>
-									<input
-										type="checkbox"
-										:value="sub"
-										v-model="selectedSubjects"
-										:disabled="isReadOnly"
-										class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
-									/>
-									{{ sub }}
-								</label>
+									:value="sub"
+									v-model="selectedSubjects"
+									:disabled="isReadOnly"
+									:label="sub"
+									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
+								/>
 								<p v-if="!allSubjects.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No subjects found.') }}</p>
 							</div>
 						</div>
@@ -176,21 +160,16 @@
 						<!-- Boards -->
 						<div>
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Boards Supported') }}</label>
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-surface-gray-2 p-4 rounded-md border">
-								<label
+							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
+								<Checkbox
 									v-for="brd in allBoards"
 									:key="brd"
-									class="flex items-center gap-2 text-sm text-ink-gray-7 cursor-pointer select-none"
-								>
-									<input
-										type="checkbox"
-										:value="brd"
-										v-model="selectedBoards"
-										:disabled="isReadOnly"
-										class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
-									/>
-									{{ brd }}
-								</label>
+									:value="brd"
+									v-model="selectedBoards"
+									:disabled="isReadOnly"
+									:label="brd"
+									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
+								/>
 								<p v-if="!allBoards.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No boards found.') }}</p>
 							</div>
 						</div>
@@ -198,21 +177,16 @@
 						<!-- Classes -->
 						<div>
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Classes Target') }}</label>
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-surface-gray-2 p-4 rounded-md border">
-								<label
+							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
+								<Checkbox
 									v-for="cls in allClasses"
 									:key="cls"
-									class="flex items-center gap-2 text-sm text-ink-gray-7 cursor-pointer select-none"
-								>
-									<input
-										type="checkbox"
-										:value="cls"
-										v-model="selectedClasses"
-										:disabled="isReadOnly"
-										class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
-									/>
-									{{ cls }}
-								</label>
+									:value="cls"
+									v-model="selectedClasses"
+									:disabled="isReadOnly"
+									:label="cls"
+									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
+								/>
 								<p v-if="!allClasses.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No classes found.') }}</p>
 							</div>
 						</div>
@@ -275,46 +249,37 @@
 							<!-- Add row form container -->
 							<div v-if="!isReadOnly" class="space-y-3 pt-3 border-t">
 								<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-									<input
+									<TextInput
 										v-model="newQual.qualification"
 										type="text"
 										:placeholder="__('Qualification (e.g. B.Tech)')"
-										class="text-sm border rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500"
 									/>
-									<input
+									<TextInput
 										v-model="newQual.institution"
 										type="text"
 										:placeholder="__('Institution')"
-										class="text-sm border rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500"
 									/>
-									<input
+									<TextInput
 										v-model.number="newQual.year_of_passing"
 										type="number"
 										:placeholder="__('Year of Passing')"
-										class="text-sm border rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500"
 									/>
 								</div>
 								<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-									<select
+									<Select
 										v-model="newQual.level"
-										class="text-sm border rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500"
-									>
-										<option value="" disabled>{{ __('Select Level') }}</option>
-										<option value="Under Graduate">{{ __('Under Graduate') }}</option>
-										<option value="Graduate">{{ __('Graduate') }}</option>
-										<option value="Post Graduate">{{ __('Post Graduate') }}</option>
-									</select>
-									<input
+										:options="levelOptions"
+										placeholder="Select Level"
+									/>
+									<TextInput
 										v-model="newQual.class_per"
 										type="text"
 										:placeholder="__('Class / Percentage')"
-										class="text-sm border rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500"
 									/>
-									<input
+									<TextInput
 										v-model="newQual.maj_opt_subj"
 										type="text"
 										:placeholder="__('Major/Optional Subjects')"
-										class="text-sm border rounded-md p-2.5 bg-surface-white text-ink-gray-9 focus:outline-none focus:border-blue-500"
 									/>
 								</div>
 								<div class="flex justify-end">
@@ -487,12 +452,11 @@
 										{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
 									</p>
 								</div>
-								<input
+								<Checkbox
 									id="activeToggle"
 									v-model="form.active"
-									type="checkbox"
 									:disabled="isReadOnly"
-									class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4 disabled:opacity-60 disabled:cursor-not-allowed"
+									class="cursor-pointer"
 								/>
 							</div>
 
@@ -545,25 +509,42 @@
 				/>
 			</template>
 		</Dialog>
+
+		<!-- Rule Delete Confirmation Modal -->
+		<Dialog
+			v-model="showDeleteConfirmDialog"
+			:options="{
+				title: __('Confirm Deletion'),
+				size: 'sm',
+				actions: [
+					{
+						label: __('Delete'),
+						variant: 'solid',
+						theme: 'red',
+						onClick: confirmDeleteRule,
+					},
+				],
+			}"
+		>
+			<template #body-content>
+				<p class="text-sm text-ink-gray-7">
+					{{ __('Are you sure you want to delete this draft rule?') }}
+				</p>
+			</template>
+		</Dialog>
 	</div>
 </template>
-
-<script>
-import { ref } from 'vue'
-const cachedSubjects = ref([])
-const cachedBoards = ref([])
-const cachedClasses = ref([])
-</script>
 
 <script setup>
 import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Breadcrumbs, LoadingIndicator, Button, Badge, TabButtons, Dialog, call, toast as frappeToast } from 'frappe-ui'
+import { Breadcrumbs, LoadingIndicator, Button, Badge, TabButtons, Dialog, FormControl, TextInput, Select, Checkbox, call, toast as frappeToast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import { getTimezones } from '@/utils'
 import AvailabilityForm from '@/components/cz/AvailabilityForm.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { User, Lock, Plus, AlertCircle } from 'lucide-vue-next'
+import { subjectsList, boardsList, classesList } from '@/resources/bookTutor'
 
 const route = useRoute()
 const router = useRouter()
@@ -593,7 +574,7 @@ const breadcrumbs = computed(() => [
 	{ label: __('Tutor Profile'), route: { name: 'TutorProfile' } }
 ])
 
-const loadingOptions = ref(true)
+const loadingOptions = computed(() => subjectsList.loading || boardsList.loading || classesList.loading)
 const saving = ref(false)
 const isCreating = ref(false)
 const submittingForReview = ref(false)
@@ -616,9 +597,9 @@ async function submitForReview() {
 	}
 }
 
-const allSubjects = cachedSubjects
-const allBoards = cachedBoards
-const allClasses = cachedClasses
+const allSubjects = computed(() => (subjectsList.data || []).map(item => item.value))
+const allBoards = computed(() => (boardsList.data || []).map(item => item.value))
+const allClasses = computed(() => (classesList.data || []).map(item => item.value))
 
 const selectedSubjects = ref([])
 const selectedBoards = ref([])
@@ -634,6 +615,16 @@ const newQual = reactive({
 	maj_opt_subj: '',
 })
 const timezoneOptions = getTimezones()
+const tzOptions = computed(() => timezoneOptions.map(tz => ({ label: tz, value: tz })))
+
+const levelOptions = [
+	{ label: __('Select Level'), value: '' },
+	{ label: __('Under Graduate'), value: 'Under Graduate' },
+	{ label: __('Graduate'), value: 'Graduate' },
+	{ label: __('Post Graduate'), value: 'Post Graduate' },
+]
+
+
 
 function getDetectedTimezone(systemTz) {
 	try {
@@ -664,7 +655,6 @@ const isReadOnly = computed(() => {
 })
 
 onMounted(async () => {
-	await loadFormOptions()
 	await dashboardStore.dashboardData.submit()
 	syncForm()
 })
@@ -699,28 +689,6 @@ function syncForm() {
 			: []
 	} else {
 		form.timezone = defaultTz
-	}
-}
-
-async function loadFormOptions() {
-	if (allSubjects.value.length && allBoards.value.length && allClasses.value.length) {
-		loadingOptions.value = false
-		return
-	}
-	loadingOptions.value = true
-	try {
-		const [subRes, brdRes, clsRes] = await Promise.all([
-			call('frappe.client.get_list', { doctype: 'Subject', fields: ['name'], limit: 100 }),
-			call('frappe.client.get_list', { doctype: 'Board', fields: ['name'], limit: 100 }),
-			call('frappe.client.get_list', { doctype: 'Class', fields: ['name'], limit: 100 }),
-		])
-		allSubjects.value = subRes ? subRes.map((r) => r.name) : []
-		allBoards.value = brdRes ? brdRes.map((r) => r.name) : []
-		allClasses.value = clsRes ? clsRes.map((r) => r.name) : []
-	} catch (e) {
-		console.error('Failed to load options:', e)
-	} finally {
-		loadingOptions.value = false
 	}
 }
 
@@ -964,8 +932,19 @@ async function handleSave(formData) {
 	}
 }
 
-async function deleteRule(name) {
-	if (!confirm(__('Are you sure you want to delete this draft rule?'))) return
+const showDeleteConfirmDialog = ref(false)
+const ruleToDelete = ref(null)
+
+function deleteRule(name) {
+	ruleToDelete.value = name
+	showDeleteConfirmDialog.value = true
+}
+
+async function confirmDeleteRule() {
+	if (!ruleToDelete.value) return
+	const name = ruleToDelete.value
+	showDeleteConfirmDialog.value = false
+	ruleToDelete.value = null
 	try {
 		await call('smart_learning.api.tutor_api.delete_availability_rule', { rule_name: name })
 		frappeToast.success(__('Rule deleted successfully.'))

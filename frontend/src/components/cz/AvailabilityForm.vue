@@ -3,86 +3,64 @@
 		<div class="grid grid-cols-1 gap-4">
 			<div>
 				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">{{ __('Weekdays') }}</label>
-				<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 border border-gray-100 rounded-lg p-3">
-					<label
+				<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 border border-gray-100 rounded-lg p-4">
+					<Checkbox
 						v-for="day in weekdays"
 						:key="day"
-						class="flex items-center gap-2.5 cursor-pointer text-sm font-medium text-gray-700 select-none hover:text-gray-900"
-					>
-						<input
-							type="checkbox"
-							:value="day"
-							v-model="form.weekdays"
-							class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-						/>
-						{{ day }}
-					</label>
+						:value="day"
+						v-model="form.weekdays"
+						:label="day"
+						class="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900"
+					/>
 				</div>
 				<p v-if="weekdayError" class="text-xs text-red-500 mt-1.5">{{ __('Please select at least one weekday.') }}</p>
 			</div>
 		</div>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-			<div>
-				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{{ __('Start Time') }}</label>
-				<input
-					v-model="form.start_time"
-					type="time"
-					required
-					class="w-full text-sm border border-gray-200 rounded-lg p-2.5 bg-white text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-				/>
-			</div>
+			<FormControl
+				v-model="form.start_time"
+				type="time"
+				:label="__('Start Time')"
+				:required="true"
+			/>
+			<FormControl
+				v-model="form.end_time"
+				type="time"
+				:label="__('End Time')"
+				:required="true"
+			/>
+		</div>
 
-			<div>
-				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{{ __('End Time') }}</label>
-				<input
-					v-model="form.end_time"
-					type="time"
-					required
-					class="w-full text-sm border border-gray-200 rounded-lg p-2.5 bg-white text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-				/>
-			</div>
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+			<FormControl
+				v-model="form.effective_from"
+				type="date"
+				:label="__('Effective From')"
+				:required="true"
+			/>
+			<FormControl
+				v-model="form.effective_to"
+				type="date"
+				:label="__('Effective To')"
+			/>
 		</div>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div>
-				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{{ __('Effective From') }}</label>
-				<input
-					v-model="form.effective_from"
-					type="date"
-					required
-					class="w-full text-sm border border-gray-200 rounded-lg p-2.5 bg-white text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-				/>
-			</div>
-
-			<div>
-				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{{ __('Effective To') }}</label>
-				<input
-					v-model="form.effective_to"
-					type="date"
-					class="w-full text-sm border border-gray-200 rounded-lg p-2.5 bg-white text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-				/>
-			</div>
-		</div>
-
-		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-			<div>
-				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{{ __('Timezone') }}</label>
+				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Timezone') }}</label>
 				<div class="text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg p-2.5 flex items-center justify-between">
 					<span>{{ profileTimezone || 'Asia/Kolkata' }}</span>
 					<span class="text-[10px] bg-gray-200 text-gray-600 font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">{{ __('Source: Tutor Profile') }}</span>
 				</div>
 			</div>
 
-			<div class="flex items-center gap-6 pt-4">
-				<label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 select-none">
-					<input
-						v-model="form.active"
-						type="checkbox"
-						class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-					/>
-					{{ __('Active') }}
-				</label>
+			<div class="flex items-center pt-5">
+				<Checkbox
+					v-model="form.active"
+					:label="__('Active')"
+					class="cursor-pointer text-sm font-medium text-gray-700"
+				/>
 			</div>
 		</div>
 
@@ -109,7 +87,7 @@
 
 <script setup>
 import { reactive, watch, ref } from 'vue'
-import { Button } from 'frappe-ui'
+import { Button, Checkbox, FormControl } from 'frappe-ui'
 
 const props = defineProps({
 	rule: {

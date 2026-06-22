@@ -27,22 +27,12 @@
 				<div class="lg:col-span-2 space-y-6">
 					
 					<!-- Status Filter Tabs -->
-					<div class="flex border-b border-gray-200 bg-surface-white p-2 rounded-lg border shadow-sm">
-						<button
-							v-for="tab in ['Active', 'Completed', 'Dismissed', 'All']"
-							:key="tab"
-							@click="activeTab = tab"
-							class="flex-1 py-2 text-xs font-semibold rounded-md transition-colors"
-							:class="activeTab === tab ? 'bg-ink-gray-9 text-surface-white font-bold' : 'text-ink-gray-6 hover:text-ink-gray-9 hover:bg-surface-gray-2'"
-						>
-							{{ __(tab) }}
-							<span
-								v-if="tab === 'Active' && pendingCount"
-								class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-red-500 text-white font-bold"
-							>
-								{{ pendingCount }}
-							</span>
-						</button>
+					<div class="mb-4">
+						<TabButtons
+							class="w-full flex"
+							:buttons="tabButtons"
+							v-model="activeTab"
+						/>
 					</div>
 
 					<!-- List of recommendations -->
@@ -96,12 +86,11 @@
 									<p class="font-semibold text-ink-gray-8 truncate">{{ sub.subject }}</p>
 									<p class="text-[10px] text-ink-gray-5">{{ sub.attempts_count }} {{ __('attempts') }}</p>
 								</div>
-								<span
-									class="px-2 py-0.5 rounded-full font-bold text-[11px]"
-									:class="sub.average_score < 50 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'"
-								>
-									{{ sub.average_score }}%
-								</span>
+								<Badge
+									:label="`${sub.average_score}%`"
+									:theme="sub.average_score < 50 ? 'red' : 'amber'"
+									size="sm"
+								/>
 							</div>
 						</div>
 						<div v-else class="text-center py-6 text-xs text-ink-gray-5">
@@ -124,12 +113,11 @@
 									<p class="font-semibold text-ink-gray-8 leading-tight truncate-2-lines flex-1">
 										{{ topic.lesson_title || topic.lesson }}
 									</p>
-									<span
-										class="px-1.5 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider shrink-0"
-										:class="topic.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-100 text-gray-700 border'"
-									>
-										{{ topic.priority }}
-									</span>
+									<Badge
+										:label="topic.priority"
+										:theme="topic.priority === 'High' ? 'red' : 'gray'"
+										size="sm"
+									/>
 								</div>
 								<p v-if="topic.course_title" class="text-[10px] text-ink-gray-5 mt-0.5 truncate">
 									{{ topic.course_title }}
@@ -177,7 +165,7 @@
 
 <script setup>
 import { computed, onMounted, ref, inject } from 'vue'
-import { Breadcrumbs, LoadingIndicator } from 'frappe-ui'
+import { Breadcrumbs, LoadingIndicator, TabButtons, Badge } from 'frappe-ui'
 import { useRevisionStore } from '@/stores/useRevisionStore'
 import RevisionCard from '@/components/cz/RevisionCard.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
@@ -194,6 +182,15 @@ onMounted(() => {
 const breadcrumbs = computed(() => [
 	{ label: __('Revision Recommendations'), route: { name: 'Revision' } }
 ])
+
+const tabButtons = computed(() => {
+	return [
+		{ value: 'Active', label: pendingCount.value ? `${__('Active')} (${pendingCount.value})` : __('Active') },
+		{ value: 'Completed', label: __('Completed') },
+		{ value: 'Dismissed', label: __('Dismissed') },
+		{ value: 'All', label: __('All') }
+	]
+})
 
 const pendingCount = computed(() => {
 	return (revisionStore.recommendations || []).filter(r => ['Pending', 'Viewed'].includes(r.status)).length
