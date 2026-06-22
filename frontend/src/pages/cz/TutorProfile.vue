@@ -13,21 +13,19 @@
 			</div>
 
 			<!-- Empty State: No Profile and Not Creating -->
-			<div v-else-if="!profile && !isCreating" class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
+			<div v-else-if="!profile && !isCreating"
+				class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
 					</div>
-					<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Tutor Profile linked to your account') }}</h3>
+					<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Tutor Profile linked to your account') }}
+					</h3>
 					<p class="text-sm text-ink-gray-7 max-w-sm">
 						{{ __('Create a tutor profile to start configuring availability rules and taking bookings.') }}
 					</p>
 				</div>
-				<Button
-					@click="isCreating = true"
-					variant="solid"
-					class="font-semibold text-xs mt-2"
-				>
+				<Button @click="isCreating = true" variant="solid" class="font-semibold text-xs mt-2">
 					{{ __('Create Tutor Profile') }}
 				</Button>
 			</div>
@@ -36,77 +34,58 @@
 			<div v-else class="space-y-6 bg-surface-white">
 				<div class="flex justify-between items-start border-b pb-4">
 					<div>
-						<h2 class="text-xl font-semibold text-ink-gray-9">{{ form.tutor_name || __('Tutor Profile') }}</h2>
+						<div class="flex items-center gap-3">
+							<h2 class="text-xl font-semibold text-ink-gray-9">{{ form.tutor_name || __('Tutor Profile') }}</h2>
+							<Badge
+								v-if="profile?.verification_status"
+								:theme="getVerificationTheme(profile.verification_status)"
+								size="sm"
+							>
+								{{ profile.verification_status }}
+							</Badge>
+						</div>
 						<p class="text-sm text-ink-gray-5 mt-1">{{ __('Manage your tutoring profile details visible to students.') }}</p>
 					</div>
 				</div>
 
 				<!-- Tabs Navigation -->
 				<div class="mb-4">
-					<TabButtons
-						class="inline-block"
-						:buttons="profileTabs"
-						v-model="activeTab"
-					/>
+					<TabButtons class="inline-block" :buttons="profileTabs" v-model="activeTab" />
 				</div>
 
 				<!-- TAB: Profile Details -->
 				<div v-if="activeTab === 'profile'" class="space-y-6 max-w-3xl">
 					<form @submit.prevent="saveProfile" class="space-y-6">
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<FormControl
-								v-model="form.tutor_name"
-								:disabled="isReadOnly"
-								type="text"
-								:label="__('Display Name')"
-								:required="true"
-								placeholder="e.g. Dr. John Doe"
-							/>
-							<FormControl
-								v-model="form.timezone"
-								:disabled="isReadOnly"
-								type="select"
-								:options="tzOptions"
-								:label="__('Timezone')"
-								:required="true"
-							/>
+							<FormControl v-model="form.tutor_name" :disabled="isReadOnly" type="text"
+								:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
+							<FormControl v-model="form.timezone" :disabled="isReadOnly" type="select"
+								:options="tzOptions" :label="__('Timezone')" :required="true" />
 						</div>
 
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<FormControl
-								v-model.number="form.years_of_experience"
-								:disabled="isReadOnly"
-								type="number"
-								min="0"
-								:required="true"
-								placeholder="e.g. 5"
-								:label="__('Years of Experience')"
-							/>
+							<FormControl v-model.number="form.years_of_experience" :disabled="isReadOnly" type="number"
+								min="0" :required="true" placeholder="e.g. 5" :label="__('Years of Experience')" />
 						</div>
 
-						<FormControl
-							v-model="form.bio"
-							:disabled="isReadOnly"
-							type="textarea"
-							rows="4"
+						<FormControl v-model="form.bio" :disabled="isReadOnly" type="textarea" rows="4"
 							placeholder="Write a short summary about your background, credentials and tutoring approach..."
-							:label="__('Biography')"
-						/>
+							:label="__('Biography')" />
 
 						<!-- Subjects -->
 						<div class="border-t pt-5">
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Subjects Taught') }}</label>
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 								<Checkbox
-									v-for="sub in allSubjects"
+									v-for="sub in displayedSubjects"
 									:key="sub"
-									:value="sub"
-									v-model="selectedSubjects"
+									:modelValue="selectedSubjects.includes(sub)"
+									@update:modelValue="val => { if (val) { selectedSubjects.push(sub) } else { selectedSubjects = selectedSubjects.filter(s => s !== sub) } }"
 									:disabled="isReadOnly"
 									:label="sub"
 									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
 								/>
-								<p v-if="!allSubjects.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No subjects found.') }}</p>
+								<p v-if="!displayedSubjects.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No subjects found.') }}</p>
 							</div>
 						</div>
 
@@ -115,15 +94,15 @@
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Boards Supported') }}</label>
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 								<Checkbox
-									v-for="brd in allBoards"
+									v-for="brd in displayedBoards"
 									:key="brd"
-									:value="brd"
-									v-model="selectedBoards"
+									:modelValue="selectedBoards.includes(brd)"
+									@update:modelValue="val => { if (val) { selectedBoards.push(brd) } else { selectedBoards = selectedBoards.filter(b => b !== brd) } }"
 									:disabled="isReadOnly"
 									:label="brd"
 									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
 								/>
-								<p v-if="!allBoards.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No boards found.') }}</p>
+								<p v-if="!displayedBoards.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No boards found.') }}</p>
 							</div>
 						</div>
 
@@ -132,28 +111,26 @@
 							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Classes Target') }}</label>
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 								<Checkbox
-									v-for="cls in allClasses"
+									v-for="cls in displayedClasses"
 									:key="cls"
-									:value="cls"
-									v-model="selectedClasses"
+									:modelValue="selectedClasses.includes(cls)"
+									@update:modelValue="val => { if (val) { selectedClasses.push(cls) } else { selectedClasses = selectedClasses.filter(c => c !== cls) } }"
 									:disabled="isReadOnly"
 									:label="cls"
 									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
 								/>
-								<p v-if="!allClasses.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No classes found.') }}</p>
+								<p v-if="!displayedClasses.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No classes found.') }}</p>
 							</div>
 						</div>
 
 						<!-- Qualifications -->
 						<div class="border-t pt-5 space-y-4">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Qualifications') }}</label>
-							
+							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{
+								__('Qualifications') }}</label>
+
 							<div v-if="qualifications.length" class="space-y-2.5">
-								<div
-									v-for="(q, idx) in qualifications"
-									:key="idx"
-									class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3"
-								>
+								<div v-for="(q, idx) in qualifications" :key="idx"
+									class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
 									<div class="space-y-1">
 										<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
 											<span class="font-semibold">{{ q.qualification }}</span>
@@ -164,70 +141,44 @@
 										</div>
 										<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
 											<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
-											<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
-											<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
+											<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per
+												}}</span>
+											<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj
+												}}</span>
 										</div>
 									</div>
-									<button
-										v-if="!isReadOnly"
-										type="button"
-										@click="removeQualification(idx)"
-										class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5"
-									>
+									<button v-if="!isReadOnly" type="button" @click="removeQualification(idx)"
+										class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5">
 										{{ __('Remove') }}
 									</button>
 								</div>
 							</div>
-							<div
-								v-else
-								class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center"
-							>
+							<div v-else
+								class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center">
 								{{ __('No qualifications added yet. At least one is required.') }}
 							</div>
 
 							<!-- Add row form container -->
 							<div v-if="!isReadOnly" class="space-y-3 pt-3 border-t">
 								<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-									<TextInput
-										v-model="newQual.qualification"
-										type="text"
-										:placeholder="__('Qualification (e.g. B.Tech)')"
-									/>
-									<TextInput
-										v-model="newQual.institution"
-										type="text"
-										:placeholder="__('Institution')"
-									/>
-									<TextInput
-										v-model.number="newQual.year_of_passing"
-										type="number"
-										:placeholder="__('Year of Passing')"
-									/>
+									<TextInput v-model="newQual.qualification" type="text"
+										:placeholder="__('Qualification (e.g. B.Tech)')" />
+									<TextInput v-model="newQual.institution" type="text"
+										:placeholder="__('Institution')" />
+									<TextInput v-model.number="newQual.year_of_passing" type="number"
+										:placeholder="__('Year of Passing')" />
 								</div>
 								<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-									<Select
-										v-model="newQual.level"
-										:options="levelOptions"
-										placeholder="Select Level"
-									/>
-									<TextInput
-										v-model="newQual.class_per"
-										type="text"
-										:placeholder="__('Class / Percentage')"
-									/>
-									<TextInput
-										v-model="newQual.maj_opt_subj"
-										type="text"
-										:placeholder="__('Major/Optional Subjects')"
-									/>
+									<Select v-model="newQual.level" :options="levelOptions"
+										placeholder="Select Level" />
+									<TextInput v-model="newQual.class_per" type="text"
+										:placeholder="__('Class / Percentage')" />
+									<TextInput v-model="newQual.maj_opt_subj" type="text"
+										:placeholder="__('Major/Optional Subjects')" />
 								</div>
 								<div class="flex justify-end">
-									<Button
-										type="button"
-										variant="outline"
-										@click="addQualification"
-										class="rounded-md text-xs font-semibold px-4 h-9 justify-center"
-									>
+									<Button type="button" variant="outline" @click="addQualification"
+										class="rounded-md text-xs font-semibold px-4 h-9 justify-center">
 										{{ __('Add Row') }}
 									</Button>
 								</div>
@@ -235,13 +186,10 @@
 						</div>
 
 						<div class="flex items-start gap-3 mt-4 pb-2 border-t pt-5">
-							<Checkbox
-								id="activeToggle"
-								v-model="form.active"
-								:disabled="isReadOnly"
-							/>
+							<Checkbox id="activeToggle" v-model="form.active" :disabled="isReadOnly" />
 							<div class="space-y-1">
-								<label class="text-sm font-medium text-ink-gray-9 select-none" :class="{ 'cursor-pointer': !isReadOnly }" for="activeToggle">
+								<label class="text-sm font-medium text-ink-gray-9 select-none"
+									:class="{ 'cursor-pointer': !isReadOnly }" for="activeToggle">
 									{{ __('Active Status') }}
 								</label>
 								<p class="text-xs text-ink-gray-5">
@@ -252,12 +200,8 @@
 
 						<!-- Submit -->
 						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
-							<Button
-								:loading="saving"
-								variant="solid"
-								type="submit"
-								class="rounded-md text-xs font-semibold px-5"
-							>
+							<Button :loading="saving" variant="solid" type="submit"
+								class="rounded-md text-xs font-semibold px-5">
 								{{ __('Update Profile') }}
 							</Button>
 						</div>
@@ -267,13 +211,11 @@
 				<!-- TAB: Availability Rules -->
 				<div v-if="activeTab === 'availability'" class="space-y-6 max-w-5xl">
 					<!-- Warning banner if tutor profile is not verified -->
-					<div
-						v-if="profile && profile.verification_status !== 'Verified'"
-						class="flex items-start gap-2.5 p-4 bg-surface-amber-1 border border-outline-amber-2 rounded-md text-sm text-ink-amber-3"
-					>
+					<div v-if="profile && profile.verification_status !== 'Verified'"
+						class="flex items-start gap-2.5 p-4 bg-surface-amber-1 border border-outline-amber-2 rounded-md text-sm text-ink-amber-3">
 						<AlertCircle class="w-4 h-4 mt-0.5 shrink-0" />
 						<div>
-							<span class="font-semibold">{{ __('Tutor Profile not verified') }}</span>. 
+							<span class="font-semibold">{{ __('Tutor Profile not verified') }}</span>.
 							{{ __('To create the availability rule, Tutor Profile must be verified.') }}
 						</div>
 					</div>
@@ -283,11 +225,7 @@
 							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Weekly Availability Slots') }}</h3>
 							<p class="text-sm text-ink-gray-5 mt-0.5">{{ __('Set up your recurring weekly slot generation patterns.') }}</p>
 						</div>
-						<Button
-							@click="openAddModal"
-							variant="solid"
-							class="text-xs font-semibold"
-						>
+						<Button @click="openAddModal" variant="solid" class="text-xs font-semibold">
 							<template #prefix>
 								<Plus class="w-3.5 h-3.5" />
 							</template>
@@ -296,11 +234,8 @@
 					</div>
 
 					<div v-if="rules.length" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-						<div
-							v-for="rule in rules"
-							:key="rule.name"
-							class="border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between"
-						>
+						<div v-for="rule in rules" :key="rule.name"
+							class="border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between">
 							<div class="space-y-3">
 								<!-- Header: Weekday & Active Status -->
 								<div class="flex justify-between items-start">
@@ -309,31 +244,41 @@
 											{{ getWeekdaysString(rule.weekday) }}
 										</h4>
 										<p class="text-xs text-ink-gray-5 mt-0.5">
-											{{ rule.effective_from }} {{ rule.effective_to ? `to ${rule.effective_to}` : __('onwards') }}
+											{{ rule.effective_from }} {{ rule.effective_to ? `to ${rule.effective_to}` :
+												__('onwards') }}
 										</p>
 									</div>
 									<div class="flex gap-1.5">
-										<Badge
-											:label="rule.active ? __('Active') : __('Inactive')"
-											:theme="rule.active ? 'green' : 'red'"
-											size="sm"
-										/>
+										<Badge :label="rule.active ? __('Active') : __('Inactive')"
+											:theme="rule.active ? 'green' : 'red'" size="sm" />
 									</div>
 								</div>
 
 								<!-- Details Grid -->
 								<div class="grid grid-cols-2 gap-4 pt-1 text-xs">
 									<div>
-										<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Time Range') }}</span>
-										<span class="font-semibold text-ink-gray-8">{{ formatTime(rule.start_time) }} – {{ formatTime(rule.end_time) }}</span>
+										<span
+											class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{
+												__('Time Range') }}</span>
+										<span class="font-semibold text-ink-gray-8">{{ formatTime(rule.start_time) }} –
+											{{
+												formatTime(rule.end_time) }}</span>
 									</div>
 									<div>
-										<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Duration') }}</span>
-										<span class="font-semibold text-ink-gray-8">{{ settings_slot_duration }} {{ __('mins') }}</span>
+										<span
+											class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{
+												__('Duration') }}</span>
+										<span class="font-semibold text-ink-gray-8">{{ settings_slot_duration }} {{
+											__('mins')
+											}}</span>
 									</div>
 									<div class="col-span-2">
-										<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Time Zone') }}</span>
-										<span class="font-semibold text-ink-gray-8">{{ rule.timezone || profile.timezone || 'Asia/Kolkata' }}</span>
+										<span
+											class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{
+												__('Time Zone') }}</span>
+										<span class="font-semibold text-ink-gray-8">{{ rule.timezone || profile.timezone
+											||
+											'Asia/Kolkata' }}</span>
 									</div>
 								</div>
 							</div>
@@ -342,18 +287,12 @@
 							<div class="flex justify-end items-center gap-2.5 pt-3 border-t mt-4">
 								<!-- Draft-only actions -->
 								<template v-if="rule.docstatus === 0">
-									<Button
-										@click="openEditModal(rule)"
-										variant="outline"
-										class="text-xs font-semibold"
-									>
+									<Button @click="openEditModal(rule)" variant="outline"
+										class="text-xs font-semibold">
 										{{ __('Edit') }}
 									</Button>
-									<Button
-										@click="deleteRule(rule.name)"
-										variant="outline"
-										class="text-xs font-semibold text-red-600 hover:text-red-700"
-									>
+									<Button @click="deleteRule(rule.name)" variant="outline"
+										class="text-xs font-semibold text-red-600 hover:text-red-700">
 										{{ __('Delete') }}
 									</Button>
 								</template>
@@ -361,13 +300,11 @@
 						</div>
 					</div>
 
-					<div v-else class="text-center py-12 border border-dashed rounded-md text-ink-gray-5 space-y-3 bg-surface-white">
-						<p>{{ __('No availability rules defined yet. Create your first rule to generate booking slots.') }}</p>
-						<Button
-							@click="openAddModal"
-							variant="solid"
-							class="text-xs font-semibold mx-auto"
-						>
+					<div v-else
+						class="text-center py-12 border border-dashed rounded-md text-ink-gray-5 space-y-3 bg-surface-white">
+						<p>{{ __('No availability rules defined yet. Create your first rule to generate booking slots.')
+							}}</p>
+						<Button @click="openAddModal" variant="solid" class="text-xs font-semibold mx-auto">
 							{{ __('Create Slots') }}
 						</Button>
 					</div>
@@ -377,40 +314,29 @@
 		</div>
 
 		<!-- Rule Edit/Add Modal -->
-		<Dialog
-			v-model="showModal"
-			:options="{
-				title: editingRule ? __('Edit Availability Rule') : __('Add Availability Rule'),
-				size: 'lg',
-			}"
-		>
+		<Dialog v-model="showModal" :options="{
+			title: editingRule ? __('Edit Availability Rule') : __('Add Availability Rule'),
+			size: 'lg',
+		}">
 			<template #body-content>
-				<AvailabilityForm
-					:rule="editingRule"
-					:profileTimezone="form.timezone"
-					:loading="savingRule"
-					@save="handleSave"
-					@cancel="showModal = false"
-				/>
+				<AvailabilityForm :rule="editingRule" :profileTimezone="form.timezone" :loading="savingRule"
+					@save="handleSave" @cancel="showModal = false" />
 			</template>
 		</Dialog>
 
 		<!-- Rule Delete Confirmation Modal -->
-		<Dialog
-			v-model="showDeleteConfirmDialog"
-			:options="{
-				title: __('Confirm Deletion'),
-				size: 'sm',
-				actions: [
-					{
-						label: __('Delete'),
-						variant: 'solid',
-						theme: 'red',
-						onClick: confirmDeleteRule,
-					},
-				],
-			}"
-		>
+		<Dialog v-model="showDeleteConfirmDialog" :options="{
+			title: __('Confirm Deletion'),
+			size: 'sm',
+			actions: [
+				{
+					label: __('Delete'),
+					variant: 'solid',
+					theme: 'red',
+					onClick: confirmDeleteRule,
+				},
+			],
+		}">
 			<template #body-content>
 				<p class="text-sm text-ink-gray-7">
 					{{ __('Are you sure you want to delete this draft rule?') }}
@@ -419,60 +345,38 @@
 		</Dialog>
 
 		<!-- Profile Creation Modal -->
-		<Dialog
-			v-model="isCreating"
-			:options="{
-				title: __('Create Tutor Profile'),
-				size: 'xl',
-			}"
-		>
+		<Dialog v-model="isCreating" :options="{
+			title: __('Create Tutor Profile'),
+			size: 'xl',
+		}">
 			<template #body-content>
 				<div class="space-y-5 max-h-[70vh] overflow-y-auto px-1 py-1">
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<FormControl
-							v-model="form.tutor_name"
-							type="text"
-							:label="__('Display Name')"
-							:required="true"
-							placeholder="e.g. Dr. John Doe"
-						/>
-						<FormControl
-							v-model="form.timezone"
-							type="select"
-							:options="tzOptions"
-							:label="__('Timezone')"
-							:required="true"
-						/>
+						<FormControl v-model="form.tutor_name" type="text" :label="__('Display Name')" :required="true"
+							placeholder="e.g. Dr. John Doe" />
+						<FormControl v-model="form.timezone" type="select" :options="tzOptions" :label="__('Timezone')"
+							:required="true" />
 					</div>
 
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<FormControl
-							v-model.number="form.years_of_experience"
-							type="number"
-							min="0"
-							:required="true"
-							placeholder="e.g. 5"
-							:label="__('Years of Experience')"
-						/>
+						<FormControl v-model.number="form.years_of_experience" type="number" min="0" :required="true"
+							placeholder="e.g. 5" :label="__('Years of Experience')" />
 					</div>
 
-					<FormControl
-						v-model="form.bio"
-						type="textarea"
-						rows="4"
+					<FormControl v-model="form.bio" type="textarea" rows="4"
 						placeholder="Write a short summary about your background, credentials and tutoring approach..."
-						:label="__('Biography')"
-					/>
+						:label="__('Biography')" />
 
 					<!-- Subjects -->
 					<div class="border-t pt-5">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Subjects Taught') }}</label>
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{
+							__('Subjects Taught') }}</label>
 						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
 							<Checkbox
 								v-for="sub in allSubjects"
 								:key="sub"
-								:value="sub"
-								v-model="selectedSubjects"
+								:modelValue="selectedSubjects.includes(sub)"
+								@update:modelValue="val => { if (val) { selectedSubjects.push(sub) } else { selectedSubjects = selectedSubjects.filter(s => s !== sub) } }"
 								:label="sub"
 								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
 							/>
@@ -487,8 +391,8 @@
 							<Checkbox
 								v-for="brd in allBoards"
 								:key="brd"
-								:value="brd"
-								v-model="selectedBoards"
+								:modelValue="selectedBoards.includes(brd)"
+								@update:modelValue="val => { if (val) { selectedBoards.push(brd) } else { selectedBoards = selectedBoards.filter(b => b !== brd) } }"
 								:label="brd"
 								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
 							/>
@@ -503,8 +407,8 @@
 							<Checkbox
 								v-for="cls in allClasses"
 								:key="cls"
-								:value="cls"
-								v-model="selectedClasses"
+								:modelValue="selectedClasses.includes(cls)"
+								@update:modelValue="val => { if (val) { selectedClasses.push(cls) } else { selectedClasses = selectedClasses.filter(c => c !== cls) } }"
 								:label="cls"
 								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
 							/>
@@ -514,14 +418,12 @@
 
 					<!-- Qualifications -->
 					<div class="border-t pt-5 space-y-4">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Qualifications') }}</label>
-						
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{
+							__('Qualifications') }}</label>
+
 						<div v-if="qualifications.length" class="space-y-2.5">
-							<div
-								v-for="(q, idx) in qualifications"
-								:key="idx"
-								class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3"
-							>
+							<div v-for="(q, idx) in qualifications" :key="idx"
+								class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
 								<div class="space-y-1">
 									<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
 										<span class="font-semibold">{{ q.qualification }}</span>
@@ -533,68 +435,40 @@
 									<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
 										<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
 										<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
-										<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
+										<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj
+											}}</span>
 									</div>
 								</div>
-								<button
-									type="button"
-									@click="removeQualification(idx)"
-									class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5"
-								>
+								<button type="button" @click="removeQualification(idx)"
+									class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5">
 									{{ __('Remove') }}
 								</button>
 							</div>
 						</div>
-						<div
-							v-else
-							class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center"
-						>
+						<div v-else
+							class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center">
 							{{ __('No qualifications added yet. At least one is required.') }}
 						</div>
 
 						<!-- Add row form container -->
 						<div class="space-y-3 pt-3 border-t">
 							<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-								<TextInput
-									v-model="newQual.qualification"
-									type="text"
-									:placeholder="__('Qualification (e.g. B.Tech)')"
-								/>
-								<TextInput
-									v-model="newQual.institution"
-									type="text"
-									:placeholder="__('Institution')"
-								/>
-								<TextInput
-									v-model.number="newQual.year_of_passing"
-									type="number"
-									:placeholder="__('Year of Passing')"
-								/>
+								<TextInput v-model="newQual.qualification" type="text"
+									:placeholder="__('Qualification (e.g. B.Tech)')" />
+								<TextInput v-model="newQual.institution" type="text" :placeholder="__('Institution')" />
+								<TextInput v-model.number="newQual.year_of_passing" type="number"
+									:placeholder="__('Year of Passing')" />
 							</div>
 							<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-								<Select
-									v-model="newQual.level"
-									:options="levelOptions"
-									placeholder="Select Level"
-								/>
-								<TextInput
-									v-model="newQual.class_per"
-									type="text"
-									:placeholder="__('Class / Percentage')"
-								/>
-								<TextInput
-									v-model="newQual.maj_opt_subj"
-									type="text"
-									:placeholder="__('Major/Optional Subjects')"
-								/>
+								<Select v-model="newQual.level" :options="levelOptions" placeholder="Select Level" />
+								<TextInput v-model="newQual.class_per" type="text"
+									:placeholder="__('Class / Percentage')" />
+								<TextInput v-model="newQual.maj_opt_subj" type="text"
+									:placeholder="__('Major/Optional Subjects')" />
 							</div>
 							<div class="flex justify-end">
-								<Button
-									type="button"
-									variant="outline"
-									@click="addQualification"
-									class="rounded-md text-xs font-semibold px-4 h-9 justify-center"
-								>
+								<Button type="button" variant="outline" @click="addQualification"
+									class="rounded-md text-xs font-semibold px-4 h-9 justify-center">
 									{{ __('Add Row') }}
 								</Button>
 							</div>
@@ -602,12 +476,10 @@
 					</div>
 
 					<div class="flex items-start gap-3 mt-4 pb-2 border-t pt-5">
-						<Checkbox
-							id="activeToggleModal"
-							v-model="form.active"
-						/>
+						<Checkbox id="activeToggleModal" v-model="form.active" />
 						<div class="space-y-1">
-							<label class="text-sm font-medium text-ink-gray-9 select-none cursor-pointer" for="activeToggleModal">
+							<label class="text-sm font-medium text-ink-gray-9 select-none cursor-pointer"
+								for="activeToggleModal">
 								{{ __('Active Status') }}
 							</label>
 							<p class="text-xs text-ink-gray-5">
@@ -619,19 +491,10 @@
 			</template>
 			<template #actions>
 				<div class="flex justify-end gap-2.5">
-					<Button
-						variant="outline"
-						@click="isCreating = false"
-						class="text-xs font-semibold"
-					>
+					<Button variant="outline" @click="isCreating = false" class="text-xs font-semibold">
 						{{ __('Cancel') }}
 					</Button>
-					<Button
-						variant="solid"
-						:loading="saving"
-						@click="saveProfile"
-						class="text-xs font-semibold"
-					>
+					<Button variant="solid" :loading="saving" @click="saveProfile" class="text-xs font-semibold">
 						{{ __('Create Profile') }}
 					</Button>
 				</div>
@@ -681,9 +544,33 @@ const saving = ref(false)
 const isCreating = ref(false)
 
 
+const profile = computed(() => dashboardStore.dashboardData.data?.profile)
+const isReadOnly = computed(() => {
+	return profile.value?.verification_status === 'Verified'
+})
+
+function getVerificationTheme(status) {
+	switch (status) {
+		case 'Verified': return 'green'
+		case 'Pending Verification': return 'orange'
+		case 'Rejected': return 'red'
+		default: return 'gray'
+	}
+}
+
 const allSubjects = computed(() => (subjectsList.data || []).map(item => item.value))
 const allBoards = computed(() => (boardsList.data || []).map(item => item.value))
 const allClasses = computed(() => (classesList.data || []).map(item => item.value))
+
+const displayedSubjects = computed(() => {
+	return isReadOnly.value ? selectedSubjects.value : allSubjects.value
+})
+const displayedBoards = computed(() => {
+	return isReadOnly.value ? selectedBoards.value : allBoards.value
+})
+const displayedClasses = computed(() => {
+	return isReadOnly.value ? selectedClasses.value : allClasses.value
+})
 
 const selectedSubjects = ref([])
 const selectedBoards = ref([])
@@ -728,14 +615,9 @@ const form = reactive({
 	active: true,
 })
 
-const profile = computed(() => dashboardStore.dashboardData.data?.profile)
 const rules = computed(() => dashboardStore.dashboardData.data?.rules || [])
 const settings_slot_duration = computed(() => {
 	return dashboardStore.dashboardData.data?.settings_slot_duration || 30
-})
-
-const isReadOnly = computed(() => {
-	return false
 })
 
 onMounted(async () => {
@@ -981,7 +863,7 @@ async function handleSave(formData) {
 	savingRule.value = true
 	try {
 		const weekdayRows = formData.weekdays.map((day) => ({ weekday: day }))
-		
+
 		const doc = {
 			doctype: 'Tutor Availability Rule',
 			tutor: profile.value.name,
