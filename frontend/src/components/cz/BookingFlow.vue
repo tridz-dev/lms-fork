@@ -84,7 +84,7 @@
 
 <script setup>
 import { computed, inject, reactive, ref, watch } from 'vue'
-import { Button, LoadingIndicator, Select } from 'frappe-ui'
+import { Button, LoadingIndicator, Select, toast } from 'frappe-ui'
 import { useTutorStore } from '@/stores/useTutorStore'
 import { useBookingStore } from '@/stores/useBookingStore'
 import { systemSettings } from '@/resources/bookTutor'
@@ -168,7 +168,7 @@ function formatSlotTime(start, end) {
 async function startBooking() {
 	if (!selectedSlot.value) return
 	if (!filters.subject || !filters.board || !filters.class_name) {
-		alert(__('Please select a Subject, Board, and Class.'))
+		toast.error(__('Please select a Subject, Board, and Class.'))
 		return
 	}
 	try {
@@ -206,6 +206,6 @@ async function onPaymentFailure(errorRes) {
 			errorRes.error_description
 		)
 	}
-	alert(__('Payment failed. Please try again.'))
+	toast.error(__('Payment failed. Please try again.'))
 }
 </script>

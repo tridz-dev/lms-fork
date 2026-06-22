@@ -13,18 +13,16 @@
 				</p>
 			</div>
 			<div class="flex gap-2">
-				<span
-					class="border px-2.5 py-0.5 text-xs rounded-full font-medium"
-					:class="priorityClasses"
-				>
-					{{ recommendation.priority }}
-				</span>
-				<span
-					class="border px-2.5 py-0.5 text-xs rounded-full font-medium"
-					:class="statusClasses"
-				>
-					{{ recommendation.status }}
-				</span>
+				<Badge
+					:label="recommendation.priority"
+					:theme="priorityTheme"
+					size="sm"
+				/>
+				<Badge
+					:label="recommendation.status"
+					:theme="statusTheme"
+					size="sm"
+				/>
 			</div>
 		</div>
 
@@ -70,8 +68,7 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue'
-import { Button } from 'frappe-ui'
-import { call } from 'frappe-ui'
+import { Button, Badge, call } from 'frappe-ui'
 import { useRouter } from 'vue-router'
 import { useRevisionStore } from '@/stores/useRevisionStore'
 
@@ -93,31 +90,31 @@ const canAction = computed(() => {
 	return ['Pending', 'Viewed'].includes(props.recommendation.status)
 })
 
-const priorityClasses = computed(() => {
+const priorityTheme = computed(() => {
 	switch (props.recommendation.priority) {
 		case 'High':
-			return 'border-red-200 bg-red-50 text-red-700 font-semibold'
+			return 'red'
 		case 'Medium':
-			return 'border-amber-200 bg-amber-50 text-amber-700 font-semibold'
+			return 'amber'
 		case 'Low':
 		default:
-			return 'border-gray-200 bg-gray-50 text-gray-600'
+			return 'gray'
 	}
 })
 
-const statusClasses = computed(() => {
+const statusTheme = computed(() => {
 	switch (props.recommendation.status) {
 		case 'Completed':
-			return 'border-green-200 bg-green-50 text-green-700 font-semibold'
+			return 'green'
 		case 'Viewed':
-			return 'border-blue-200 bg-blue-50 text-blue-700 font-semibold'
+			return 'blue'
 		case 'Dismissed':
-			return 'border-red-200 bg-red-50 text-red-700 font-semibold'
+			return 'red'
 		case 'Archived':
-			return 'border-gray-300 bg-gray-100 text-gray-500 font-medium'
+			return 'gray'
 		case 'Pending':
 		default:
-			return 'border-amber-200 bg-amber-50 text-amber-700 font-medium'
+			return 'amber'
 	}
 })
 

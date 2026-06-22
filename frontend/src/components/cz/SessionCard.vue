@@ -13,13 +13,12 @@
 					{{ formatSlotTime(session.start_datetime, session.end_datetime) }}
 				</p>
 			</div>
-			<div>
-				<span
-					class="border px-2.5 py-0.5 text-xs rounded-full font-medium"
-					:class="statusClasses"
-				>
-					{{ session.booking_status }}
-				</span>
+			<div class="flex items-center">
+				<Badge
+					:label="session.booking_status"
+					:theme="statusTheme"
+					size="sm"
+				/>
 			</div>
 		</div>
 
@@ -82,9 +81,11 @@
 							<h4 class="font-bold text-base text-ink-gray-9">{{ session.tutor }}</h4>
 							<p class="text-xs text-ink-gray-4 mt-0.5">ID: {{ session.name }}</p>
 						</div>
-						<span class="border px-2.5 py-0.5 text-xs rounded-full font-semibold" :class="statusClasses">
-							{{ session.booking_status }}
-						</span>
+						<Badge
+							:label="session.booking_status"
+							:theme="statusTheme"
+							size="sm"
+						/>
 					</div>
 
 					<!-- Details Grid -->
@@ -155,7 +156,7 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue'
-import { Dialog, Button } from 'frappe-ui'
+import { Dialog, Button, Badge } from 'frappe-ui'
 import { Video } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -171,19 +172,19 @@ import { formatLocal, formatTimeRangeLocal } from '@/utils/timezone'
 
 const showDetails = ref(false)
 
-const statusClasses = computed(() => {
+const statusTheme = computed(() => {
 	switch (props.session.booking_status) {
 		case 'Confirmed':
-			return 'border-blue-200 bg-blue-50 text-blue-700'
+			return 'blue'
 		case 'Completed':
-			return 'border-green-200 bg-green-50 text-green-700'
+			return 'green'
 		case 'Pending Payment':
-			return 'border-amber-200 bg-amber-50 text-amber-700'
+			return 'amber'
 		case 'Cancelled':
 		case 'Expired':
-			return 'border-gray-200 bg-gray-50 text-gray-400 line-through'
+			return 'gray'
 		default:
-			return 'border-gray-200 bg-gray-50 text-gray-600'
+			return 'gray'
 	}
 })
 

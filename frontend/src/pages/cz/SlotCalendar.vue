@@ -75,7 +75,7 @@
 				</div>
 
 				<!-- ══════════════ WEEK VIEW ══════════════ -->
-				<div v-if="activeView === 'week'" class="space-y-3">
+				<div v-if="activeView === 'calendar'" class="space-y-3">
 					<!-- Week Navigation -->
 					<div class="flex items-center justify-between">
 						<Button variant="outline" class="text-xs font-semibold" @click="prevWeek">
@@ -318,6 +318,28 @@
 				</div>
 			</template>
 		</Dialog>
+
+		<Dialog
+			v-model="showDeleteConfirmDialog"
+			:options="{
+				title: __('Confirm Deletion'),
+				size: 'sm',
+				actions: [
+					{
+						label: __('Delete'),
+						variant: 'solid',
+						theme: 'red',
+						onClick: confirmDeleteSlot,
+					},
+				],
+			}"
+		>
+			<template #body-content>
+				<p class="text-sm text-ink-gray-7">
+					{{ __('Are you sure you want to delete this available slot?') }}
+				</p>
+			</template>
+		</Dialog>
 	</div>
 </template>
 
@@ -333,11 +355,11 @@ import dayjs from '@/utils/dayjs'
 const dashboardStore = useTutorDashboardStore()
 
 // ── View state ────────────────────────────────────────────────────────────
-const activeView = ref('week')        // 'week' | 'list'
+const activeView = ref('calendar')        // 'week' | 'list'
 const activeTab = ref('available')    // list view filter
 
 const viewButtons = computed(() => [
-	{ value: 'week', label: __('Week') },
+	{ value: 'calendar', label: __('Calender') },
 	{ value: 'list', label: __('List') },
 ])
 
@@ -518,8 +540,19 @@ async function triggerRegenerate() {
 }
 
 // ── Slot deletion ─────────────────────────────────────────────────────────
-async function deleteSlot(name) {
-	if (!confirm(__('Are you sure you want to delete this available slot?'))) return
+const showDeleteConfirmDialog = ref(false)
+const slotToDelete = ref(null)
+
+function deleteSlot(name) {
+	slotToDelete.value = name
+	showDeleteConfirmDialog.value = true
+}
+
+async function confirmDeleteSlot() {
+	if (!slotToDelete.value) return
+	const name = slotToDelete.value
+	showDeleteConfirmDialog.value = false
+	slotToDelete.value = null
 	try {
 		await call('frappe.client.delete_doc', {
 			doctype: 'Tutor Availability Slot',
@@ -535,6 +568,6 @@ async function deleteSlot(name) {
 
 async function deleteSlotFromDialog(name) {
 	showSlotDialog.value = false
-	await deleteSlot(name)
+	deleteSlot(name)
 }
 </script>
