@@ -36,6 +36,7 @@
 						:key="session.name"
 						:session="session"
 						@retryPayment="handleRetryPayment"
+						@sessionCancelled="sessionStore.fetchHistory()"
 					/>
 				</div>
 
