@@ -317,21 +317,10 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 	if (!isLoggedIn) {
-		if (to.name == 'Home') {
-			return next({ name: 'Courses' })
-		}
+		if (to.name == 'Home') router.push({ name: 'Courses' })
 
 		await settings.promise
-		const guestAllowedRoutes = [
-			'Courses',
-			'CourseDetail',
-			'Jobs',
-			'JobDetail',
-			'CertifiedParticipants',
-			'TutorSearch',
-			'Search',
-		]
-		if (!settings.data.allow_guest_access || !guestAllowedRoutes.includes(to.name)) {
+		if (!settings.data.allow_guest_access) {
 			window.location.href = '/login'
 			return
 		}
