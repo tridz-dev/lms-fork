@@ -6,7 +6,7 @@
 		<div class="flex items-start justify-between pb-3 border-b">
 			<div>
 				<h4 class="font-bold text-base text-ink-gray-9">
-					{{ session.tutor_name || session.tutor }}
+					{{ session.tutor_name || __('Tutor') }}
 				</h4>
 				<p class="text-xs text-ink-gray-5 mt-1.5 flex items-center">
 					<span class="font-semibold text-ink-gray-4 mr-1.5 uppercase tracking-wider text-[10px]">{{ __('SLOT') }}:</span>
@@ -82,7 +82,7 @@
 					<!-- Tutor and Status Header -->
 					<div class="flex justify-between items-start border-b pb-3">
 						<div>
-							<h4 class="font-bold text-base text-ink-gray-9">{{ session.tutor_name || session.tutor }}</h4>
+							<h4 class="font-bold text-base text-ink-gray-9">{{ session.tutor_name || __('Tutor') }}</h4>
 							<p class="text-xs text-ink-gray-4 mt-0.5">ID: {{ session.name }}</p>
 						</div>
 						<Badge
@@ -301,12 +301,18 @@ const statusTheme = computed(() => {
 	switch (props.session.booking_status) {
 		case 'Confirmed':
 			return 'blue'
+		case 'Payment Success':
 		case 'Completed':
 			return 'green'
 		case 'Pending Payment':
+		case 'Cancellation Requested':
+		case 'Refund Requested':
 			return 'amber'
+		case 'Refunded':
+			return 'blue'
 		case 'Cancelled':
 		case 'Expired':
+		case 'Failed':
 			return 'gray'
 		default:
 			return 'gray'
