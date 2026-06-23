@@ -39,7 +39,7 @@
 				</div>
 
 				<!-- Section Tabs -->
-				<div class="mb-4">
+				<div class="mb-4 overflow-x-auto whitespace-nowrap pb-1">
 					<TabButtons
 						class="inline-block"
 						:buttons="tabButtons"
@@ -360,13 +360,13 @@ const tabButtons = computed(() => {
 		!isSessionUpcoming(s.start_datetime))
 	).length
 	const cancelled = sessions.value.filter(s => s.booking_status === 'Cancelled').length
-	const expired = sessions.value.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed' || s.booking_status === 'Pending Payment').length
+	const failed = sessions.value.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed' || s.booking_status === 'Pending Payment').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
-		{ value: 'expired', label: `${__('Expired')} (${expired})` },
+		{ value: 'failed', label: `${__('Failed')} (${failed})` },
 	]
 })
 
