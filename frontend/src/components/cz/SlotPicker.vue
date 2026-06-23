@@ -13,7 +13,7 @@
 				class="flex flex-col items-center px-4 py-2 border rounded-lg focus:outline-none min-w-[72px] transition-all duration-150 shrink-0"
 				:class="
 					selectedDate === date
-						? 'bg-ink-gray-9 border-ink-gray-9 text-surface-white shadow-sm'
+						? 'bg-gray-900 border-gray-900 text-white shadow-sm'
 						: 'bg-surface-white border-outline-gray-2 text-ink-gray-7 hover:bg-surface-gray-2'
 				"
 			>
@@ -51,7 +51,7 @@
 					class="py-2.5 px-3 border text-xs font-medium transition-all text-center rounded-lg focus:outline-none"
 					:class="
 						selectedSlotName === slot.name
-							? 'bg-ink-gray-9 border-ink-gray-9 text-surface-white shadow-sm'
+							? 'bg-gray-900 border-gray-900 text-white shadow-sm'
 							: 'bg-surface-white border-outline-gray-2 text-ink-gray-7 hover:bg-surface-gray-2'
 					"
 				>

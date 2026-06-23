@@ -62,8 +62,8 @@
 					{{ __('Booking Review') }}
 				</h4>
 				<p class="text-xs text-blue-800">
-					<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Time') }}:</span>
-					{{ formatSlotTime(selectedSlot.start_datetime, selectedSlot.end_datetime) }}
+					<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
+					<span class="font-medium text-blue-900">{{ selectedSlotHighlight }}</span>
 				</p>
 				<p class="text-xs text-blue-800">
 					<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Price') }}:</span>
@@ -91,7 +91,7 @@ import { systemSettings } from '@/resources/bookTutor'
 import SlotPicker from './SlotPicker.vue'
 import RazorpayCheckout from './RazorpayCheckout.vue'
 import { useRouter } from 'vue-router'
-import { formatTimeRangeLocal } from '@/utils/timezone'
+import { formatTimeRangeLocal, convertToLocal, getBrowserTimezone } from '@/utils/timezone'
 
 // Temporary: centralized test booking amount — restore to tutor.hourly_rate when live
 const TEST_BOOKING_AMOUNT = 500
@@ -128,6 +128,14 @@ const classOptions = computed(() =>
 )
 
 const selectedSlot = ref(null)
+const selectedSlotHighlight = computed(() => {
+	if (!selectedSlot.value) return ''
+	const startLocal = convertToLocal(selectedSlot.value.start_datetime)
+	const endLocal = convertToLocal(selectedSlot.value.end_datetime)
+	if (!startLocal || !endLocal) return ''
+	const tz = getBrowserTimezone()
+	return `date - ${startLocal.format('DD MMM YYYY')}, time - ${startLocal.format('hh:mm A')} – ${endLocal.format('hh:mm A')} (${tz})`
+})
 const checkoutDetails = ref(null)
 
 const slotsList = tutorStore.slotsList
