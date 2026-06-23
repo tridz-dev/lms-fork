@@ -13,6 +13,9 @@ export const useTutorStore = defineStore('tutor-store', () => {
 	})
 
 	const selectedTutor = ref(null)
+	const slotsOffset = ref(0)
+	const accumulatedSlots = ref([])
+	const hasMoreSlotsBackend = ref(true)
 
 	// Fetch tutors
 	const tutorsList = createResource({
@@ -37,14 +40,34 @@ export const useTutorStore = defineStore('tutor-store', () => {
 				start_date: filters.start_date || undefined,
 				end_date: filters.end_date || undefined,
 				tutor: filters.tutor || undefined,
+				limit: 10,
+				start: slotsOffset.value,
 			}
 		},
+		onSuccess(res) {
+			const newSlots = res?.success ? res.data : []
+			if (slotsOffset.value === 0) {
+				accumulatedSlots.value = newSlots
+			} else {
+				accumulatedSlots.value = [...accumulatedSlots.value, ...newSlots]
+			}
+			hasMoreSlotsBackend.value = newSlots.length === 10
+		}
 	})
+
+	function loadMoreSlotsBackend() {
+		if (slotsList.loading || !hasMoreSlotsBackend.value) return
+		slotsOffset.value += 10
+		slotsList.submit()
+	}
 
 	watch(
 		filters,
 		() => {
 			if (filters.tutor || filters.subject || filters.board || filters.class_name) {
+				slotsOffset.value = 0
+				accumulatedSlots.value = []
+				hasMoreSlotsBackend.value = true
 				slotsList.submit()
 			}
 		},
@@ -56,5 +79,8 @@ export const useTutorStore = defineStore('tutor-store', () => {
 		selectedTutor,
 		tutorsList,
 		slotsList,
+		accumulatedSlots,
+		hasMoreSlotsBackend,
+		loadMoreSlotsBackend,
 	}
 })

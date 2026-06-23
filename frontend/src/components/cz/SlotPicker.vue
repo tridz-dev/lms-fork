@@ -59,11 +59,24 @@
 				</button>
 			</div>
 		</div>
+
+		<!-- Load More Button -->
+		<div v-if="hasMore" class="flex justify-center pt-2">
+			<Button
+				variant="outline"
+				class="text-xs"
+				:loading="loadingMore"
+				@click="$emit('loadMore')"
+			>
+				{{ __('Load More Slots') }}
+			</Button>
+		</div>
 	</div>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { Button } from 'frappe-ui'
 import { convertToLocal, getBrowserTimezone } from '@/utils/timezone'
 import dayjs from '@/utils/dayjs'
 
@@ -84,9 +97,17 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	loadingMore: {
+		type: Boolean,
+		default: false,
+	},
+	hasMore: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-defineEmits(['selectSlot'])
+defineEmits(['selectSlot', 'loadMore'])
 
 const selectedDate = ref('')
 

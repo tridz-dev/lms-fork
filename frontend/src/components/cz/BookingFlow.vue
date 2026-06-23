@@ -46,12 +46,19 @@
 		</div>
 
 		<!-- Slot picker -->
-		<div v-if="slotsList.loading" class="flex justify-center py-12">
+		<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-12">
 			<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
 		</div>
 		<div v-else>
-			<SlotPicker :slots="slots" :selectedSlotName="selectedSlot?.name" :systemTimezone="systemTimezone"
-				@selectSlot="onSelectSlot" />
+			<SlotPicker
+				:slots="slots"
+				:selectedSlotName="selectedSlot?.name"
+				:systemTimezone="systemTimezone"
+				:loading-more="slotsList.loading"
+				:has-more="tutorStore.hasMoreSlotsBackend"
+				@selectSlot="onSelectSlot"
+				@loadMore="tutorStore.loadMoreSlotsBackend"
+			/>
 		</div>
 
 		<!-- Booking review bar -->
@@ -139,7 +146,7 @@ const selectedSlotHighlight = computed(() => {
 const checkoutDetails = ref(null)
 
 const slotsList = tutorStore.slotsList
-const slots = computed(() => (slotsList.data?.success ? slotsList.data.data : []))
+const slots = computed(() => tutorStore.accumulatedSlots)
 
 // Reset filters when tutor changes
 watch(
