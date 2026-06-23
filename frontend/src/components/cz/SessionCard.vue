@@ -150,14 +150,86 @@
 					</div>
 				</div>
 			</template>
+			<template #actions>
+				<div class="flex justify-between w-full">
+					<div>
+						<Button
+							v-if="isCancellable"
+							variant="outline"
+							theme="red"
+							@click="promptCancellation"
+						>
+							{{ __('Cancel Session') }}
+						</Button>
+					</div>
+					<Button
+						variant="minimal"
+						@click="showDetails = false"
+					>
+						{{ __('Close') }}
+					</Button>
+				</div>
+			</template>
+		</Dialog>
+
+		<!-- Cancel Session Confirmation Dialog -->
+		<Dialog
+			v-model="showCancelDialog"
+			:options="{
+				title: __('Cancel Session'),
+				size: 'md',
+			}"
+		>
+			<template #body-content>
+				<div class="space-y-4">
+					<p class="text-sm text-ink-gray-7 leading-relaxed">
+						{{ __('Are you sure you want to cancel this session?') }}
+						<br />
+						<span class="text-red-500 font-semibold mt-1 block">
+							{{ __('This action will cancel the booking and release the slot.') }}
+						</span>
+					</p>
+					<div>
+						<label class="text-xs font-medium text-ink-gray-5 block mb-1">
+							{{ __('Reason for Cancellation (Optional)') }}
+						</label>
+						<textarea
+							v-model="cancelReason"
+							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+							rows="3"
+							:placeholder="__('Please provide a reason...')"
+						></textarea>
+					</div>
+				</div>
+			</template>
+			<template #actions>
+				<div class="flex gap-2 justify-end">
+					<Button
+						variant="minimal"
+						@click="showCancelDialog = false"
+					>
+						{{ __('Keep Session') }}
+					</Button>
+					<Button
+						variant="solid"
+						theme="red"
+						:loading="sessionStore.sessionCanceller.loading"
+						@click="confirmCancellation"
+					>
+						{{ __('Confirm') }}
+					</Button>
+				</div>
+			</template>
 		</Dialog>
 	</div>
 </template>
 
 <script setup>
 import { computed, inject, ref } from 'vue'
-import { Dialog, Button, Badge } from 'frappe-ui'
+import { Dialog, Button, Badge, toast } from 'frappe-ui'
 import { Video } from 'lucide-vue-next'
+import { useSessionStore } from '@/stores/useSessionStore'
+import { formatLocal, formatTimeRangeLocal, isSessionUpcoming } from '@/utils/timezone'
 
 const props = defineProps({
 	session: {
@@ -166,11 +238,46 @@ const props = defineProps({
 	},
 })
 
-defineEmits(['retryPayment'])
+const emit = defineEmits(['retryPayment', 'sessionCancelled'])
 
-import { formatLocal, formatTimeRangeLocal } from '@/utils/timezone'
-
+const sessionStore = useSessionStore()
 const showDetails = ref(false)
+const showCancelDialog = ref(false)
+const cancelReason = ref('')
+
+const isUpcoming = computed(() => {
+	return isSessionUpcoming(props.session.start_datetime)
+})
+
+const isCancellable = computed(() => {
+	return isUpcoming.value && ['Confirmed', 'Pending Payment'].includes(props.session.booking_status)
+})
+
+function promptCancellation() {
+	cancelReason.value = ''
+	showCancelDialog.value = true
+}
+
+async function confirmCancellation() {
+	try {
+		await sessionStore.sessionCanceller.submit({
+			booking_name: props.session.name,
+			reason: cancelReason.value,
+		})
+		
+		props.session.booking_status = 'Cancelled'
+		if (props.session.payment_status === 'Pending') {
+			props.session.payment_status = 'Failed'
+		}
+		
+		toast.success(__('Session cancelled successfully.'))
+		showCancelDialog.value = false
+		showDetails.value = false
+		emit('sessionCancelled', props.session.name)
+	} catch (err) {
+		toast.error(err.messages?.[0] || err.message || __('Failed to cancel session.'))
+	}
+}
 
 const statusTheme = computed(() => {
 	switch (props.session.booking_status) {

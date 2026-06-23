@@ -20,6 +20,10 @@ export const useSessionStore = defineStore('session-store', () => {
 		}
 	})
 
+	const sessionCanceller = createResource({
+		url: 'smart_learning.api.booking_api.cancel_session',
+	})
+
 	function fetchHistory() {
 		return bookingHistoryFetcher.submit()
 	}
@@ -33,6 +37,7 @@ export const useSessionStore = defineStore('session-store', () => {
 		currentSession,
 		bookingHistoryFetcher,
 		bookingDetailsFetcher,
+		sessionCanceller,
 		fetchHistory,
 		fetchDetails,
 	}
