@@ -30,8 +30,8 @@
 				<Breadcrumbs :items="breadcrumbItems" />
 			</template>
 			<template #right-header>
-				<!-- Inline filter bar: exactly matches Batches header pattern -->
-				<div class="flex items-center gap-2 flex-wrap">
+				<!-- Desktop Layout: inline filter bar (visible on medium screens and larger) -->
+				<div class="hidden md:flex items-center gap-2 flex-wrap">
 					<FormControl
 						v-model="localFilters.tutor"
 						:placeholder="__('Search by Tutor')"
@@ -69,6 +69,59 @@
 					>
 						{{ __('Clear') }}
 					</Button>
+				</div>
+
+				<!-- Mobile Layout: Collapsible Popover filter bar (visible on small screens) -->
+				<div class="flex md:hidden items-center gap-2">
+					<Popover placement="bottom-end">
+						<template #target="{ togglePopover }">
+							<Button @click="togglePopover" variant="outline">
+								<template #prefix>
+									<Filter class="size-4 stroke-1.5" />
+								</template>
+								{{ __('Filters') }}
+								<span v-if="hasActiveFilters" class="ml-1.5 size-2 rounded-full bg-blue-500"></span>
+							</Button>
+						</template>
+						<template #body="{ close }">
+							<div class="p-4 w-72 space-y-3 bg-surface-white border rounded-lg shadow-xl mt-2">
+								<h4 class="font-semibold text-sm text-ink-gray-9 mb-1">{{ __('Filter Tutors') }}</h4>
+								<FormControl
+									v-model="localFilters.tutor"
+									:placeholder="__('Search by Tutor')"
+									type="text"
+								/>
+								<Select
+									v-model="localFilters.subject"
+									:options="subjectOptions"
+									:placeholder="__('Subject')"
+								/>
+								<Select
+									v-model="localFilters.class_name"
+									:options="classOptions"
+									:placeholder="__('Class')"
+								/>
+								<Select
+									v-model="localFilters.board"
+									:options="boardOptions"
+									:placeholder="__('Board')"
+								/>
+								<div class="flex gap-2 pt-2 border-t">
+									<Button variant="solid" class="w-full" @click="() => { onSearch(); close(); }">
+										{{ __('Apply') }}
+									</Button>
+									<Button
+										v-if="hasActiveFilters"
+										variant="ghost"
+										class="w-full text-red-500 hover:bg-red-50"
+										@click="() => { clearFilters(); close(); }"
+									>
+										{{ __('Clear') }}
+									</Button>
+								</div>
+							</div>
+						</template>
+					</Popover>
 				</div>
 			</template>
 		</LayoutHeader>
@@ -217,11 +270,12 @@ import {
 	Button,
 	FormControl,
 	LoadingIndicator,
+	Popover,
 	Select,
 	createResource,
 	usePageMeta,
 } from 'frappe-ui'
-import { Search } from 'lucide-vue-next'
+import { Filter, Search } from 'lucide-vue-next'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import EmptyStateLayout from '@/components/Layouts/EmptyStateLayout.vue'
 import TutorCard from '@/components/cz/TutorCard.vue'
@@ -298,9 +352,9 @@ function toOptions(data, emptyLabel) {
 	return base.concat(data.map((o) => ({ label: o.label, value: o.value })))
 }
 
-const subjectOptions = computed(() => toOptions(subjectsList.data))
-const classOptions   = computed(() => toOptions(classesList.data))
-const boardOptions   = computed(() => toOptions(boardsList.data))
+const subjectOptions = computed(() => toOptions(subjectsList.data, __('Subject')))
+const classOptions   = computed(() => toOptions(classesList.data, __('Class')))
+const boardOptions   = computed(() => toOptions(boardsList.data, __('Board')))
 
 // ── Search (manual trigger) ────────────────────────────────────────────────
 function onSearch() {
