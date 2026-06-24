@@ -204,16 +204,16 @@
 						{{ __('Are you sure you want to cancel this session?') }}
 						<br />
 						<span class="text-red-500 font-semibold mt-1 block">
-							{{ __('This action will cancel the booking and release the slot.') }}
+							{{ __('This action will cancel the booking.') }}
 						</span>
 					</p>
 					<div>
 						<label class="text-xs font-medium text-ink-gray-5 block mb-1">
-							{{ __('Reason for Cancellation (Optional)') }}
+							{{ __('Reason for Cancellation') }} <span class="text-red-500">*</span>
 						</label>
 						<textarea
 							v-model="cancelReason"
-							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"
 							rows="3"
 							:placeholder="__('Please provide a reason...')"
 						></textarea>
@@ -232,6 +232,7 @@
 						variant="solid"
 						theme="red"
 						:loading="sessionStore.sessionCanceller.loading"
+						:disabled="!cancelReason.trim()"
 						@click="confirmCancellation"
 					>
 						{{ __('Confirm') }}
@@ -277,10 +278,14 @@ function promptCancellation() {
 }
 
 async function confirmCancellation() {
+	if (!cancelReason.value || !cancelReason.value.trim()) {
+		toast.error(__('Cancellation reason is mandatory.'))
+		return
+	}
 	try {
 		await sessionStore.sessionCanceller.submit({
 			booking_name: props.session.name,
-			reason: cancelReason.value,
+			reason: cancelReason.value.trim(),
 		})
 		
 		props.session.booking_status = 'Cancelled'
