@@ -301,6 +301,12 @@ const routes = [
 		beforeEnter: requireTutorRole
 	},
 	{
+		path: '/tutor/profile/create',
+		name: 'TutorProfileCreate',
+		component: () => import('@/pages/cz/TutorProfileCreate.vue'),
+		beforeEnter: requireTutorRole
+	},
+	{
 		path: '/tutor/profile',
 		name: 'TutorProfile',
 		component: () => import('@/pages/cz/TutorProfile.vue'),
