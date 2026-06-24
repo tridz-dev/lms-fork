@@ -359,11 +359,19 @@ async function saveProfile() {
 			await dashboardStore.dashboardData.submit()
 			router.push({ name: 'TutorProfile' })
 		} else {
-			frappeToast.error(res.error || __('Failed to save profile.'))
+			let errorMsg = res.error || __('Failed to save profile.')
+			if (typeof errorMsg === 'string' && errorMsg.includes('Workflow State transition not allowed')) {
+				errorMsg = __('Profile submission for verification is not permitted in the current state. Please contact support.')
+			}
+			frappeToast.error(errorMsg)
 		}
 	} catch (e) {
 		console.error('Failed to save profile:', e)
-		frappeToast.error(__('An error occurred while saving.'))
+		let errorMsg = e.message || e.error || __('An error occurred while saving.')
+		if (typeof errorMsg === 'string' && errorMsg.includes('Workflow State transition not allowed')) {
+			errorMsg = __('Profile submission for verification is not permitted in the current state. Please contact support.')
+		}
+		frappeToast.error(errorMsg)
 	} finally {
 		saving.value = false
 	}
