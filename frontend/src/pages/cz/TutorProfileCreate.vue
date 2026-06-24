@@ -150,20 +150,20 @@
 								v-model="newQual.qualification"
 								type="text"
 								:label="__('Qualification')"
-								:required="true"
+								:required="!qualifications.length"
 							/>
 							<FormControl
 								v-model="newQual.institution"
 								type="text"
 								:label="__('Institution')"
-								:required="true"
+								:required="!qualifications.length"
 								
 							/>
 							<FormControl
 								v-model.number="newQual.year_of_passing"
 								type="number"
 								:label="__('Year of Passing')"
-								:required="true"
+								:required="!qualifications.length"
 								
 							/>
 						</div>
@@ -371,7 +371,9 @@ async function saveProfile() {
 </script>
 
 <style scoped>
-:deep(select) {
+:deep(select),
+:deep(button[data-slot="trigger"]),
+:deep(.select-trigger) {
 	width: 100% !important;
 	max-width: 100% !important;
 }
