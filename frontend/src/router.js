@@ -272,31 +272,69 @@ const routes = [
 		component: () => import('@/pages/cz/Revision.vue')
 	},
 	{
+		path: '/forbidden',
+		name: 'Forbidden',
+		component: () => import('@/pages/cz/Forbidden.vue')
+	},
+	{
 		path: '/tutor/dashboard',
 		name: 'TutorDashboard',
-		component: () => import('@/pages/cz/TutorDashboard.vue')
+		component: () => import('@/pages/cz/TutorDashboard.vue'),
+		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/availability',
 		name: 'AvailabilityRules',
-		redirect: { name: 'TutorProfile', query: { tab: 'availability' } }
+		redirect: { name: 'TutorProfile', query: { tab: 'availability' } },
+		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/slots',
 		name: 'SlotCalendar',
-		component: () => import('@/pages/cz/SlotCalendar.vue')
+		component: () => import('@/pages/cz/SlotCalendar.vue'),
+		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/sessions',
 		name: 'TutorSessions',
-		component: () => import('@/pages/cz/TutorSessions.vue')
+		component: () => import('@/pages/cz/TutorSessions.vue'),
+		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/profile',
 		name: 'TutorProfile',
-		component: () => import('@/pages/cz/TutorProfile.vue')
+		component: () => import('@/pages/cz/TutorProfile.vue'),
+		beforeEnter: requireTutorRole
 	},
 ]
+
+export async function requireTutorRole(to, from, next) {
+	const { userResource } = usersStore()
+	const { isLoggedIn } = sessionStore()
+
+	// 1. Check authenticated user.
+	if (!isLoggedIn) {
+		const currentUrl = window.location.pathname + window.location.search
+		window.location.href = `/login?redirect-to=${encodeURIComponent(currentUrl)}`
+		return
+	}
+
+	try {
+		await userResource.promise
+	} catch (e) {
+		const currentUrl = window.location.pathname + window.location.search
+		window.location.href = `/login?redirect-to=${encodeURIComponent(currentUrl)}`
+		return
+	}
+
+	// 2. Check Tutor role.
+	const roles = userResource.data?.roles || []
+	if (!roles.includes('Tutor')) {
+		return next({ name: 'Forbidden' })
+	}
+
+	return next()
+}
 
 let router = createRouter({
 	history: createWebHistory(`/${getLmsBasePath()}`),
@@ -327,11 +365,7 @@ router.beforeEach(async (to, from, next) => {
 	} else {
 		const roles = userResource.data?.roles || []
 		const isTutor = roles.includes('Tutor')
-		const tutorOnlyRoutes = ['TutorDashboard', 'AvailabilityRules', 'SlotCalendar', 'TutorSessions', 'TutorProfile']
 
-		if (tutorOnlyRoutes.includes(to.name) && !isTutor) {
-			return next({ name: 'Courses' })
-		}
 		if (to.name === 'Home' && isTutor) {
 			return next({ name: 'TutorDashboard' })
 		}
