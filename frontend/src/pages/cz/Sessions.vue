@@ -46,11 +46,21 @@
 			</div>
 		</div>
 
+		<!-- Verifying payment overlay for the Pay Now retry flow -->
+		<div
+			v-if="verifyingPayment"
+			class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
+		>
+			<LoadingIndicator class="w-10 h-10 text-blue-600" />
+			<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
+			<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
+		</div>
+
 		<RazorpayCheckout
 			v-if="checkoutDetails"
 			:checkoutDetails="checkoutDetails"
 			@success="onPaymentSuccess"
-			@failure="onPaymentFailure"
+			@dismissed="onPaymentDismissed"
 		/>
 	</div>
 </template>
@@ -70,6 +80,7 @@ const bookingStore = useBookingStore()
 const socket = inject('$socket')
 
 const checkoutDetails = ref(null)
+const verifyingPayment = ref(false)
 const activeTab = ref('upcoming')
 
 let pollInterval = null
@@ -134,22 +145,22 @@ const breadcrumbs = computed(() => [
 
 const tabButtons = computed(() => {
 	const upcoming = sessionStore.sessions.filter(s =>
-		(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success') &&
+		(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 		isSessionUpcoming(s.start_datetime)
 	).length
 	const completed = sessionStore.sessions.filter(s =>
 		s.booking_status === 'Completed' ||
-		((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success') &&
+		((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 		!isSessionUpcoming(s.start_datetime))
 	).length
 	const cancelled = sessionStore.sessions.filter(s => s.booking_status === 'Cancelled').length
-	const failed = sessionStore.sessions.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed').length
+	const failed = sessionStore.sessions.filter(s => s.booking_status === 'Expired').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
-		{ value: 'failed', label: `${__('Failed')} (${failed})` },
+		{ value: 'failed', label: `${__('Expired')} (${failed})` },
 	]
 })
 
@@ -157,19 +168,19 @@ const filteredSessions = computed(() => {
 	if (!sessionStore.sessions) return []
 	if (activeTab.value === 'upcoming') {
 		return sessionStore.sessions.filter(s =>
-			(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success') &&
+			(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 			isSessionUpcoming(s.start_datetime)
 		)
 	} else if (activeTab.value === 'completed') {
 		return sessionStore.sessions.filter(s =>
 			s.booking_status === 'Completed' ||
-			((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success') &&
+			((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 			!isSessionUpcoming(s.start_datetime))
 		)
 	} else if (activeTab.value === 'cancelled') {
 		return sessionStore.sessions.filter(s => s.booking_status === 'Cancelled')
 	} else {
-		return sessionStore.sessions.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed')
+		return sessionStore.sessions.filter(s => s.booking_status === 'Expired')
 	}
 })
 
@@ -188,19 +199,62 @@ async function handleRetryPayment(bookingName) {
 	}
 }
 
-function onPaymentSuccess() {
+/**
+ * onPaymentSuccess — fires from RazorpayCheckout handler() after payment succeeds.
+ *
+ * Must call confirm_payment() to verify the signature and trigger confirm_booking()
+ * synchronously on the backend, then poll until the booking is Confirmed before
+ * refreshing the sessions list. Without this, fetchHistory() races against the
+ * backend and returns the stale "Pending Payment" state.
+ */
+async function onPaymentSuccess(paymentRes) {
+	// Capture booking_name before clearing checkoutDetails
+	const bookingName = checkoutDetails.value?.booking_name || null
+
 	checkoutDetails.value = null
+	verifyingPayment.value = true
+
+	try {
+		await bookingStore.confirmPayment(paymentRes)
+	} catch (e) {
+		console.error('confirm_payment failed in Sessions.vue:', e)
+		// Fall through — poll will detect webhook-driven confirmation
+	}
+
+	// Poll until Confirmed (or timeout after 30 s)
+	if (bookingName) {
+		for (let i = 0; i < 15; i++) {
+			await new Promise((r) => setTimeout(r, 2000))
+			try {
+				const result = await bookingStore.getBookingStatus(bookingName)
+				if (result?.booking_status && result.booking_status !== 'Pending Payment') break
+			} catch (_) { /* network glitch — keep polling */ }
+		}
+	} else {
+		await new Promise((r) => setTimeout(r, 4000))
+	}
+
+	verifyingPayment.value = false
 	sessionStore.fetchHistory()
 }
 
-async function onPaymentFailure(errorRes) {
+/**
+ * onPaymentDismissed — fires when the student explicitly closes the Razorpay modal.
+ * Report the last failure to the backend only if a payment was actually attempted.
+ */
+async function onPaymentDismissed(errorData) {
 	checkoutDetails.value = null
-	if (errorRes.order_id) {
-		await bookingStore.reportFailure(
-			errorRes.order_id,
-			errorRes.error_code,
-			errorRes.error_description
-		)
+	if (errorData?.order_id) {
+		try {
+			await bookingStore.reportFailure(
+				errorData.order_id,
+				errorData.error_code,
+				errorData.error_description
+			)
+		} catch (e) {
+			console.error('Failed to report payment failure:', e)
+		}
+		toast.error(__('Payment failed. Please try again.'))
 	}
 	sessionStore.fetchHistory()
 }
