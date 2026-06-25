@@ -57,7 +57,7 @@
 
 <script setup>
 import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import { Breadcrumbs, Button, TabButtons, LoadingIndicator } from 'frappe-ui'
+import { Breadcrumbs, Button, TabButtons, LoadingIndicator, toast } from 'frappe-ui'
 import { useSessionStore } from '@/stores/useSessionStore'
 import { useBookingStore } from '@/stores/useBookingStore'
 import SessionCard from '@/components/cz/SessionCard.vue'
@@ -175,10 +175,16 @@ const filteredSessions = computed(() => {
 
 async function handleRetryPayment(bookingName) {
 	try {
-		const res = await bookingStore.getCheckout(bookingName)
+		// retry_booking clears the stale Razorpay order and creates a fresh one
+		// so the student pays on the same slot without re-selecting it.
+		const res = await bookingStore.retryBooking(bookingName)
 		if (res) checkoutDetails.value = res
 	} catch (e) {
-		console.error('Failed to load checkout details:', e)
+		console.error('Failed to initiate payment retry:', e)
+		const msg = e?.message || e?.exc_type
+			? __('Unable to retry payment. The booking may have expired. Please book a new session.')
+			: __('Something went wrong. Please try again.')
+		toast.error(msg)
 	}
 }
 

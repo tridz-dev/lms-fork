@@ -7,7 +7,7 @@
 					{{ tutor.tutor_name }}
 				</h3>
 				<p class="text-xs text-ink-gray-5 mt-1">
-					{{ tutor.years_of_experience || tutor.years_of_experience || 0 }}
+					{{ tutor.years_of_experience || 0 }}
 					{{ __('years of experience') }}
 					<span class="mx-1">·</span>
 					{{ tutor.timezone || systemTimezone }}
@@ -83,9 +83,23 @@
 			</Button>
 		</div>
 
-		<!-- Razorpay headless -->
-		<RazorpayCheckout v-if="checkoutDetails" :checkoutDetails="checkoutDetails" @success="onPaymentSuccess"
-			@failure="onPaymentFailure" />
+		<!-- Payment verifying overlay -->
+		<div
+			v-if="verifyingPayment"
+			class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
+		>
+			<LoadingIndicator class="w-10 h-10 text-blue-600" />
+			<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
+			<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
+		</div>
+
+		<!-- Razorpay headless — kept mounted until success or explicit dismiss -->
+		<RazorpayCheckout
+			v-if="checkoutDetails"
+			:checkoutDetails="checkoutDetails"
+			@success="onPaymentSuccess"
+			@dismissed="onPaymentDismissed"
+		/>
 	</div>
 </template>
 
@@ -145,6 +159,13 @@ const selectedSlotHighlight = computed(() => {
 })
 const checkoutDetails = ref(null)
 
+/**
+ * verifyingPayment is shown as an overlay while we poll the backend waiting
+ * for the booking to transition from Pending Payment → Confirmed.
+ * This handles the race between the frontend callback and the Razorpay webhook.
+ */
+const verifyingPayment = ref(false)
+
 const slotsList = tutorStore.slotsList
 const slots = computed(() => tutorStore.accumulatedSlots)
 
@@ -202,25 +223,105 @@ async function startBooking() {
 	}
 }
 
+/**
+ * Poll the backend until the booking reaches a terminal confirmation state.
+ *
+ * After Razorpay's handler() fires we call confirm_payment() which triggers
+ * RazorpayOrder.handle_success → our on_update hook → confirm_booking().
+ * However, there is a race: the webhook may arrive before or after the API
+ * response. We poll to show the user accurate status rather than redirecting
+ * to a page with stale Pending Payment data.
+ *
+ * @param {string} bookingName
+ * @param {number} maxAttempts   Max polling iterations (default 15 × 2s = 30s)
+ * @returns {Promise<string>}    Final booking_status observed
+ */
+async function pollBookingStatus(bookingName, maxAttempts = 15) {
+	for (let i = 0; i < maxAttempts; i++) {
+		await new Promise((r) => setTimeout(r, 2000))
+		try {
+			const result = await bookingStore.getBookingStatus(bookingName)
+			const status = result?.booking_status
+			if (status && status !== 'Pending Payment') {
+				return status
+			}
+		} catch (_) {
+			// Network glitch — keep polling
+		}
+	}
+	// Timeout: webhook may still be in flight; return null to signal timeout
+	return null
+}
+
+/**
+ * onPaymentSuccess — fires from RazorpayCheckout handler() after SUCCESSFUL payment.
+ *
+ * Razorpay's built-in retry flow:
+ *   attempt 1 → payment.failed (ignored by component)
+ *   attempt 2 → payment succeeds → handler() fires → THIS function
+ *
+ * Flow:
+ *   1. Tear down the checkout widget (order complete — modal is closed by Razorpay)
+ *   2. Call confirm_payment() to verify signature & trigger hook → confirm_booking()
+ *   3. Show "Verifying…" overlay while polling for confirmation
+ *   4. Redirect to Sessions on confirmation (or timeout)
+ */
 async function onPaymentSuccess(paymentRes) {
+	// Capture booking_name BEFORE clearing checkoutDetails — needed for polling
+	// even when confirmPayment() throws.
+	const bookingName = checkoutDetails.value?.booking_name || null
+
+	// Razorpay modal is now closed. Safe to unmount the checkout component.
 	checkoutDetails.value = null
+	verifyingPayment.value = true
+
 	try {
 		await bookingStore.confirmPayment(paymentRes)
 	} catch (e) {
-		console.error('Failed to confirm payment:', e)
+		console.error('confirm_payment API failed:', e)
+		// Webhook will still confirm the booking — proceed to poll anyway.
 	}
+
+	if (bookingName) {
+		await pollBookingStatus(bookingName)
+	} else {
+		// Fallback: wait a few seconds for the webhook to process
+		await new Promise((r) => setTimeout(r, 4000))
+	}
+
+	verifyingPayment.value = false
 	router.push({ name: 'Sessions' })
 }
 
-async function onPaymentFailure(errorRes) {
+/**
+ * onPaymentDismissed — fires from RazorpayCheckout ondismiss handler.
+ *
+ * The student explicitly closed the Razorpay modal WITHOUT completing payment.
+ * This is the ONLY path that should call reportFailure() on the backend,
+ * because at this point we know the student has given up and is not retrying.
+ *
+ * errorData will be null if the student closed before attempting any payment,
+ * or will contain the last payment error if they failed and then closed.
+ *
+ * Scenario B (fail → close): errorData present → report failure
+ * Scenario C (open → close without attempt): errorData null → just clean up
+ */
+async function onPaymentDismissed(errorData) {
 	checkoutDetails.value = null
-	if (errorRes.order_id) {
-		await bookingStore.reportFailure(
-			errorRes.order_id,
-			errorRes.error_code,
-			errorRes.error_description
-		)
+
+	if (errorData?.order_id) {
+		// Student attempted payment but failed, then closed → report to backend
+		try {
+			await bookingStore.reportFailure(
+				errorData.order_id,
+				errorData.error_code,
+				errorData.error_description
+			)
+		} catch (e) {
+			console.error('Failed to report payment failure:', e)
+		}
+		toast.error(__('Payment failed. Please try again from My Sessions.'))
 	}
-	toast.error(__('Payment failed. Please try again.'))
+	// If errorData is null, student just closed without trying — no backend call needed.
 }
 </script>
