@@ -55,7 +55,7 @@
 					{{ __('Generating meeting link...') }}
 				</span>
 			</div>
-			<div v-else-if="session.booking_status === 'Pending Payment'">
+			<div v-else-if="session.booking_status === 'Pending Payment' || session.booking_status === 'Failed'">
 				<Button
 					@click.stop="$emit('retryPayment', session.name)"
 					variant="solid"
@@ -269,7 +269,7 @@ const isUpcoming = computed(() => {
 })
 
 const isCancellable = computed(() => {
-	return isUpcoming.value && ['Confirmed', 'Pending Payment'].includes(props.session.booking_status)
+	return isUpcoming.value && ['Confirmed', 'Pending Payment', 'Failed'].includes(props.session.booking_status)
 })
 
 function promptCancellation() {
