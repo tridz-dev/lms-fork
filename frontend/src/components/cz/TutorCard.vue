@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="flex flex-col h-full border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors"
+		class="flex flex-col h-full border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors cursor-pointer hover:shadow-sm"
+		@click="navigateToBooking"
 	>
 		<div class="flex flex-col flex-auto">
 			<!-- Header: name + score badge (if matched) or timezone -->
@@ -93,11 +94,9 @@
 					{{ TEST_BOOKING_AMOUNT }} {{ currency }}
 					<span class="text-xs font-normal text-ink-gray-5">/ hr</span>
 				</div>
-				<router-link :to="{ name: 'BookSession', query: { tutor: tutor.name } }">
-					<Button variant="solid" size="sm">
-						{{ __('Book') }}
-					</Button>
-				</router-link>
+				<Button variant="solid" size="sm" @click.stop="navigateToBooking">
+					{{ __('Book') }}
+				</Button>
 			</div>
 		</div>
 	</div>
@@ -105,8 +104,11 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { Badge, Button } from 'frappe-ui'
 import { systemSettings } from '@/resources/bookTutor'
+
+const router = useRouter()
 
 const TEST_BOOKING_AMOUNT = 500
 
@@ -127,4 +129,8 @@ const scoreTheme = computed(() => {
 	if (s >= 40) return 'amber'
 	return 'gray'
 })
+
+function navigateToBooking() {
+	router.push({ name: 'BookSession', query: { tutor: props.tutor.name } })
+}
 </script>

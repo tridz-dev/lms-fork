@@ -12,8 +12,8 @@
 				<LoadingIndicator class="w-10 h-10 text-gray-400" />
 			</div>
 
-			<!-- Empty State: No Profile and Not Creating -->
-			<div v-else-if="!profile && !isCreating"
+			<!-- Empty State: No Profile -->
+			<div v-else-if="!profile"
 				class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
@@ -25,9 +25,11 @@
 						{{ __('Create a tutor profile to start configuring availability rules and taking bookings.') }}
 					</p>
 				</div>
-				<Button @click="isCreating = true" variant="solid" class="font-semibold text-xs mt-2">
-					{{ __('Create Tutor Profile') }}
-				</Button>
+				<router-link :to="{ name: 'TutorProfileCreate' }">
+					<Button variant="solid" class="font-semibold text-xs mt-2">
+						{{ __('Create Tutor Profile') }}
+					</Button>
+				</router-link>
 			</div>
 
 			<!-- Profile Edit/View Form -->
@@ -56,14 +58,11 @@
 				<!-- TAB: Profile Details -->
 				<div v-if="activeTab === 'profile'" class="space-y-6 max-w-3xl">
 					<form @submit.prevent="saveProfile" class="space-y-6">
-						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<div class="space-y-4">
 							<FormControl v-model="form.tutor_name" :disabled="isReadOnly" type="text"
 								:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
 							<FormControl v-model="form.timezone" :disabled="isReadOnly" type="select"
 								:options="tzOptions" :label="__('Timezone')" :required="true" />
-						</div>
-
-						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<FormControl v-model.number="form.years_of_experience" :disabled="isReadOnly" type="number"
 								min="0" :required="true" placeholder="e.g. 5" :label="__('Years of Experience')" />
 						</div>
@@ -74,53 +73,77 @@
 
 						<!-- Subjects -->
 						<div class="border-t pt-5">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Subjects Taught') }}</label>
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
-								<Checkbox
-									v-for="sub in displayedSubjects"
-									:key="sub"
-									:modelValue="selectedSubjects.includes(sub)"
-									@update:modelValue="val => { if (val) { selectedSubjects.push(sub) } else { selectedSubjects = selectedSubjects.filter(s => s !== sub) } }"
-									:disabled="isReadOnly"
-									:label="sub"
-									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
-								/>
-								<p v-if="!displayedSubjects.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No subjects found.') }}</p>
+							<div v-if="isReadOnly" class="space-y-2">
+								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
+								<div class="flex flex-wrap gap-2">
+									<Badge
+										v-for="sub in selectedSubjects"
+										:key="sub"
+										theme="gray"
+										size="md"
+									>
+										{{ sub }}
+									</Badge>
+									<p v-if="!selectedSubjects.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
+								</div>
 							</div>
+							<MultiSelect
+								v-else
+								v-model="selectedSubjects"
+								doctype="Subject"
+								:label="__('Subjects Taught')"
+								:required="true"
+							/>
 						</div>
 
 						<!-- Boards -->
 						<div class="border-t pt-5">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Boards Supported') }}</label>
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
-								<Checkbox
-									v-for="brd in displayedBoards"
-									:key="brd"
-									:modelValue="selectedBoards.includes(brd)"
-									@update:modelValue="val => { if (val) { selectedBoards.push(brd) } else { selectedBoards = selectedBoards.filter(b => b !== brd) } }"
-									:disabled="isReadOnly"
-									:label="brd"
-									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
-								/>
-								<p v-if="!displayedBoards.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No boards found.') }}</p>
+							<div v-if="isReadOnly" class="space-y-2">
+								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
+								<div class="flex flex-wrap gap-2">
+									<Badge
+										v-for="brd in selectedBoards"
+										:key="brd"
+										theme="gray"
+										size="md"
+									>
+										{{ brd }}
+									</Badge>
+									<p v-if="!selectedBoards.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
+								</div>
 							</div>
+							<MultiSelect
+								v-else
+								v-model="selectedBoards"
+								doctype="Board"
+								:label="__('Boards Supported')"
+								:required="true"
+							/>
 						</div>
 
 						<!-- Classes -->
 						<div class="border-t pt-5">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Classes Target') }}</label>
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
-								<Checkbox
-									v-for="cls in displayedClasses"
-									:key="cls"
-									:modelValue="selectedClasses.includes(cls)"
-									@update:modelValue="val => { if (val) { selectedClasses.push(cls) } else { selectedClasses = selectedClasses.filter(c => c !== cls) } }"
-									:disabled="isReadOnly"
-									:label="cls"
-									class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
-								/>
-								<p v-if="!displayedClasses.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No classes found.') }}</p>
+							<div v-if="isReadOnly" class="space-y-2">
+								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
+								<div class="flex flex-wrap gap-2">
+									<Badge
+										v-for="cls in selectedClasses"
+										:key="cls"
+										theme="gray"
+										size="md"
+									>
+										{{ cls }}
+									</Badge>
+									<p v-if="!selectedClasses.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
+								</div>
 							</div>
+							<MultiSelect
+								v-else
+								v-model="selectedClasses"
+								doctype="Class"
+								:label="__('Classes Target')"
+								:required="true"
+							/>
 						</div>
 
 						<!-- Qualifications -->
@@ -159,26 +182,58 @@
 							</div>
 
 							<!-- Add row form container -->
-							<div v-if="!isReadOnly" class="space-y-3 pt-3 border-t">
+							<div v-if="!isReadOnly" class="space-y-4 pt-4 border-t border-slate-100">
+								<h4 class="text-sm font-semibold text-ink-gray-7">
+									{{ __('Add Qualification') }}
+								</h4>
 								<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-									<TextInput v-model="newQual.qualification" type="text"
-										:placeholder="__('Qualification (e.g. B.Tech)')" />
-									<TextInput v-model="newQual.institution" type="text"
-										:placeholder="__('Institution')" />
-									<TextInput v-model.number="newQual.year_of_passing" type="number"
-										:placeholder="__('Year of Passing')" />
+									<FormControl
+										v-model="newQual.qualification"
+										type="text"
+										:label="__('Qualification')"
+										:required="!qualifications.length"
+										placeholder="e.g. B.Tech"
+									/>
+									<FormControl
+										v-model="newQual.institution"
+										type="text"
+										:label="__('Institution')"
+										:required="!qualifications.length"
+										placeholder="e.g. Stanford University"
+									/>
+									<FormControl
+										v-model.number="newQual.year_of_passing"
+										type="number"
+										:label="__('Year of Passing')"
+										:required="!qualifications.length"
+										placeholder="e.g. 2020"
+									/>
 								</div>
+
 								<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-									<Select v-model="newQual.level" :options="levelOptions"
-										placeholder="Select Level" />
-									<TextInput v-model="newQual.class_per" type="text"
-										:placeholder="__('Class / Percentage')" />
-									<TextInput v-model="newQual.maj_opt_subj" type="text"
-										:placeholder="__('Major/Optional Subjects')" />
+									<FormControl
+										v-model="newQual.level"
+										type="select"
+										:options="levelOptions"
+										:label="__('Level')"
+									/>
+									<FormControl
+										v-model="newQual.class_per"
+										type="text"
+										:label="__('Class / Percentage')"
+										placeholder="e.g. First Class / 85%"
+									/>
+									<FormControl
+										v-model="newQual.maj_opt_subj"
+										type="text"
+										:label="__('Major / Optional Subjects')"
+										placeholder="e.g. Computer Science"
+									/>
 								</div>
+								
 								<div class="flex justify-end">
 									<Button type="button" variant="outline" @click="addQualification"
-										class="rounded-md text-xs font-semibold px-4 h-9 justify-center">
+										class="rounded-xl text-xs font-semibold px-4 h-9 justify-center">
 										{{ __('Add Row') }}
 									</Button>
 								</div>
@@ -344,162 +399,7 @@
 			</template>
 		</Dialog>
 
-		<!-- Profile Creation Modal -->
-		<Dialog v-model="isCreating" :options="{
-			title: __('Create Tutor Profile'),
-			size: 'xl',
-		}">
-			<template #body-content>
-				<div class="space-y-5 max-h-[70vh] overflow-y-auto px-1 py-1">
-					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<FormControl v-model="form.tutor_name" type="text" :label="__('Display Name')" :required="true"
-							placeholder="e.g. Dr. John Doe" />
-						<FormControl v-model="form.timezone" type="select" :options="tzOptions" :label="__('Timezone')"
-							:required="true" />
-					</div>
 
-					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<FormControl v-model.number="form.years_of_experience" type="number" min="0" :required="true"
-							placeholder="e.g. 5" :label="__('Years of Experience')" />
-					</div>
-
-					<FormControl v-model="form.bio" type="textarea" rows="4"
-						placeholder="Write a short summary about your background, credentials and tutoring approach..."
-						:label="__('Biography')" />
-
-					<!-- Subjects -->
-					<div class="border-t pt-5">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{
-							__('Subjects Taught') }}</label>
-						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
-							<Checkbox
-								v-for="sub in allSubjects"
-								:key="sub"
-								:modelValue="selectedSubjects.includes(sub)"
-								@update:modelValue="val => { if (val) { selectedSubjects.push(sub) } else { selectedSubjects = selectedSubjects.filter(s => s !== sub) } }"
-								:label="sub"
-								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
-							/>
-							<p v-if="!allSubjects.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No subjects found.') }}</p>
-						</div>
-					</div>
-
-					<!-- Boards -->
-					<div class="border-t pt-5">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Boards Supported') }}</label>
-						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
-							<Checkbox
-								v-for="brd in allBoards"
-								:key="brd"
-								:modelValue="selectedBoards.includes(brd)"
-								@update:modelValue="val => { if (val) { selectedBoards.push(brd) } else { selectedBoards = selectedBoards.filter(b => b !== brd) } }"
-								:label="brd"
-								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
-							/>
-							<p v-if="!allBoards.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No boards found.') }}</p>
-						</div>
-					</div>
-
-					<!-- Classes -->
-					<div class="border-t pt-5">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Classes Target') }}</label>
-						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface-gray-2 p-4 rounded-md border">
-							<Checkbox
-								v-for="cls in allClasses"
-								:key="cls"
-								:modelValue="selectedClasses.includes(cls)"
-								@update:modelValue="val => { if (val) { selectedClasses.push(cls) } else { selectedClasses = selectedClasses.filter(c => c !== cls) } }"
-								:label="cls"
-								class="cursor-pointer text-sm text-ink-gray-7 hover:text-ink-gray-9"
-							/>
-							<p v-if="!allClasses.length" class="text-xs text-ink-gray-5 col-span-full">{{ __('No classes found.') }}</p>
-						</div>
-					</div>
-
-					<!-- Qualifications -->
-					<div class="border-t pt-5 space-y-4">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{
-							__('Qualifications') }}</label>
-
-						<div v-if="qualifications.length" class="space-y-2.5">
-							<div v-for="(q, idx) in qualifications" :key="idx"
-								class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
-								<div class="space-y-1">
-									<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
-										<span class="font-semibold">{{ q.qualification }}</span>
-										<span class="text-ink-gray-4">·</span>
-										<span>{{ q.institution }}</span>
-										<span class="text-ink-gray-4">·</span>
-										<span class="font-medium text-ink-gray-5">{{ q.year_of_passing }}</span>
-									</div>
-									<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
-										<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
-										<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
-										<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj
-											}}</span>
-									</div>
-								</div>
-								<button type="button" @click="removeQualification(idx)"
-									class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5">
-									{{ __('Remove') }}
-								</button>
-							</div>
-						</div>
-						<div v-else
-							class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center">
-							{{ __('No qualifications added yet. At least one is required.') }}
-						</div>
-
-						<!-- Add row form container -->
-						<div class="space-y-3 pt-3 border-t">
-							<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-								<TextInput v-model="newQual.qualification" type="text"
-									:placeholder="__('Qualification (e.g. B.Tech)')" />
-								<TextInput v-model="newQual.institution" type="text" :placeholder="__('Institution')" />
-								<TextInput v-model.number="newQual.year_of_passing" type="number"
-									:placeholder="__('Year of Passing')" />
-							</div>
-							<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-								<Select v-model="newQual.level" :options="levelOptions" placeholder="Select Level" />
-								<TextInput v-model="newQual.class_per" type="text"
-									:placeholder="__('Class / Percentage')" />
-								<TextInput v-model="newQual.maj_opt_subj" type="text"
-									:placeholder="__('Major/Optional Subjects')" />
-							</div>
-							<div class="flex justify-end">
-								<Button type="button" variant="outline" @click="addQualification"
-									class="rounded-md text-xs font-semibold px-4 h-9 justify-center">
-									{{ __('Add Row') }}
-								</Button>
-							</div>
-						</div>
-					</div>
-
-					<div class="flex items-start gap-3 mt-4 pb-2 border-t pt-5">
-						<Checkbox id="activeToggleModal" v-model="form.active" />
-						<div class="space-y-1">
-							<label class="text-sm font-medium text-ink-gray-9 select-none cursor-pointer"
-								for="activeToggleModal">
-								{{ __('Active Status') }}
-							</label>
-							<p class="text-xs text-ink-gray-5">
-								{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
-							</p>
-						</div>
-					</div>
-				</div>
-			</template>
-			<template #actions>
-				<div class="flex justify-end gap-2.5">
-					<Button variant="outline" @click="isCreating = false" class="text-xs font-semibold">
-						{{ __('Cancel') }}
-					</Button>
-					<Button variant="solid" :loading="saving" @click="saveProfile" class="text-xs font-semibold">
-						{{ __('Create Profile') }}
-					</Button>
-				</div>
-			</template>
-		</Dialog>
 	</div>
 </template>
 
@@ -513,6 +413,7 @@ import AvailabilityForm from '@/components/cz/AvailabilityForm.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { User, Lock, Plus, AlertCircle } from 'lucide-vue-next'
 import { subjectsList, boardsList, classesList } from '@/resources/bookTutor'
+import MultiSelect from '@/components/Controls/MultiSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -541,7 +442,6 @@ const breadcrumbs = computed(() => [
 
 const loadingOptions = computed(() => subjectsList.loading || boardsList.loading || classesList.loading)
 const saving = ref(false)
-const isCreating = ref(false)
 
 
 const profile = computed(() => dashboardStore.dashboardData.data?.profile)
@@ -557,20 +457,6 @@ function getVerificationTheme(status) {
 		default: return 'gray'
 	}
 }
-
-const allSubjects = computed(() => (subjectsList.data || []).map(item => item.value))
-const allBoards = computed(() => (boardsList.data || []).map(item => item.value))
-const allClasses = computed(() => (classesList.data || []).map(item => item.value))
-
-const displayedSubjects = computed(() => {
-	return isReadOnly.value ? selectedSubjects.value : allSubjects.value
-})
-const displayedBoards = computed(() => {
-	return isReadOnly.value ? selectedBoards.value : allBoards.value
-})
-const displayedClasses = computed(() => {
-	return isReadOnly.value ? selectedClasses.value : allClasses.value
-})
 
 const selectedSubjects = ref([])
 const selectedBoards = ref([])
@@ -921,3 +807,12 @@ async function confirmDeleteRule() {
 	}
 }
 </script>
+
+<style scoped>
+:deep(select),
+:deep(button[data-slot="trigger"]),
+:deep(.select-trigger) {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+</style>

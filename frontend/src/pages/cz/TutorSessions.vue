@@ -39,7 +39,7 @@
 				</div>
 
 				<!-- Section Tabs -->
-				<div class="mb-4">
+				<div class="mb-4 overflow-x-auto whitespace-nowrap pb-1">
 					<TabButtons
 						class="inline-block"
 						:buttons="tabButtons"
@@ -185,11 +185,26 @@
 			}"
 		>
 			<template #body-content>
-				<p class="text-sm text-ink-gray-7 leading-relaxed">
-					{{ __('Are you sure you want to cancel this session?') }}
-					<br />
-					<span class="text-red-500 font-semibold mt-1 block">{{ __('This action will cancel the booking and release the slot.') }}</span>
-				</p>
+				<div class="space-y-4">
+					<p class="text-sm text-ink-gray-7 leading-relaxed">
+						{{ __('Are you sure you want to cancel this session?') }}
+						<br />
+						<span class="text-red-500 font-semibold mt-1 block">
+							{{ __('This action will cancel the booking and release the slot.') }}
+						</span>
+					</p>
+					<div>
+						<label class="text-xs font-medium text-ink-gray-5 block mb-1">
+							{{ __('Reason for Cancellation') }} <span class="text-red-500">*</span>
+						</label>
+						<textarea
+							v-model="cancelReason"
+							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"
+							rows="3"
+							:placeholder="__('Please provide a reason...')"
+						></textarea>
+					</div>
+				</div>
 			</template>
 			<template #actions>
 				<div class="flex gap-2 justify-end">
@@ -203,6 +218,7 @@
 						variant="solid"
 						theme="red"
 						:loading="dashboardStore.sessionCanceller.loading"
+						:disabled="!cancelReason.trim()"
 						@click="confirmCancellation"
 					>
 						{{ __('Confirm') }}
@@ -232,6 +248,7 @@ const selectedBookingForCompletion = ref(null)
 
 const showCancelDialog = ref(false)
 const selectedBookingForCancellation = ref(null)
+const cancelReason = ref('')
 
 let pollInterval = null
 
@@ -318,14 +335,22 @@ async function confirmCompletion() {
 
 function promptCancellation(booking) {
 	selectedBookingForCancellation.value = booking
+	cancelReason.value = ''
 	showCancelDialog.value = true
 }
 
 async function confirmCancellation() {
 	if (!selectedBookingForCancellation.value) return
+	if (!cancelReason.value || !cancelReason.value.trim()) {
+		toast.error(__('Cancellation reason is mandatory.'))
+		return
+	}
 	const bookingName = selectedBookingForCancellation.value.name
 	try {
-		await dashboardStore.sessionCanceller.submit({ booking_name: bookingName })
+		await dashboardStore.sessionCanceller.submit({
+			booking_name: bookingName,
+			reason: cancelReason.value.trim()
+		})
 		
 		// In-place local state update of booking_status to 'Cancelled'
 		const found = sessions.value.find(s => s.name === bookingName)
@@ -360,13 +385,13 @@ const tabButtons = computed(() => {
 		!isSessionUpcoming(s.start_datetime))
 	).length
 	const cancelled = sessions.value.filter(s => s.booking_status === 'Cancelled').length
-	const expired = sessions.value.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed' || s.booking_status === 'Pending Payment').length
+	const failed = sessions.value.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed' || s.booking_status === 'Pending Payment').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
-		{ value: 'expired', label: `${__('Expired')} (${expired})` },
+		{ value: 'failed', label: `${__('Failed')} (${failed})` },
 	]
 })
 

@@ -6,7 +6,7 @@
 		<div class="flex items-start justify-between pb-3 border-b">
 			<div>
 				<h4 class="font-bold text-base text-ink-gray-9">
-					{{ session.tutor }}
+					{{ session.tutor_name || __('Tutor') }}
 				</h4>
 				<p class="text-xs text-ink-gray-5 mt-1.5 flex items-center">
 					<span class="font-semibold text-ink-gray-4 mr-1.5 uppercase tracking-wider text-[10px]">{{ __('SLOT') }}:</span>
@@ -29,7 +29,11 @@
 			</div>
 			<div>
 				<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Payment') }}</span>
-				<span class="font-bold text-ink-gray-8">{{ session.payment_status }}</span>
+				<Badge
+					:label="paymentLabel"
+					:theme="paymentTheme"
+					size="sm"
+				/>
 			</div>
 		</div>
 
@@ -78,7 +82,7 @@
 					<!-- Tutor and Status Header -->
 					<div class="flex justify-between items-start border-b pb-3">
 						<div>
-							<h4 class="font-bold text-base text-ink-gray-9">{{ session.tutor }}</h4>
+							<h4 class="font-bold text-base text-ink-gray-9">{{ session.tutor_name || __('Tutor') }}</h4>
 							<p class="text-xs text-ink-gray-4 mt-0.5">ID: {{ session.name }}</p>
 						</div>
 						<Badge
@@ -91,10 +95,17 @@
 					<!-- Details Grid -->
 					<div class="grid grid-cols-2 gap-4 py-2">
 						<div class="col-span-2">
-							<span class="text-xs font-semibold text-ink-gray-4 uppercase tracking-wider block mb-0.5">{{ __('Date & Time') }}</span>
-							<span class="font-medium text-ink-gray-9 block leading-relaxed">
-								{{ formatSlotTime(session.start_datetime, session.end_datetime) }}
-							</span>
+							<Card
+								:title="__('Scheduled Date & Time')"
+								class="!p-4 shadow-none border bg-gray-50/50"
+							>
+								<div class="flex items-center gap-2">
+									<Calendar class="h-4 w-4 text-blue-600 shrink-0" />
+									<span class="font-bold text-ink-gray-9 text-sm leading-relaxed">
+										{{ formatSlotTime(session.start_datetime, session.end_datetime) }}
+									</span>
+								</div>
+							</Card>
 						</div>
 						<div>
 							<span class="text-xs font-semibold text-ink-gray-4 uppercase tracking-wider block mb-0.5">{{ __('Subject') }}</span>
@@ -114,39 +125,46 @@
 						</div>
 						<div class="col-span-2">
 							<span class="text-xs font-semibold text-ink-gray-4 uppercase tracking-wider block mb-0.5">{{ __('Payment Status') }}</span>
-							<span class="font-medium text-ink-gray-9 block">{{ session.payment_status }}</span>
+							<Badge
+								:label="paymentLabel"
+								:theme="paymentTheme"
+								size="sm"
+								class="w-fit"
+							/>
 						</div>
 					</div>
 
 					<!-- Meeting Link Section -->
-					<div v-if="session.booking_status === 'Confirmed'" class="bg-blue-50 border border-blue-100 rounded-md p-3 mt-3">
-						<span class="text-xs font-semibold text-blue-900 uppercase tracking-wider block mb-1">{{ __('Meeting Room') }}</span>
-						<div v-if="session.meeting_link" class="flex items-center justify-between">
-							<span class="text-xs text-blue-800 break-all select-all font-mono mr-2">{{ session.meeting_link }}</span>
-							<a
-								:href="session.meeting_link"
-								target="_blank"
-								class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-							>
-								<Video class="w-3.5 h-3.5" />
-								{{ __('Join') }}
-							</a>
-						</div>
-						<div v-else class="text-xs text-blue-800 italic">
-							{{ __('Generating meeting link...') }}
-						</div>
-					</div>
-
-					<!-- Audit Details Section -->
-					<div class="border-t pt-3 text-xs text-ink-gray-4 flex flex-col gap-1">
-						<div class="flex justify-between">
-							<span>{{ __('Locked At') }}</span>
-							<span>{{ session.locked_at ? formatAuditTime(session.locked_at) : 'N/A' }}</span>
-						</div>
-						<div v-if="session.confirmed_at" class="flex justify-between">
-							<span>{{ __('Confirmed At') }}</span>
-							<span>{{ formatAuditTime(session.confirmed_at) }}</span>
-						</div>
+					<div v-if="session.booking_status === 'Confirmed'" class="mt-3">
+						<Card
+							:title="__('Meeting Room')"
+							class="!p-4 shadow-none border bg-gray-50/50"
+						>
+							<template #actions>
+								<Badge label="Google Meet" theme="blue" size="sm" />
+							</template>
+							<div class="flex items-center justify-between">
+								<p class="text-xs text-ink-gray-5">{{ __('Online live tutoring session') }}</p>
+								<div v-if="session.meeting_link">
+									<Button
+										:href="session.meeting_link"
+										target="_blank"
+										as="a"
+										variant="solid"
+										theme="blue"
+										size="sm"
+									>
+										<template #icon>
+											<Video class="w-3.5 h-3.5" />
+										</template>
+										{{ __('Join Meeting') }}
+									</Button>
+								</div>
+								<div v-else class="text-xs text-ink-gray-4 italic">
+									{{ __('Generating meeting link...') }}
+								</div>
+							</div>
+						</Card>
 					</div>
 				</div>
 			</template>
@@ -186,16 +204,16 @@
 						{{ __('Are you sure you want to cancel this session?') }}
 						<br />
 						<span class="text-red-500 font-semibold mt-1 block">
-							{{ __('This action will cancel the booking and release the slot.') }}
+							{{ __('This action will cancel the booking.') }}
 						</span>
 					</p>
 					<div>
 						<label class="text-xs font-medium text-ink-gray-5 block mb-1">
-							{{ __('Reason for Cancellation (Optional)') }}
+							{{ __('Reason for Cancellation') }} <span class="text-red-500">*</span>
 						</label>
 						<textarea
 							v-model="cancelReason"
-							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"
 							rows="3"
 							:placeholder="__('Please provide a reason...')"
 						></textarea>
@@ -214,6 +232,7 @@
 						variant="solid"
 						theme="red"
 						:loading="sessionStore.sessionCanceller.loading"
+						:disabled="!cancelReason.trim()"
 						@click="confirmCancellation"
 					>
 						{{ __('Confirm') }}
@@ -226,8 +245,8 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue'
-import { Dialog, Button, Badge, toast } from 'frappe-ui'
-import { Video } from 'lucide-vue-next'
+import { Dialog, Button, Badge, Card, toast } from 'frappe-ui'
+import { Video, Calendar } from 'lucide-vue-next'
 import { useSessionStore } from '@/stores/useSessionStore'
 import { formatLocal, formatTimeRangeLocal, isSessionUpcoming } from '@/utils/timezone'
 
@@ -259,10 +278,14 @@ function promptCancellation() {
 }
 
 async function confirmCancellation() {
+	if (!cancelReason.value || !cancelReason.value.trim()) {
+		toast.error(__('Cancellation reason is mandatory.'))
+		return
+	}
 	try {
 		await sessionStore.sessionCanceller.submit({
 			booking_name: props.session.name,
-			reason: cancelReason.value,
+			reason: cancelReason.value.trim(),
 		})
 		
 		props.session.booking_status = 'Cancelled'
@@ -283,13 +306,53 @@ const statusTheme = computed(() => {
 	switch (props.session.booking_status) {
 		case 'Confirmed':
 			return 'blue'
+		case 'Payment Success':
 		case 'Completed':
 			return 'green'
 		case 'Pending Payment':
+		case 'Cancellation Requested':
+		case 'Refund Requested':
 			return 'amber'
+		case 'Refunded':
+			return 'blue'
 		case 'Cancelled':
 		case 'Expired':
+		case 'Failed':
 			return 'gray'
+		default:
+			return 'gray'
+	}
+})
+
+const paymentLabel = computed(() => {
+	const status = props.session.payment_status?.toLowerCase() || ''
+	const labelMap = {
+		captured: 'Paid',
+		authorized: 'Pending',
+		created: 'Pending',
+		pending: 'Pending',
+		failed: 'Unpaid',
+		refunded: 'Refunded',
+		partially_refunded: 'Partially Refunded'
+	}
+	return labelMap[status] || (status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Pending')
+})
+
+const paymentTheme = computed(() => {
+	const status = props.session.payment_status?.toLowerCase() || ''
+	switch (status) {
+		case 'captured':
+			return 'green'
+		case 'authorized':
+		case 'created':
+		case 'pending':
+			return 'orange'
+		case 'failed':
+			return 'red'
+		case 'refunded':
+			return 'blue'
+		case 'partially_refunded':
+			return 'purple'
 		default:
 			return 'gray'
 	}
