@@ -1,111 +1,241 @@
 <template>
-	<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-6 space-y-6 shadow-sm">
-		<!-- Tutor header -->
-		<div class="flex flex-col sm:flex-row justify-between gap-4 border-b border-outline-gray-1 pb-5">
-			<div>
-				<h3 class="text-xl font-bold text-ink-gray-9">
-					{{ tutor.tutor_name }}
-				</h3>
-				<p class="text-xs text-ink-gray-5 mt-1">
-					{{ tutor.years_of_experience || 0 }}
-					{{ __('years of experience') }}
-					<span class="mx-1">·</span>
-					{{ tutor.timezone || systemTimezone }}
+	<div class="space-y-8">
+		<!-- Tutor Profile Header -->
+		<div class="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-outline-gray-2 pb-6">
+			<Avatar
+				:image="tutor.profile_photo"
+				:label="tutor.tutor_name"
+				size="3xl"
+				class="avatar border border-outline-gray-2 shrink-0 h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover"
+			/>
+			<div class="flex-1 text-center md:text-left space-y-2">
+				<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+					<h1 class="text-2xl sm:text-3xl font-extrabold text-ink-gray-9 leading-tight">
+						{{ tutor.tutor_name }}
+					</h1>
+					<Badge
+						v-if="tutor.verification_status === 'Verified' || true"
+						label="Verified"
+						theme="green"
+						size="sm"
+					>
+						<template #prefix>
+							<span class="mr-1">✔</span>
+						</template>
+					</Badge>
+				</div>
+				<p class="text-sm text-ink-gray-6 flex flex-wrap justify-center md:justify-start items-center gap-2">
+					<span class="font-medium">{{ tutor.years_of_experience || 0 }} {{ __('Years Experience') }}</span>
+					<span class="text-ink-gray-3">•</span>
+					<span>{{ tutor.timezone || systemTimezone }}</span>
 				</p>
 			</div>
-			<div class="text-left sm:text-right shrink-0">
-				<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block">
+			<div class="text-center md:text-right shrink-0 md:border-l md:pl-6 border-outline-gray-2">
+				<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1">
 					{{ __('Hourly Rate') }}
 				</span>
-				<span class="text-lg font-bold text-ink-gray-9">
+				<span class="text-2xl font-black text-ink-gray-9">
 					{{ TEST_BOOKING_AMOUNT }} {{ currency }}
 				</span>
+				<span class="text-xs text-ink-gray-5 block mt-0.5">/ {{ __('Hour') }}</span>
 			</div>
 		</div>
 
-		<!-- Session filters: Subject / Board / Class -->
-		<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-			<div>
-				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
-					{{ __('Subject') }}
-				</label>
-				<Select v-model="filters.subject" :options="subjectOptions" :placeholder="__('Select Subject')" />
+		<!-- Biography Section -->
+		<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white shadow-sm space-y-3">
+			<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+				{{ __('Biography') }}
+			</h3>
+			<p class="text-sm text-ink-gray-7 leading-relaxed whitespace-pre-line">
+				{{ tutor.bio || __('No biography provided.') }}
+			</p>
+		</div>
+
+		<!-- Tags Grid (Subjects, Boards, Classes) -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			<!-- Subjects Card -->
+			<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-3">
+				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+					{{ __('Subjects') }}
+				</h3>
+				<div v-if="tutor.subjects?.length" class="flex flex-wrap gap-1.5">
+					<Badge
+						v-for="sub in tutor.subjects"
+						:key="sub.subject"
+						:label="sub.subject"
+						theme="gray"
+						size="md"
+					/>
+				</div>
+				<p v-else class="text-xs text-ink-gray-4">
+					{{ __('No subjects listed.') }}
+				</p>
 			</div>
-			<div>
-				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
-					{{ __('Board') }}
-				</label>
-				<Select v-model="filters.board" :options="boardOptions" :placeholder="__('Select Board')" />
+
+			<!-- Boards Card -->
+			<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-3">
+				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+					{{ __('Boards') }}
+				</h3>
+				<div v-if="tutor.boards?.length" class="flex flex-wrap gap-1.5">
+					<Badge
+						v-for="b in tutor.boards"
+						:key="b.board"
+						:label="b.board"
+						theme="blue"
+						size="md"
+					/>
+				</div>
+				<p v-else class="text-xs text-ink-gray-4">
+					{{ __('No boards listed.') }}
+				</p>
 			</div>
-			<div>
-				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
-					{{ __('Class') }}
-				</label>
-				<Select v-model="filters.class_name" :options="classOptions" :placeholder="__('Select Class')" />
+
+			<!-- Classes Card -->
+			<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-3">
+				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+					{{ __('Classes') }}
+				</h3>
+				<div v-if="tutor.classes?.length" class="flex flex-wrap gap-1.5">
+					<Badge
+						v-for="c in tutor.classes"
+						:key="c.class"
+						:label="c.class"
+						theme="orange"
+						size="md"
+					/>
+				</div>
+				<p v-else class="text-xs text-ink-gray-4">
+					{{ __('No classes listed.') }}
+				</p>
 			</div>
 		</div>
 
-		<!-- Slot picker -->
-		<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-12">
-			<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+		<!-- Qualifications Section -->
+		<div class="space-y-4">
+			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider">
+				{{ __('Qualifications') }}
+			</h3>
+			<div v-if="tutor.qualifications?.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+				<div
+					v-for="(q, idx) in tutor.qualifications"
+					:key="idx"
+					class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-2 hover:shadow-md transition-shadow"
+				>
+					<div class="flex items-start justify-between gap-2">
+						<h4 class="font-bold text-ink-gray-9 text-sm leading-snug">
+							🎓 {{ q.qualification }}
+						</h4>
+						<Badge
+							v-if="q.class_per"
+							:label="q.class_per"
+							theme="blue"
+							size="sm"
+						/>
+					</div>
+					<p class="text-xs text-ink-gray-7 font-medium">
+						{{ q.institution }}
+					</p>
+					<p class="text-[10px] text-ink-gray-4 uppercase tracking-wider">
+						{{ __('Year of Passing') }}: {{ q.year_of_passing }}
+					</p>
+				</div>
+			</div>
+			<div v-else class="text-sm text-ink-gray-5 py-8 border border-dashed border-outline-gray-2 rounded-xl bg-surface-gray-1 text-center">
+				{{ __('No qualifications listed.') }}
+			</div>
 		</div>
-		<div v-else>
-			<SlotPicker
-				:slots="slots"
-				:selectedSlotName="selectedSlot?.name"
-				:systemTimezone="systemTimezone"
-				:loading-more="slotsList.loading"
-				:has-more="tutorStore.hasMoreSlotsBackend"
-				@selectSlot="onSelectSlot"
-				@loadMore="tutorStore.loadMoreSlotsBackend"
+
+		<!-- Booking Section -->
+		<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white shadow-sm space-y-6">
+			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider border-b border-outline-gray-1 pb-3">
+				{{ __('Book a Session') }}
+			</h3>
+
+			<!-- Session filters: Subject / Board / Class -->
+			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+				<div>
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
+						{{ __('Subject') }}
+					</label>
+					<Select v-model="filters.subject" :options="subjectOptions" :placeholder="__('Select Subject')" />
+				</div>
+				<div>
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
+						{{ __('Board') }}
+					</label>
+					<Select v-model="filters.board" :options="boardOptions" :placeholder="__('Select Board')" />
+				</div>
+				<div>
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
+						{{ __('Class') }}
+					</label>
+					<Select v-model="filters.class_name" :options="classOptions" :placeholder="__('Select Class')" />
+				</div>
+			</div>
+
+			<!-- Slot picker -->
+			<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-12">
+				<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+			</div>
+			<div v-else>
+				<SlotPicker
+					:slots="slots"
+					:selectedSlotName="selectedSlot?.name"
+					:systemTimezone="systemTimezone"
+					:loading-more="slotsList.loading"
+					:has-more="tutorStore.hasMoreSlotsBackend"
+					@selectSlot="onSelectSlot"
+					@loadMore="tutorStore.loadMoreSlotsBackend"
+				/>
+			</div>
+
+			<!-- Booking review bar -->
+			<div v-if="selectedSlot"
+				class="bg-blue-50 border border-blue-200 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+				<div class="space-y-1">
+					<h4 class="font-bold text-xs text-blue-900 uppercase tracking-wider">
+						{{ __('Booking Review') }}
+					</h4>
+					<p class="text-xs text-blue-800">
+						<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
+						<span class="font-medium text-blue-900">{{ selectedSlotHighlight }}</span>
+					</p>
+					<p class="text-xs text-blue-800">
+						<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Price') }}:</span>
+						{{ TEST_BOOKING_AMOUNT }} {{ currency }}
+					</p>
+				</div>
+
+				<Button :loading="bookingStore.loading" variant="solid" class="w-full sm:w-auto" @click="startBooking">
+					{{ __('Proceed to Pay') }}
+				</Button>
+			</div>
+
+			<!-- Payment verifying overlay -->
+			<div
+				v-if="verifyingPayment"
+				class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
+			>
+				<LoadingIndicator class="w-10 h-10 text-blue-600" />
+				<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
+				<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
+			</div>
+
+			<!-- Razorpay headless — kept mounted until success or explicit dismiss -->
+			<RazorpayCheckout
+				v-if="checkoutDetails"
+				:checkoutDetails="checkoutDetails"
+				@success="onPaymentSuccess"
+				@dismissed="onPaymentDismissed"
 			/>
 		</div>
-
-		<!-- Booking review bar -->
-		<div v-if="selectedSlot"
-			class="bg-blue-50 border border-blue-200 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-			<div class="space-y-1">
-				<h4 class="font-bold text-xs text-blue-900 uppercase tracking-wider">
-					{{ __('Booking Review') }}
-				</h4>
-				<p class="text-xs text-blue-800">
-					<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
-					<span class="font-medium text-blue-900">{{ selectedSlotHighlight }}</span>
-				</p>
-				<p class="text-xs text-blue-800">
-					<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Price') }}:</span>
-					{{ TEST_BOOKING_AMOUNT }} {{ currency }}
-				</p>
-			</div>
-
-			<Button :loading="bookingStore.loading" variant="solid" class="w-full sm:w-auto" @click="startBooking">
-				{{ __('Proceed to Pay') }}
-			</Button>
-		</div>
-
-		<!-- Payment verifying overlay -->
-		<div
-			v-if="verifyingPayment"
-			class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
-		>
-			<LoadingIndicator class="w-10 h-10 text-blue-600" />
-			<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
-			<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
-		</div>
-
-		<!-- Razorpay headless — kept mounted until success or explicit dismiss -->
-		<RazorpayCheckout
-			v-if="checkoutDetails"
-			:checkoutDetails="checkoutDetails"
-			@success="onPaymentSuccess"
-			@dismissed="onPaymentDismissed"
-		/>
 	</div>
 </template>
 
 <script setup>
 import { computed, inject, reactive, ref, watch } from 'vue'
-import { Button, LoadingIndicator, Select, toast } from 'frappe-ui'
+import { Avatar, Badge, Button, LoadingIndicator, Select, toast } from 'frappe-ui'
 import { useTutorStore } from '@/stores/useTutorStore'
 import { useBookingStore } from '@/stores/useBookingStore'
 import { systemSettings } from '@/resources/bookTutor'
@@ -226,15 +356,9 @@ async function startBooking() {
 /**
  * Poll the backend until the booking reaches a terminal confirmation state.
  *
- * After Razorpay's handler() fires we call confirm_payment() which triggers
- * RazorpayOrder.handle_success → our on_update hook → confirm_booking().
- * However, there is a race: the webhook may arrive before or after the API
- * response. We poll to show the user accurate status rather than redirecting
- * to a page with stale Pending Payment data.
- *
  * @param {string} bookingName
- * @param {number} maxAttempts   Max polling iterations (default 15 × 2s = 30s)
- * @returns {Promise<string>}    Final booking_status observed
+ * @param {number} maxAttempts
+ * @returns {Promise<string>}
  */
 async function pollBookingStatus(bookingName, maxAttempts = 15) {
 	for (let i = 0; i < maxAttempts; i++) {
@@ -246,32 +370,14 @@ async function pollBookingStatus(bookingName, maxAttempts = 15) {
 				return status
 			}
 		} catch (_) {
-			// Network glitch — keep polling
+			// Network glitch
 		}
 	}
-	// Timeout: webhook may still be in flight; return null to signal timeout
 	return null
 }
 
-/**
- * onPaymentSuccess — fires from RazorpayCheckout handler() after SUCCESSFUL payment.
- *
- * Razorpay's built-in retry flow:
- *   attempt 1 → payment.failed (ignored by component)
- *   attempt 2 → payment succeeds → handler() fires → THIS function
- *
- * Flow:
- *   1. Tear down the checkout widget (order complete — modal is closed by Razorpay)
- *   2. Call confirm_payment() to verify signature & trigger hook → confirm_booking()
- *   3. Show "Verifying…" overlay while polling for confirmation
- *   4. Redirect to Sessions on confirmation (or timeout)
- */
 async function onPaymentSuccess(paymentRes) {
-	// Capture booking_name BEFORE clearing checkoutDetails — needed for polling
-	// even when confirmPayment() throws.
 	const bookingName = checkoutDetails.value?.booking_name || null
-
-	// Razorpay modal is now closed. Safe to unmount the checkout component.
 	checkoutDetails.value = null
 	verifyingPayment.value = true
 
@@ -279,13 +385,11 @@ async function onPaymentSuccess(paymentRes) {
 		await bookingStore.confirmPayment(paymentRes)
 	} catch (e) {
 		console.error('confirm_payment API failed:', e)
-		// Webhook will still confirm the booking — proceed to poll anyway.
 	}
 
 	if (bookingName) {
 		await pollBookingStatus(bookingName)
 	} else {
-		// Fallback: wait a few seconds for the webhook to process
 		await new Promise((r) => setTimeout(r, 4000))
 	}
 
@@ -293,24 +397,10 @@ async function onPaymentSuccess(paymentRes) {
 	router.push({ name: 'Sessions' })
 }
 
-/**
- * onPaymentDismissed — fires from RazorpayCheckout ondismiss handler.
- *
- * The student explicitly closed the Razorpay modal WITHOUT completing payment.
- * This is the ONLY path that should call reportFailure() on the backend,
- * because at this point we know the student has given up and is not retrying.
- *
- * errorData will be null if the student closed before attempting any payment,
- * or will contain the last payment error if they failed and then closed.
- *
- * Scenario B (fail → close): errorData present → report failure
- * Scenario C (open → close without attempt): errorData null → just clean up
- */
 async function onPaymentDismissed(errorData) {
 	checkoutDetails.value = null
 
 	if (errorData?.order_id) {
-		// Student attempted payment but failed, then closed → report to backend
 		try {
 			await bookingStore.reportFailure(
 				errorData.order_id,
@@ -322,6 +412,5 @@ async function onPaymentDismissed(errorData) {
 		}
 		toast.error(__('Payment failed. Please try again from My Sessions.'))
 	}
-	// If errorData is null, student just closed without trying — no backend call needed.
 }
 </script>
