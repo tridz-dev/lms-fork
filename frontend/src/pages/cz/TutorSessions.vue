@@ -23,11 +23,10 @@
 						{{ __('Please create your tutor profile first to view booked sessions.') }}
 					</p>
 				</div>
-				<router-link
-					:to="{ name: 'TutorProfile' }"
-					class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-sm transition-colors"
-				>
-					{{ __('Create Tutor Profile') }}
+				<router-link :to="{ name: 'TutorProfile' }">
+					<Button variant="solid" class="font-semibold text-xs mt-2">
+						{{ __('Create Tutor Profile') }}
+					</Button>
 				</router-link>
 			</div>
 
