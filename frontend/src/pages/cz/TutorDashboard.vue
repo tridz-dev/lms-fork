@@ -23,11 +23,10 @@
 						{{ __('Please create your tutor profile first to access the dashboard.') }}
 					</p>
 				</div>
-				<router-link
-					:to="{ name: 'TutorProfile' }"
-					class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-sm transition-colors"
-				>
-					{{ __('Create Tutor Profile') }}
+				<router-link :to="{ name: 'TutorProfile' }">
+					<Button variant="solid" class="font-semibold text-xs mt-2">
+						{{ __('Create Tutor Profile') }}
+					</Button>
 				</router-link>
 			</div>
 
@@ -143,7 +142,7 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { Breadcrumbs, LoadingIndicator, Badge, NumberChart } from 'frappe-ui'
+import { Breadcrumbs, LoadingIndicator, Button, Badge, NumberChart } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { Home as HomeIcon } from 'lucide-vue-next'

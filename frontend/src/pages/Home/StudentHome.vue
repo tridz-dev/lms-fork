@@ -1,5 +1,5 @@
 <template>
-	<div class="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+	<div class="space-y-8 py-6">
 		<!-- Loading state -->
 		<div v-if="dashboardData.loading" class="flex items-center justify-center min-h-[300px]">
 			<div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600"></div>
@@ -29,9 +29,9 @@
 							<h3 class="text-2xl font-bold tracking-tight text-white sm:text-3xl">
 								{{ dashboardData.data.continue_learning.course_title }}
 							</h3>
-							<p class="mt-2 text-indigo-100 text-sm font-medium flex items-center gap-2">
+							<p class="mt-2 text-indigo-100 text-sm font-medium leading-relaxed">
 								<span class="text-white font-semibold">{{ __('Next Lesson:') }}</span>
-								{{ dashboardData.data.continue_learning.lesson_title }}
+								{{ ' ' + dashboardData.data.continue_learning.lesson_title }}
 							</p>
 						</div>
 

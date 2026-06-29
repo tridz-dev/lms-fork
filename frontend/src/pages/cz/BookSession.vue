@@ -8,8 +8,71 @@
 		</LayoutHeader>
 
 		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl pb-10">
-			<div v-if="tutorDetails.loading" class="flex justify-center py-20">
-				<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+			<div v-if="tutorDetails.loading" class="space-y-8 animate-pulse">
+				<!-- Header Skeleton -->
+				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b">
+					<div class="flex items-center gap-4">
+						<div class="h-20 w-20 rounded-full bg-surface-gray-3 shrink-0"></div>
+						<div class="space-y-3">
+							<div class="h-6 w-48 rounded bg-surface-gray-3"></div>
+							<div class="h-4 w-64 rounded bg-surface-gray-2"></div>
+						</div>
+					</div>
+					<div class="space-y-2 text-left sm:text-right shrink-0">
+						<div class="h-3 w-16 rounded bg-surface-gray-2 sm:ml-auto"></div>
+						<div class="h-6 w-24 rounded bg-surface-gray-3 sm:ml-auto"></div>
+					</div>
+				</div>
+
+				<!-- Bio Skeleton -->
+				<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white space-y-4">
+					<div class="h-4 w-24 rounded bg-surface-gray-3"></div>
+					<div class="space-y-2">
+						<div class="h-3 w-full rounded bg-surface-gray-2"></div>
+						<div class="h-3 w-11/12 rounded bg-surface-gray-2"></div>
+						<div class="h-3 w-4/5 rounded bg-surface-gray-2"></div>
+					</div>
+				</div>
+
+				<!-- Tags (Subjects / Boards / Classes) Skeleton -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div v-for="i in 3" :key="i" class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white space-y-3">
+						<div class="h-3 w-20 rounded bg-surface-gray-3"></div>
+						<div class="flex flex-wrap gap-1.5 pt-1">
+							<div class="h-6 w-16 rounded bg-surface-gray-2"></div>
+							<div class="h-6 w-20 rounded bg-surface-gray-2"></div>
+							<div class="h-6 w-14 rounded bg-surface-gray-2"></div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Qualifications Skeleton -->
+				<div class="space-y-3">
+					<div class="h-4 w-32 rounded bg-surface-gray-3"></div>
+					<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+						<div v-for="i in 2" :key="i" class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white space-y-3">
+							<div class="h-4 w-24 rounded bg-surface-gray-3"></div>
+							<div class="h-3.5 w-32 rounded bg-surface-gray-2"></div>
+							<div class="h-3 w-16 rounded bg-surface-gray-2"></div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slot Picker Skeleton -->
+				<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white space-y-6">
+					<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b pb-5">
+						<div v-for="i in 3" :key="i" class="space-y-2">
+							<div class="h-3 w-16 rounded bg-surface-gray-3"></div>
+							<div class="h-10 w-full rounded bg-surface-gray-2"></div>
+						</div>
+					</div>
+					<div class="space-y-3">
+						<div class="h-4 w-28 rounded bg-surface-gray-3"></div>
+						<div class="flex gap-2 pb-1 overflow-x-auto">
+							<div v-for="i in 5" :key="i" class="h-16 w-16 rounded-lg bg-surface-gray-2 shrink-0"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div v-else-if="tutorDetails.data">
 				<BookingFlow :tutor="tutorDetails.data" />
@@ -29,9 +92,10 @@
 			<template #left-header>
 				<Breadcrumbs :items="breadcrumbItems" />
 			</template>
+
 			<template #right-header>
-				<!-- Desktop Layout: inline filter bar (visible on medium screens and larger) -->
-				<div class="hidden md:flex items-center gap-2 flex-wrap">
+				<!-- Desktop Layout: inline filter bar (visible on large screens and larger) -->
+				<div class="hidden xl:flex items-center gap-2 flex-wrap">
 					<FormControl
 						v-model="localFilters.tutor"
 						:placeholder="__('Search by Tutor')"
@@ -71,8 +135,8 @@
 					</Button>
 				</div>
 
-				<!-- Mobile Layout: Collapsible Popover filter bar (visible on small screens) -->
-				<div class="flex md:hidden items-center gap-2">
+				<!-- Mobile Layout: Collapsible Popover filter bar (visible on small/medium screens) -->
+				<div class="flex xl:hidden items-center gap-2">
 					<Popover placement="bottom-end">
 						<template #target="{ togglePopover }">
 							<Button @click="togglePopover" variant="outline">
