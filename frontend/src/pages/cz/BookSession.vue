@@ -92,9 +92,10 @@
 			<template #left-header>
 				<Breadcrumbs :items="breadcrumbItems" />
 			</template>
+
 			<template #right-header>
-				<!-- Desktop Layout: inline filter bar (visible on medium screens and larger) -->
-				<div class="hidden md:flex items-center gap-2 flex-wrap">
+				<!-- Desktop Layout: inline filter bar (visible on large screens and larger) -->
+				<div class="hidden xl:flex items-center gap-2 flex-wrap">
 					<FormControl
 						v-model="localFilters.tutor"
 						:placeholder="__('Search by Tutor')"
@@ -134,8 +135,8 @@
 					</Button>
 				</div>
 
-				<!-- Mobile Layout: Collapsible Popover filter bar (visible on small screens) -->
-				<div class="flex md:hidden items-center gap-2">
+				<!-- Mobile Layout: Collapsible Popover filter bar (visible on small/medium screens) -->
+				<div class="flex xl:hidden items-center gap-2">
 					<Popover placement="bottom-end">
 						<template #target="{ togglePopover }">
 							<Button @click="togglePopover" variant="outline">
