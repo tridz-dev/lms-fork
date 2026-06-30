@@ -6,7 +6,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-6 max-w-4xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="profileStore.profile.loading" class="flex justify-center py-20">
 				<div class="flex flex-col items-center gap-3">

@@ -6,7 +6,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-6 max-w-3xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Header -->
 			<div class="border-b pb-4 mb-6">
 				<h2 class="text-2xl font-extrabold text-ink-gray-9 tracking-tight">

@@ -9,7 +9,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto w-full max-w-6xl p-5 md:p-8">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Header Section -->
 			<div class="border-b pb-4 mb-6 bg-surface-white p-6 rounded-lg border shadow-sm">
 				<h2 class="text-2xl font-bold text-ink-gray-9">

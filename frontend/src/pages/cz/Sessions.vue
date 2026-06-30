@@ -13,7 +13,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<div class="space-y-6">
 				<div class="border-b pb-4">
 					<h2 class="text-xl font-semibold text-ink-gray-9">{{ __('My Booked Sessions') }}</h2>

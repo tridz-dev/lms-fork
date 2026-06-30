@@ -7,7 +7,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl pb-10">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<div v-if="tutorDetails.loading" class="space-y-8 animate-pulse">
 				<!-- Header Skeleton -->
 				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b">
@@ -190,7 +190,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl pb-10">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 
 			<!-- ── Recommended Tutors For You ───────────────────────────────── -->
 			<div v-if="!hasActiveFilters" class="mb-8">
