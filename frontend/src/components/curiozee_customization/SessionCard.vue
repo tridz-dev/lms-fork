@@ -269,7 +269,7 @@ const isUpcoming = computed(() => {
 })
 
 const isCancellable = computed(() => {
-	return isUpcoming.value && ['Confirmed', 'Pending Payment', 'Failed'].includes(props.session.booking_status)
+	return ['Confirmed', 'Pending Payment', 'Failed'].includes(props.session.booking_status)
 })
 
 function promptCancellation() {

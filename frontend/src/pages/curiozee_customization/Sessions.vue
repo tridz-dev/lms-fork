@@ -148,16 +148,19 @@ const tabButtons = computed(() => {
 		(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 		isSessionUpcoming(s.start_datetime)
 	).length
+	const confirmed = sessionStore.sessions.filter(s =>
+		(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
+		!isSessionUpcoming(s.start_datetime)
+	).length
 	const completed = sessionStore.sessions.filter(s =>
-		s.booking_status === 'Completed' ||
-		((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
-		!isSessionUpcoming(s.start_datetime))
+		s.booking_status === 'Completed'
 	).length
 	const cancelled = sessionStore.sessions.filter(s => s.booking_status === 'Cancelled').length
 	const failed = sessionStore.sessions.filter(s => s.booking_status === 'Expired').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
+		{ value: 'confirmed', label: `${__('Confirmed')} (${confirmed})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
 		{ value: 'failed', label: `${__('Expired')} (${failed})` },
@@ -171,11 +174,14 @@ const filteredSessions = computed(() => {
 			(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 			isSessionUpcoming(s.start_datetime)
 		)
+	} else if (activeTab.value === 'confirmed') {
+		return sessionStore.sessions.filter(s =>
+			(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
+			!isSessionUpcoming(s.start_datetime)
+		)
 	} else if (activeTab.value === 'completed') {
 		return sessionStore.sessions.filter(s =>
-			s.booking_status === 'Completed' ||
-			((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
-			!isSessionUpcoming(s.start_datetime))
+			s.booking_status === 'Completed'
 		)
 	} else if (activeTab.value === 'cancelled') {
 		return sessionStore.sessions.filter(s => s.booking_status === 'Cancelled')
@@ -214,15 +220,17 @@ async function onPaymentSuccess(paymentRes) {
 	checkoutDetails.value = null
 	verifyingPayment.value = true
 
+	let paymentConfirmed = false
 	try {
 		await bookingStore.confirmPayment(paymentRes)
+		paymentConfirmed = true
 	} catch (e) {
 		console.error('confirm_payment failed in Sessions.vue:', e)
-		// Fall through — poll will detect webhook-driven confirmation
+		toast.error(e.messages?.[0] || e.message || __('Payment confirmation failed.'))
 	}
 
 	// Poll until Confirmed (or timeout after 30 s)
-	if (bookingName) {
+	if (paymentConfirmed && bookingName) {
 		for (let i = 0; i < 15; i++) {
 			await new Promise((r) => setTimeout(r, 2000))
 			try {
@@ -230,6 +238,10 @@ async function onPaymentSuccess(paymentRes) {
 				if (result?.booking_status && result.booking_status !== 'Pending Payment') break
 			} catch (_) { /* network glitch — keep polling */ }
 		}
+	} else if (!paymentConfirmed) {
+		verifyingPayment.value = false
+		sessionStore.fetchHistory()
+		return
 	} else {
 		await new Promise((r) => setTimeout(r, 4000))
 	}
