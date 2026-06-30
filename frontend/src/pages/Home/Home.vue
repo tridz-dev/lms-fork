@@ -3,7 +3,7 @@
 		<div class="space-y-2">
 			<div class="flex items-center justify-between">
 				<div class="text-xl font-bold text-ink-gray-9">
-					{{ __('Hey') }}, {{ user.data?.full_name }} 👋
+					{{ __('Hey') }}, {{ studentDisplayName }} 👋
 				</div>
 				<div>
 					<div
@@ -44,10 +44,19 @@ import { useRouter } from 'vue-router'
 import StudentHome from '@/pages/Home/StudentHome.vue'
 import AdminHome from '@/pages/Home/AdminHome.vue'
 import Streak from '@/pages/Home/Streak.vue'
+import { useStudentProfileStore } from '@/stores/useStudentProfileStore'
 
 const user = inject<any>('$user')
 const { brand } = sessionStore()
 const router = useRouter()
+const studentProfileStore = useStudentProfileStore()
+
+const studentDisplayName = computed(() => {
+	if (currentTab.value === 'student' && studentProfileStore.profile.data?.full_name) {
+		return studentProfileStore.profile.data.full_name
+	}
+	return user.data?.full_name
+})
 const evalCount = ref(0)
 const currentTab = ref<'student' | 'instructor'>('student')
 const showStreakModal = ref(false)
@@ -104,6 +113,7 @@ onMounted(() => {
 	} else {
 		currentTab.value = 'student'
 		fetchEvalCount()
+		studentProfileStore.profile.submit()
 	}
 })
 
