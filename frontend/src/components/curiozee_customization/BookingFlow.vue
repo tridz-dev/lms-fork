@@ -1,14 +1,14 @@
 <template>
-	<div class="space-y-8">
+	<div class="space-y-6">
 		<!-- Tutor Profile Header -->
-		<div class="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-outline-gray-2 pb-6">
+		<div class="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-outline-gray-2 pb-5">
 			<Avatar
 				:image="tutor.profile_photo"
 				:label="tutor.tutor_name"
 				size="3xl"
 				class="avatar border border-outline-gray-2 shrink-0 h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover"
 			/>
-			<div class="flex-1 text-center md:text-left space-y-2">
+			<div class="flex-1 text-center md:text-left space-y-1.5">
 				<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
 					<h1 class="text-2xl sm:text-3xl font-extrabold text-ink-gray-9 leading-tight">
 						{{ tutor.tutor_name }}
@@ -42,19 +42,19 @@
 		</div>
 
 		<!-- Biography Section -->
-		<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white shadow-sm space-y-3">
+		<div v-if="tutor.bio" class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
 			<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
 				{{ __('Biography') }}
 			</h3>
 			<p class="text-sm text-ink-gray-7 leading-relaxed whitespace-pre-line">
-				{{ tutor.bio || __('No biography provided.') }}
+				{{ tutor.bio }}
 			</p>
 		</div>
 
 		<!-- Tags Grid (Subjects, Boards, Classes) -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 			<!-- Subjects Card -->
-			<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-3">
+			<div class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
 				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
 					{{ __('Subjects') }}
 				</h3>
@@ -73,7 +73,7 @@
 			</div>
 
 			<!-- Boards Card -->
-			<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-3">
+			<div class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
 				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
 					{{ __('Boards') }}
 				</h3>
@@ -92,7 +92,7 @@
 			</div>
 
 			<!-- Classes Card -->
-			<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-3">
+			<div class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
 				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
 					{{ __('Classes') }}
 				</h3>
@@ -112,7 +112,7 @@
 		</div>
 
 		<!-- Qualifications Section -->
-		<div class="space-y-4">
+		<div class="space-y-3">
 			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider">
 				{{ __('Qualifications') }}
 			</h3>
@@ -120,54 +120,62 @@
 				<div
 					v-for="(q, idx) in tutor.qualifications"
 					:key="idx"
-					class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-2 hover:shadow-md transition-shadow"
+					class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2 hover:shadow-md transition-shadow"
 				>
-					<div class="flex items-start justify-between gap-2">
-						<h4 class="font-bold text-ink-gray-9 text-sm leading-snug">
-							🎓 {{ q.qualification }}
-						</h4>
-						<Badge
-							v-if="q.class_per"
-							:label="q.class_per"
-							theme="blue"
-							size="sm"
-						/>
+					<h4 class="font-bold text-ink-gray-9 text-sm leading-snug flex items-center gap-1.5 border-b pb-1.5 mb-1.5">
+						🎓 {{ q.qualification }}
+					</h4>
+					<div class="space-y-1 text-xs">
+						<div v-if="q.level" class="flex items-start gap-1">
+							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Level') }}:</span>
+							<span class="text-ink-gray-9 font-semibold">{{ q.level }}</span>
+						</div>
+						<div class="flex items-start gap-1">
+							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Institution') }}:</span>
+							<span class="text-ink-gray-9 font-semibold">{{ q.institution }}</span>
+						</div>
+						<div class="flex items-start gap-1">
+							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Year of Passing') }}:</span>
+							<span class="text-ink-gray-9 font-semibold">{{ q.year_of_passing }}</span>
+						</div>
+						<div v-if="q.class_per" class="flex items-start gap-1">
+							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Class / Pct') }}:</span>
+							<span class="text-ink-gray-9 font-semibold">{{ q.class_per }}</span>
+						</div>
+						<div v-if="q.maj_opt_subj" class="flex items-start gap-1">
+							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Subjects') }}:</span>
+							<span class="text-ink-gray-9 font-semibold">{{ q.maj_opt_subj }}</span>
+						</div>
 					</div>
-					<p class="text-xs text-ink-gray-7 font-medium">
-						{{ q.institution }}
-					</p>
-					<p class="text-[10px] text-ink-gray-4 uppercase tracking-wider">
-						{{ __('Year of Passing') }}: {{ q.year_of_passing }}
-					</p>
 				</div>
 			</div>
-			<div v-else class="text-sm text-ink-gray-5 py-8 border border-dashed border-outline-gray-2 rounded-xl bg-surface-gray-1 text-center">
+			<div v-else class="text-sm text-ink-gray-5 py-6 border border-dashed border-outline-gray-2 rounded-xl bg-surface-gray-1 text-center">
 				{{ __('No qualifications listed.') }}
 			</div>
 		</div>
 
 		<!-- Booking Section -->
-		<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white shadow-sm space-y-6">
-			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider border-b border-outline-gray-1 pb-3">
+		<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-5">
+			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider border-b border-outline-gray-1 pb-2">
 				{{ __('Book a Session') }}
 			</h3>
 
 			<!-- Session filters: Subject / Board / Class -->
 			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 				<div>
-					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
 						{{ __('Subject') }}
 					</label>
 					<Select v-model="filters.subject" :options="subjectOptions" :placeholder="__('Select Subject')" />
 				</div>
 				<div>
-					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
 						{{ __('Board') }}
 					</label>
 					<Select v-model="filters.board" :options="boardOptions" :placeholder="__('Select Board')" />
 				</div>
 				<div>
-					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
 						{{ __('Class') }}
 					</label>
 					<Select v-model="filters.class_name" :options="classOptions" :placeholder="__('Select Class')" />
@@ -175,7 +183,7 @@
 			</div>
 
 			<!-- Slot picker -->
-			<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-12">
+			<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
 				<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
 			</div>
 			<div v-else>
@@ -192,7 +200,7 @@
 
 			<!-- Booking review bar -->
 			<div v-if="selectedSlot"
-				class="bg-blue-50 border border-blue-200 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+				class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 				<div class="space-y-1">
 					<h4 class="font-bold text-xs text-blue-900 uppercase tracking-wider">
 						{{ __('Booking Review') }}
