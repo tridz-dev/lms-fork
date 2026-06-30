@@ -3,6 +3,7 @@ import { usersStore } from './stores/user'
 import { sessionStore } from './stores/session'
 import { useSettings } from './stores/settings'
 import { getLmsBasePath } from './utils/basePath'
+import { useStudentProfileStore } from './stores/useStudentProfileStore'
 
 const routes = [
 	{
@@ -312,6 +313,18 @@ const routes = [
 		component: () => import('@/pages/cz/TutorProfile.vue'),
 		beforeEnter: requireTutorRole
 	},
+	{
+		path: '/student/profile/create',
+		name: 'StudentProfileCreate',
+		component: () => import('@/pages/cz/StudentProfileCreate.vue'),
+		beforeEnter: requireStudentRole
+	},
+	{
+		path: '/student/profile',
+		name: 'StudentProfile',
+		component: () => import('@/pages/cz/StudentProfile.vue'),
+		beforeEnter: requireStudentRole
+	},
 ]
 
 export async function requireTutorRole(to, from, next) {
@@ -336,6 +349,42 @@ export async function requireTutorRole(to, from, next) {
 	// 2. Check Tutor role.
 	const roles = userResource.data?.roles || []
 	if (!roles.includes('Tutor')) {
+		return next({ name: 'Forbidden' })
+	}
+
+	return next()
+}
+
+export async function requireStudentRole(to, from, next) {
+	const { userResource } = usersStore()
+	const { isLoggedIn } = sessionStore()
+
+	// 1. Check authenticated user.
+	if (!isLoggedIn) {
+		const currentUrl = window.location.pathname + window.location.search
+		window.location.href = `/login?redirect-to=${encodeURIComponent(currentUrl)}`
+		return
+	}
+
+	try {
+		await userResource.promise
+	} catch (e) {
+		const currentUrl = window.location.pathname + window.location.search
+		window.location.href = `/login?redirect-to=${encodeURIComponent(currentUrl)}`
+		return
+	}
+
+	// 2. Check Student/Tutor role.
+	const roles = userResource.data?.roles || []
+	const isTutor = roles.includes('Tutor')
+	const isStudent = roles.includes('LMS Student')
+	const isSystemManager = roles.includes('System Manager') || roles.includes('Administrator')
+
+	if (isTutor) {
+		return next({ name: 'Forbidden' })
+	}
+
+	if (!isStudent && !isSystemManager) {
 		return next({ name: 'Forbidden' })
 	}
 
@@ -371,12 +420,24 @@ router.beforeEach(async (to, from, next) => {
 	} else {
 		const roles = userResource.data?.roles || []
 		const isTutor = roles.includes('Tutor')
+		const isStudent = roles.includes('LMS Student')
+		const isSystemManager = roles.includes('System Manager') || roles.includes('Administrator')
 
 		if (to.name === 'Home' && isTutor) {
 			return next({ name: 'TutorDashboard' })
 		}
 		if (to.name === 'BookSession' && isTutor) {
 			return next({ name: 'TutorDashboard' })
+		}
+
+		if (isStudent && !isSystemManager) {
+			if (to.name !== 'StudentProfileCreate' && to.name !== 'Forbidden') {
+				const profileStore = useStudentProfileStore()
+				const profileExists = await profileStore.checkExists()
+				if (!profileExists) {
+					return next({ name: 'StudentProfileCreate' })
+				}
+			}
 		}
 	}
 	return next()
