@@ -538,6 +538,13 @@ const getSidebarItems = (forMobile = false) => {
 					activeFor: ['Revision'],
 					condition: () => !forMobile && userResource?.data && !userResource?.data?.roles?.includes('Tutor'),
 				},
+				{
+					label: 'Student Profile',
+					icon: 'User',
+					to: 'StudentProfile',
+					activeFor: ['StudentProfile', 'StudentProfileCreate'],
+					condition: () => !forMobile && userResource?.data && !userResource?.data?.roles?.includes('Tutor'),
+				},
 			],
 		},
 		{
