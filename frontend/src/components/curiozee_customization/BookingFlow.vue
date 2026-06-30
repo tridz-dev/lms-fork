@@ -358,24 +358,20 @@ async function startBooking() {
 		if (res) checkoutDetails.value = res
 	} catch (e) {
 		console.error('Booking initiation failed:', e)
+		toast.error(e.messages?.[0] || e.message || __('Booking initiation failed.'))
 	}
 }
 
 /**
  * Poll the backend until the booking reaches a terminal confirmation state.
- *
- * @param {string} bookingName
- * @param {number} maxAttempts
- * @returns {Promise<string>}
  */
-async function pollBookingStatus(bookingName, maxAttempts = 15) {
-	for (let i = 0; i < maxAttempts; i++) {
+async function pollBookingStatus(bookingName) {
+	for (let i = 0; i < 15; i++) {
 		await new Promise((r) => setTimeout(r, 2000))
 		try {
 			const result = await bookingStore.getBookingStatus(bookingName)
-			const status = result?.booking_status
-			if (status && status !== 'Pending Payment') {
-				return status
+			if (result?.booking_status && result.booking_status !== 'Pending Payment') {
+				return result
 			}
 		} catch (_) {
 			// Network glitch
@@ -389,14 +385,20 @@ async function onPaymentSuccess(paymentRes) {
 	checkoutDetails.value = null
 	verifyingPayment.value = true
 
+	let paymentConfirmed = false
 	try {
 		await bookingStore.confirmPayment(paymentRes)
+		paymentConfirmed = true
 	} catch (e) {
 		console.error('confirm_payment API failed:', e)
+		toast.error(e.messages?.[0] || e.message || __('Payment confirmation failed.'))
 	}
 
-	if (bookingName) {
+	if (paymentConfirmed && bookingName) {
 		await pollBookingStatus(bookingName)
+	} else if (!paymentConfirmed) {
+		verifyingPayment.value = false
+		return
 	} else {
 		await new Promise((r) => setTimeout(r, 4000))
 	}

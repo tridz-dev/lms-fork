@@ -214,15 +214,17 @@ async function onPaymentSuccess(paymentRes) {
 	checkoutDetails.value = null
 	verifyingPayment.value = true
 
+	let paymentConfirmed = false
 	try {
 		await bookingStore.confirmPayment(paymentRes)
+		paymentConfirmed = true
 	} catch (e) {
 		console.error('confirm_payment failed in Sessions.vue:', e)
-		// Fall through — poll will detect webhook-driven confirmation
+		toast.error(e.messages?.[0] || e.message || __('Payment confirmation failed.'))
 	}
 
 	// Poll until Confirmed (or timeout after 30 s)
-	if (bookingName) {
+	if (paymentConfirmed && bookingName) {
 		for (let i = 0; i < 15; i++) {
 			await new Promise((r) => setTimeout(r, 2000))
 			try {
@@ -230,6 +232,10 @@ async function onPaymentSuccess(paymentRes) {
 				if (result?.booking_status && result.booking_status !== 'Pending Payment') break
 			} catch (_) { /* network glitch — keep polling */ }
 		}
+	} else if (!paymentConfirmed) {
+		verifyingPayment.value = false
+		sessionStore.fetchHistory()
+		return
 	} else {
 		await new Promise((r) => setTimeout(r, 4000))
 	}
