@@ -5,7 +5,7 @@
 		<!-- Top Row: Name and Score Badge -->
 		<div class="flex items-start justify-between gap-3 pb-3 border-b border-outline-gray-2">
 			<div class="min-w-0">
-				<h4 class="text-sm font-bold text-ink-gray-9 truncate">
+				<h4 class="text-sm font-semibold text-ink-gray-9 truncate">
 					{{ tutor.tutor_name }}
 				</h4>
 				<p class="text-xs text-ink-gray-5 mt-1 font-medium">
@@ -36,7 +36,7 @@
 					:key="idx"
 					class="flex items-center gap-1.5 text-xs text-ink-gray-7 font-medium"
 				>
-					<span class="text-emerald-500 font-bold shrink-0">✓</span>
+					<span class="text-emerald-500 font-semibold shrink-0">✓</span>
 					<span class="truncate">{{ reason }}</span>
 				</div>
 			</div>

@@ -17,18 +17,18 @@
 
 			<!-- Empty State: No Profile -->
 			<div v-else-if="!profile"
-				class="text-center py-16 border border-outline-gray-2 rounded-2xl space-y-5 bg-surface-white shadow-sm max-w-xl mx-auto mt-10">
+				class="text-center py-16 border border-outline-gray-2 rounded-md space-y-5 bg-surface-white max-w-xl mx-auto mt-10">
 				<div class="flex flex-col items-center justify-center space-y-3 px-6">
-					<div class="p-4 bg-indigo-50 rounded-full text-indigo-600">
+					<div class="p-4 bg-surface-gray-2 rounded-full text-ink-gray-7">
 						<User class="w-8 h-8 stroke-1.5" />
 					</div>
-					<h3 class="text-xl font-bold text-ink-gray-9">{{ __('No Student Profile Linked') }}</h3>
+					<h3 class="text-xl font-semibold text-ink-gray-9">{{ __('No Student Profile Linked') }}</h3>
 					<p class="text-sm text-ink-gray-6 max-w-sm">
 						{{ __('Please setup your student profile to configure your academic details and start booking sessions.') }}
 					</p>
 				</div>
 				<router-link :to="{ name: 'StudentProfileCreate' }">
-					<Button variant="solid" class="font-semibold text-xs mt-2 !bg-indigo-600 hover:!bg-indigo-500 !text-white rounded-xl px-5 py-2.5">
+					<Button variant="solid" size="md" class="mt-2">
 						{{ __('Create Student Profile') }}
 					</Button>
 				</router-link>
@@ -37,13 +37,11 @@
 			<!-- Profile Edit/View Section -->
 			<div v-else class="space-y-6">
 				<!-- Header Card -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 					<div>
 						<div class="flex items-center gap-3">
-							<h2 class="text-2xl font-bold text-ink-gray-9">{{ form.full_name || __('Student Profile') }}</h2>
-							<span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
-								{{ __('Student') }}
-							</span>
+							<h2 class="text-2xl font-semibold text-ink-gray-9">{{ form.full_name || __('Student Profile') }}</h2>
+							<Badge theme="blue" size="sm" :label="__('Student')" />
 						</div>
 						<p class="text-sm text-ink-gray-5 mt-1">{{ __('Manage your personal and academic details.') }}</p>
 					</div>
@@ -53,7 +51,6 @@
 						<template v-if="isReadOnly">
 							<Button
 								variant="solid"
-								class="rounded-xl text-xs font-semibold px-4 py-2 !bg-indigo-600 hover:!bg-indigo-500 !text-white border-none"
 								@click="enterEditMode"
 							>
 								<template #prefix>
@@ -65,7 +62,6 @@
 						<template v-else>
 							<Button
 								variant="outline"
-								class="rounded-xl text-xs font-semibold px-4 py-2"
 								@click="cancelEdit"
 							>
 								{{ __('Cancel') }}
@@ -73,7 +69,6 @@
 							<Button
 								:loading="saving"
 								variant="solid"
-								class="rounded-xl text-xs font-semibold px-4 py-2 !bg-indigo-600 hover:!bg-indigo-500 !text-white border-none"
 								@click="saveProfile"
 							>
 								{{ __('Save Changes') }}
@@ -87,9 +82,8 @@
 					
 					<!-- Left Details Card (Personal) -->
 					<div class="md:col-span-2 space-y-6">
-						<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm space-y-5">
-							<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3 flex items-center gap-2">
-								<span class="h-5 w-1 bg-indigo-600 rounded-full"></span>
+						<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5">
+							<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
 								{{ __('Personal Details') }}
 							</h3>
 
@@ -97,15 +91,15 @@
 								<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 									<div class="space-y-1">
 										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Full Name') }}</span>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.full_name }}</p>
+										<p class="text-base text-ink-gray-9 font-small">{{ form.full_name }}</p>
 									</div>
 									<div class="space-y-1">
 										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Phone Number') }}</span>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.phone_number || __('Not specified') }}</p>
+										<p class="text-base text-ink-gray-9 font-small">{{ form.phone_number || __('Not specified') }}</p>
 									</div>
 									<div class="space-y-1 sm:col-span-2">
 										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Time Zone') }}</span>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.time_zone }}</p>
+										<p class="text-base text-ink-gray-9 font-small">{{ form.time_zone }}</p>
 									</div>
 								</div>
 								
@@ -138,9 +132,8 @@
 
 					<!-- Right Details Card (Academic) -->
 					<div class="md:col-span-1 space-y-6">
-						<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm space-y-5 h-full">
-							<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3 flex items-center gap-2">
-								<span class="h-5 w-1 bg-indigo-600 rounded-full"></span>
+						<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5 h-full">
+							<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
 								{{ __('Academic Details') }}
 							</h3>
 
@@ -148,15 +141,15 @@
 								<div v-if="isReadOnly" class="space-y-4">
 									<div class="space-y-1">
 										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Board') }}</span>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.board }}</p>
+										<p class="text-base text-ink-gray-9 font-small">{{ form.board }}</p>
 									</div>
 									<div class="space-y-1">
 										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Class') }}</span>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.class }}</p>
+										<p class="text-base text-ink-gray-9 font-small">{{ form.class }}</p>
 									</div>
 									<div class="space-y-1">
 										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('School') }}</span>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.school || __('Not specified') }}</p>
+										<p class="text-base text-ink-gray-9 font-small">{{ form.school || __('Not specified') }}</p>
 									</div>
 								</div>
 
@@ -293,13 +286,3 @@ async function saveProfile() {
 }
 </script>
 
-<style scoped>
-select {
-	outline: none;
-	box-shadow: none;
-}
-select:focus {
-	border-color: #4f46e5 !important;
-	background-color: #ffffff !important;
-}
-</style>

@@ -1,11 +1,11 @@
 <template>
 	<div
 		@click="showDetails = true"
-		class="flex flex-col border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors cursor-pointer"
+		class="flex flex-col border rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors cursor-pointer"
 	>
 		<div class="flex items-start justify-between pb-3 border-b">
 			<div>
-				<h4 class="font-bold text-base text-ink-gray-9">
+				<h4 class="font-semibold text-base text-ink-gray-9">
 					{{ session.tutor_name || __('Tutor') }}
 				</h4>
 				<p class="text-xs text-ink-gray-5 mt-1.5 flex items-center">
@@ -25,7 +25,7 @@
 		<div class="grid grid-cols-2 gap-4 text-xs py-4 border-b">
 			<div>
 				<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Amount') }}</span>
-				<span class="font-bold text-ink-gray-8">{{ session.amount }} {{ session.currency }}</span>
+				<span class="font-semibold text-ink-gray-8">{{ session.amount }} {{ session.currency }}</span>
 			</div>
 			<div>
 				<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Payment') }}</span>
@@ -44,10 +44,13 @@
 					@click.stop
 					:href="session.meeting_link"
 					target="_blank"
-					class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
 				>
-					<Video class="w-3.5 h-3.5" />
-					{{ __('Join Meeting') }}
+					<Button variant="solid">
+						<template #prefix>
+							<Video class="w-3.5 h-3.5" />
+						</template>
+						{{ __('Join Meeting') }}
+					</Button>
 				</a>
 			</div>
 			<div v-else-if="session.booking_status === 'Confirmed'">
@@ -59,7 +62,6 @@
 				<Button
 					@click.stop="$emit('retryPayment', session.name)"
 					variant="solid"
-					class="text-xs px-4 py-2"
 				>
 					{{ __('Pay Now') }}
 				</Button>
@@ -82,7 +84,7 @@
 					<!-- Tutor and Status Header -->
 					<div class="flex justify-between items-start border-b pb-3">
 						<div>
-							<h4 class="font-bold text-base text-ink-gray-9">{{ session.tutor_name || __('Tutor') }}</h4>
+							<h4 class="font-semibold text-base text-ink-gray-9">{{ session.tutor_name || __('Tutor') }}</h4>
 							<p class="text-xs text-ink-gray-4 mt-0.5">ID: {{ session.name }}</p>
 						</div>
 						<Badge
@@ -101,7 +103,7 @@
 							>
 								<div class="flex items-center gap-2">
 									<Calendar class="h-4 w-4 text-blue-600 shrink-0" />
-									<span class="font-bold text-ink-gray-9 text-sm leading-relaxed">
+									<span class="font-semibold text-ink-gray-9 text-sm leading-relaxed">
 										{{ formatSlotTime(session.start_datetime, session.end_datetime) }}
 									</span>
 								</div>

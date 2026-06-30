@@ -6,7 +6,7 @@
 			</template>
 			<template #right-header>
 				<router-link :to="{ name: 'BookSession' }">
-					<Button variant="solid" class="text-xs font-semibold">
+					<Button variant="solid">
 						{{ __('Book a Tutor') }}
 					</Button>
 				</router-link>
@@ -16,7 +16,7 @@
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<div class="space-y-6">
 				<div class="border-b pb-4">
-					<h2 class="text-xl font-semibold text-ink-gray-9">{{ __('My Booked Sessions') }}</h2>
+					<h2 class="text-2xl font-semibold text-ink-gray-9">{{ __('My Booked Sessions') }}</h2>
 					<p class="text-sm text-ink-gray-5 mt-1">{{ __('View and manage your live tutoring sessions.') }}</p>
 				</div>
 
@@ -40,8 +40,8 @@
 					/>
 				</div>
 
-				<div v-else class="text-center py-20 text-ink-gray-5 border rounded-md bg-surface-white">
-					{{ __('No sessions found matching this status filter.') }}
+				<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white">
+					<p class="text-sm text-ink-gray-5">{{ __('No sessions found matching this status filter.') }}</p>
 				</div>
 			</div>
 		</div>

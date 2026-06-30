@@ -1,8 +1,8 @@
 <template>
-	<div class="flex flex-col border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors shadow-sm">
+	<div class="flex flex-col border rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors">
 		<div class="flex items-start justify-between pb-3 border-b">
 			<div>
-				<h4 class="font-bold text-base text-ink-gray-9">
+				<h4 class="font-semibold text-base text-ink-gray-9">
 					{{ recommendation.lesson_title || recommendation.lesson }}
 				</h4>
 				<p v-if="recommendation.course_title" class="text-xs text-ink-gray-6 font-medium mt-0.5">
@@ -28,7 +28,7 @@
 
 		<div class="text-sm text-ink-gray-8 space-y-4 py-4">
 			<div>
-				<span class="font-bold text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1.5">{{ __('Reason') }}</span>
+				<span class="font-semibold text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1.5">{{ __('Reason') }}</span>
 				<p class="leading-relaxed bg-surface-gray-2 p-3 border rounded-md text-ink-gray-7 text-xs font-normal">
 					{{ recommendation.recommendation_reason }}
 				</p>
@@ -40,7 +40,7 @@
 				:loading="resolving"
 				@click="handleRevise"
 				variant="solid"
-				class="flex-1 justify-center py-2 text-xs font-semibold"
+				class="flex-1"
 			>
 				{{ __('Revise Lesson') }}
 			</Button>
@@ -49,7 +49,6 @@
 				:loading="completing"
 				@click="markCompleted"
 				variant="outline"
-				class="justify-center py-2 text-xs font-semibold text-green-700 border-green-200 hover:bg-green-50"
 			>
 				{{ __('Complete') }}
 			</Button>
@@ -58,7 +57,6 @@
 				:loading="dismissing"
 				@click="dismiss"
 				variant="outline"
-				class="justify-center py-2 text-xs font-semibold text-red-600 border-red-200 hover:bg-red-50"
 			>
 				{{ __('Dismiss') }}
 			</Button>

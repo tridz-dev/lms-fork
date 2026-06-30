@@ -9,7 +9,7 @@
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Header -->
 			<div class="border-b pb-4 mb-6">
-				<h2 class="text-2xl font-extrabold text-ink-gray-9 tracking-tight">
+				<h2 class="text-2xl font-semibold text-ink-gray-9">
 					{{ __('Create Student Profile') }}
 				</h2>
 				<p class="text-sm text-ink-gray-5 mt-1">
@@ -18,9 +18,9 @@
 			</div>
 
 			<!-- Loading state if settings or user info not ready -->
-			<div v-if="loading" class="flex items-center justify-center py-20 bg-surface-white border border-outline-gray-2 rounded-2xl shadow-sm">
+			<div v-if="loading" class="flex items-center justify-center py-20 bg-surface-white border border-outline-gray-2 rounded-md">
 				<div class="flex flex-col items-center gap-3">
-					<div class="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+					<div class="h-8 w-8 animate-spin rounded-full border-4 border-ink-gray-7 border-t-transparent"></div>
 					<p class="text-sm text-ink-gray-5 font-medium">{{ __('Loading profile setup...') }}</p>
 				</div>
 			</div>
@@ -28,9 +28,8 @@
 			<!-- Form Container -->
 			<form v-else @submit.prevent="saveProfile" class="space-y-6">
 				<!-- Section 1: Basic Details -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-5">
-					<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3 mb-4 flex items-center gap-2">
-						<span class="h-5 w-1 bg-indigo-600 rounded-full"></span>
+				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5">
+					<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3 mb-4">
 						{{ __('Basic Information') }}
 					</h3>
 					
@@ -63,9 +62,8 @@
 				</div>
 
 				<!-- Section 2: Academic Details -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-5">
-					<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3 mb-4 flex items-center gap-2">
-						<span class="h-5 w-1 bg-indigo-600 rounded-full"></span>
+				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5">
+					<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3 mb-4">
 						{{ __('Academic Profile') }}
 					</h3>
 
@@ -102,7 +100,6 @@
 						:loading="saving"
 						variant="solid"
 						type="submit"
-						class="rounded-xl text-sm font-semibold px-8 py-3.5 !bg-gradient-to-r !from-indigo-600 !to-blue-600 hover:!from-indigo-500 hover:!to-blue-500 !text-white !border-none transition-all duration-300 shadow-md hover:shadow-lg"
 					>
 						{{ __('Complete Setup') }}
 					</Button>
@@ -219,13 +216,3 @@ async function saveProfile() {
 }
 </script>
 
-<style scoped>
-select {
-	outline: none;
-	box-shadow: none;
-}
-select:focus {
-	border-color: #4f46e5 !important;
-	background-color: #ffffff !important;
-}
-</style>

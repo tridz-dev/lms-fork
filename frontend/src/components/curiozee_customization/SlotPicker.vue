@@ -10,7 +10,7 @@
 				v-for="date in dates"
 				:key="date"
 				@click="selectedDate = date"
-				class="flex flex-col items-center px-4 py-2 border rounded-lg focus:outline-none min-w-[72px] transition-all duration-150 shrink-0"
+				class="flex flex-col items-center px-4 py-2 border rounded-md focus:outline-none min-w-[72px] transition-all duration-150 shrink-0"
 				:class="
 					selectedDate === date
 						? 'bg-gray-900 border-gray-900 text-white shadow-sm'
@@ -20,7 +20,7 @@
 				<span class="text-[10px] uppercase tracking-wider font-semibold opacity-70">
 					{{ formatDayOfWeek(date) }}
 				</span>
-				<span class="text-lg font-bold mt-0.5 leading-tight">
+				<span class="text-lg font-semibold mt-0.5 leading-tight">
 					{{ formatDayOfMonth(date) }}
 				</span>
 				<span class="text-[9px] uppercase tracking-wider font-semibold opacity-70 mt-0.5">
@@ -32,7 +32,7 @@
 		<!-- No slots empty state -->
 		<div
 			v-else
-			class="text-sm text-ink-gray-5 py-10 text-center border border-dashed border-outline-gray-2 rounded-xl bg-surface-gray-1"
+			class="text-sm text-ink-gray-5 py-10 text-center border border-dashed border-outline-gray-2 rounded-md bg-surface-gray-1"
 		>
 			{{ __('No slots available for the selected filters.') }}
 		</div>
@@ -48,7 +48,7 @@
 					v-for="slot in groupedSlots[selectedDate]"
 					:key="slot.name"
 					@click="$emit('selectSlot', slot)"
-					class="py-2.5 px-3 border text-xs font-medium transition-all text-center rounded-lg focus:outline-none"
+					class="py-2.5 px-3 border text-xs font-medium transition-all text-center rounded-md focus:outline-none"
 					:class="
 						selectedSlotName === slot.name
 							? 'bg-gray-900 border-gray-900 text-white shadow-sm'
