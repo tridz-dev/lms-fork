@@ -271,8 +271,8 @@ import {
 	Sparkles,
 	Activity
 } from 'lucide-vue-next'
-import RevisionCard from '@/components/cz/RevisionCard.vue'
-import TutorMatchCard from '@/components/cz/TutorMatchCard.vue'
+import RevisionCard from '@/components/curiozee_customization/RevisionCard.vue'
+import TutorMatchCard from '@/components/curiozee_customization/TutorMatchCard.vue'
 
 const dayjs = inject<any>('$dayjs')
 const router = useRouter()

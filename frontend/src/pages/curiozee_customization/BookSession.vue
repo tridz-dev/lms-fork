@@ -342,8 +342,8 @@ import {
 import { Filter, Search } from 'lucide-vue-next'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import EmptyStateLayout from '@/components/Layouts/EmptyStateLayout.vue'
-import TutorCard from '@/components/cz/TutorCard.vue'
-import BookingFlow from '@/components/cz/BookingFlow.vue'
+import TutorCard from '@/components/curiozee_customization/TutorCard.vue'
+import BookingFlow from '@/components/curiozee_customization/BookingFlow.vue'
 import {
 	filterState,
 	tutorsList,

@@ -167,7 +167,7 @@
 import { computed, onMounted, ref, inject } from 'vue'
 import { Breadcrumbs, LoadingIndicator, TabButtons, Badge } from 'frappe-ui'
 import { useRevisionStore } from '@/stores/useRevisionStore'
-import RevisionCard from '@/components/cz/RevisionCard.vue'
+import RevisionCard from '@/components/curiozee_customization/RevisionCard.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 
 const revisionStore = useRevisionStore()
