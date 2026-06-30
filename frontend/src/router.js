@@ -250,12 +250,12 @@ const routes = [
 	{
 		path: '/sessions',
 		name: 'Sessions',
-		component: () => import('@/pages/cz/Sessions.vue')
+		component: () => import('@/pages/curiozee_customization/Sessions.vue')
 	},
 	{
 		path: '/sessions/book',
 		name: 'BookSession',
-		component: () => import('@/pages/cz/BookSession.vue')
+		component: () => import('@/pages/curiozee_customization/BookSession.vue')
 	},
 	{
 		path: '/sessions/history',
@@ -265,22 +265,22 @@ const routes = [
 	{
 		path: '/tutors',
 		name: 'TutorSearch',
-		component: () => import('@/pages/cz/TutorSearch.vue')
+		component: () => import('@/pages/curiozee_customization/TutorSearch.vue')
 	},
 	{
 		path: '/revision',
 		name: 'Revision',
-		component: () => import('@/pages/cz/Revision.vue')
+		component: () => import('@/pages/curiozee_customization/Revision.vue')
 	},
 	{
 		path: '/forbidden',
 		name: 'Forbidden',
-		component: () => import('@/pages/cz/Forbidden.vue')
+		component: () => import('@/pages/curiozee_customization/Forbidden.vue')
 	},
 	{
 		path: '/tutor/dashboard',
 		name: 'TutorDashboard',
-		component: () => import('@/pages/cz/TutorDashboard.vue'),
+		component: () => import('@/pages/curiozee_customization/TutorDashboard.vue'),
 		beforeEnter: requireTutorRole
 	},
 	{
@@ -292,37 +292,37 @@ const routes = [
 	{
 		path: '/tutor/slots',
 		name: 'SlotCalendar',
-		component: () => import('@/pages/cz/SlotCalendar.vue'),
+		component: () => import('@/pages/curiozee_customization/SlotCalendar.vue'),
 		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/sessions',
 		name: 'TutorSessions',
-		component: () => import('@/pages/cz/TutorSessions.vue'),
+		component: () => import('@/pages/curiozee_customization/TutorSessions.vue'),
 		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/profile/create',
 		name: 'TutorProfileCreate',
-		component: () => import('@/pages/cz/TutorProfileCreate.vue'),
+		component: () => import('@/pages/curiozee_customization/TutorProfileCreate.vue'),
 		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/tutor/profile',
 		name: 'TutorProfile',
-		component: () => import('@/pages/cz/TutorProfile.vue'),
+		component: () => import('@/pages/curiozee_customization/TutorProfile.vue'),
 		beforeEnter: requireTutorRole
 	},
 	{
 		path: '/student/profile/create',
 		name: 'StudentProfileCreate',
-		component: () => import('@/pages/cz/StudentProfileCreate.vue'),
+		component: () => import('@/pages/curiozee_customization/StudentProfileCreate.vue'),
 		beforeEnter: requireStudentRole
 	},
 	{
 		path: '/student/profile',
 		name: 'StudentProfile',
-		component: () => import('@/pages/cz/StudentProfile.vue'),
+		component: () => import('@/pages/curiozee_customization/StudentProfile.vue'),
 		beforeEnter: requireStudentRole
 	},
 ]

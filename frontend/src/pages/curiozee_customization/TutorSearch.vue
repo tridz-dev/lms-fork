@@ -9,7 +9,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<div class="space-y-6">
 				<div class="border-b pb-4">
 					<h2 class="text-2xl font-bold text-ink-gray-9">
@@ -43,7 +43,7 @@
 import { computed } from 'vue'
 import { Breadcrumbs, LoadingIndicator } from 'frappe-ui'
 import { useTutorStore } from '@/stores/useTutorStore'
-import TutorCard from '@/components/cz/TutorCard.vue'
+import TutorCard from '@/components/curiozee_customization/TutorCard.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 
 const tutorStore = useTutorStore()

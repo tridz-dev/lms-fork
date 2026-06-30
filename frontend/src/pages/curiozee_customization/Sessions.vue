@@ -13,7 +13,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<div class="space-y-6">
 				<div class="border-b pb-4">
 					<h2 class="text-xl font-semibold text-ink-gray-9">{{ __('My Booked Sessions') }}</h2>
@@ -70,8 +70,8 @@ import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { Breadcrumbs, Button, TabButtons, LoadingIndicator, toast } from 'frappe-ui'
 import { useSessionStore } from '@/stores/useSessionStore'
 import { useBookingStore } from '@/stores/useBookingStore'
-import SessionCard from '@/components/cz/SessionCard.vue'
-import RazorpayCheckout from '@/components/cz/RazorpayCheckout.vue'
+import SessionCard from '@/components/curiozee_customization/SessionCard.vue'
+import RazorpayCheckout from '@/components/curiozee_customization/RazorpayCheckout.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { isSessionUpcoming } from '@/utils/timezone'
 
