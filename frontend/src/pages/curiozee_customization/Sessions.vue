@@ -148,16 +148,19 @@ const tabButtons = computed(() => {
 		(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 		isSessionUpcoming(s.start_datetime)
 	).length
+	const confirmed = sessionStore.sessions.filter(s =>
+		(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
+		!isSessionUpcoming(s.start_datetime)
+	).length
 	const completed = sessionStore.sessions.filter(s =>
-		s.booking_status === 'Completed' ||
-		((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
-		!isSessionUpcoming(s.start_datetime))
+		s.booking_status === 'Completed'
 	).length
 	const cancelled = sessionStore.sessions.filter(s => s.booking_status === 'Cancelled').length
 	const failed = sessionStore.sessions.filter(s => s.booking_status === 'Expired').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
+		{ value: 'confirmed', label: `${__('Confirmed')} (${confirmed})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
 		{ value: 'failed', label: `${__('Expired')} (${failed})` },
@@ -171,11 +174,14 @@ const filteredSessions = computed(() => {
 			(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
 			isSessionUpcoming(s.start_datetime)
 		)
+	} else if (activeTab.value === 'confirmed') {
+		return sessionStore.sessions.filter(s =>
+			(s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
+			!isSessionUpcoming(s.start_datetime)
+		)
 	} else if (activeTab.value === 'completed') {
 		return sessionStore.sessions.filter(s =>
-			s.booking_status === 'Completed' ||
-			((s.booking_status === 'Confirmed' || s.booking_status === 'Pending Payment' || s.booking_status === 'Payment Success' || s.booking_status === 'Failed') &&
-			!isSessionUpcoming(s.start_datetime))
+			s.booking_status === 'Completed'
 		)
 	} else if (activeTab.value === 'cancelled') {
 		return sessionStore.sessions.filter(s => s.booking_status === 'Cancelled')
