@@ -156,14 +156,14 @@ const tabButtons = computed(() => {
 		s.booking_status === 'Completed'
 	).length
 	const cancelled = sessionStore.sessions.filter(s => s.booking_status === 'Cancelled').length
-	const failed = sessionStore.sessions.filter(s => s.booking_status === 'Expired').length
+	// const failed = sessionStore.sessions.filter(s => s.booking_status === 'Expired').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
 		{ value: 'confirmed', label: `${__('Confirmed')} (${confirmed})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
-		{ value: 'failed', label: `${__('Expired')} (${failed})` },
+		// { value: 'failed', label: `${__('Expired')} (${failed})` },
 	]
 })
 
@@ -185,8 +185,6 @@ const filteredSessions = computed(() => {
 		)
 	} else if (activeTab.value === 'cancelled') {
 		return sessionStore.sessions.filter(s => s.booking_status === 'Cancelled')
-	} else {
-		return sessionStore.sessions.filter(s => s.booking_status === 'Expired')
 	}
 })
 

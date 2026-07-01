@@ -325,6 +325,13 @@ const routes = [
 		component: () => import('@/pages/curiozee_customization/StudentProfile.vue'),
 		beforeEnter: requireStudentRole
 	},
+	{
+		path: '/student/dashboard',
+		name: 'StudentDashboard',
+		component: () => import('@/pages/curiozee_customization/StudentDashboard.vue'),
+		beforeEnter: requireStudentRole,
+		props: { showHeader: true }
+	},
 ]
 
 export async function requireTutorRole(to, from, next) {
@@ -422,12 +429,16 @@ router.beforeEach(async (to, from, next) => {
 		const isTutor = roles.includes('Tutor')
 		const isStudent = roles.includes('LMS Student')
 		const isSystemManager = roles.includes('System Manager') || roles.includes('Administrator')
+		const isAdmin = userResource.data?.is_moderator || userResource.data?.is_instructor || userResource.data?.is_evaluator
 
 		if (to.name === 'Home' && isTutor) {
 			return next({ name: 'TutorDashboard' })
 		}
 		if (to.name === 'BookSession' && isTutor) {
 			return next({ name: 'TutorDashboard' })
+		}
+		if (to.name === 'Home' && isStudent && !isAdmin) {
+			return next({ name: 'StudentDashboard' })
 		}
 
 		if (isStudent && !isSystemManager) {

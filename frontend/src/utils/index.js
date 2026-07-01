@@ -427,7 +427,7 @@ const getSidebarItems = (forMobile = false) => {
 					label: 'Home',
 					icon: 'Home',
 					to: 'Home',
-					activeFor: ['Home', 'TutorDashboard'],
+					activeFor: ['Home', 'TutorDashboard', 'StudentDashboard'],
 					condition: () => {
 						return userResource?.data
 					},
