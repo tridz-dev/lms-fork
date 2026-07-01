@@ -6,58 +6,100 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
+		<div class="flex min-h-0 w-full flex-1 flex-col pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading || loadingOptions" class="flex justify-center py-20">
 				<LoadingIndicator class="w-10 h-10 text-gray-400" />
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile"
-				class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
-				<div class="flex flex-col items-center justify-center space-y-2">
-					<div class="p-3 bg-surface-gray-2 rounded-full">
-						<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
+			<div v-else-if="!profile" class="p-5">
+				<div class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
+					<div class="flex flex-col items-center justify-center space-y-2">
+						<div class="p-3 bg-surface-gray-2 rounded-full">
+							<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
+						</div>
+						<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Tutor Profile linked to your account') }}</h3>
+						<p class="text-sm text-ink-gray-7 max-w-sm">
+							{{ __('Create a tutor profile to start configuring availability rules and taking bookings.') }}
+						</p>
 					</div>
-					<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Tutor Profile linked to your account') }}</h3>
-					<p class="text-sm text-ink-gray-7 max-w-sm">
-						{{ __('Create a tutor profile to start configuring availability rules and taking bookings.') }}
-					</p>
+					<router-link :to="{ name: 'TutorProfileCreate' }" custom v-slot="{ navigate }">
+						<Button variant="solid" @click="navigate" class="mt-2">
+							{{ __('Create Tutor Profile') }}
+						</Button>
+					</router-link>
 				</div>
-				<router-link :to="{ name: 'TutorProfileCreate' }" custom v-slot="{ navigate }">
-					<Button variant="solid" @click="navigate" class="mt-2">
-						{{ __('Create Tutor Profile') }}
-					</Button>
-				</router-link>
 			</div>
 
 			<!-- Profile Edit/View Form -->
-			<div v-else class="space-y-6">
-				<div class="flex justify-between items-start border-b pb-4">
-					<div>
-						<div class="flex items-center gap-3">
-							<h2 class="text-2xl font-semibold text-ink-gray-9">{{ form.tutor_name || __('Tutor Profile') }}</h2>
-							<Badge
-								v-if="profile?.verification_status"
-								:theme="getVerificationTheme(profile.verification_status)"
-								size="sm"
-							>
-								{{ profile.verification_status }}
-							</Badge>
+			<div v-else>
+				<!-- Banner Cover Image -->
+				<div class="group relative h-[130px] w-full">
+					<img
+						v-if="$user?.data?.cover_image"
+						:src="$user.data.cover_image"
+						class="h-[130px] w-full object-cover object-center"
+					/>
+					<div
+						v-else
+						class="h-[130px] w-full bg-surface-gray-2"
+					></div>
+				</div>
+
+				<!-- Main Layout Container -->
+				<div class="mx-auto -mt-10 md:-mt-4 max-w-4xl w-full px-5">
+					<div class="flex flex-col md:flex-row items-center">
+						<div>
+							<div class="relative">
+								<img
+									v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
+									:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
+									class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+								/>
+								<div
+									v-else
+									class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7"
+								>
+									{{ (form.tutor_name || $user?.data?.full_name || 'T').charAt(0).toUpperCase() }}
+								</div>
+							</div>
 						</div>
-						<p class="text-sm text-ink-gray-5 mt-1">{{ __('Manage your tutoring profile details visible to students.') }}</p>
+						<div class="ms-6 mt-5 flex-1">
+							<div class="flex items-center gap-3">
+								<h2 class="text-3xl font-semibold text-ink-gray-9">
+									{{ form.tutor_name || __('Tutor Profile') }}
+								</h2>
+								<Badge
+									v-if="profile?.verification_status"
+									:theme="getVerificationTheme(profile.verification_status)"
+									size="sm"
+								>
+									{{ profile.verification_status }}
+								</Badge>
+							</div>
+							<p class="text-sm text-ink-gray-5 mt-1">
+								{{ __('Manage your tutoring profile details visible to students.') }}
+							</p>
+						</div>
 					</div>
-				</div>
 
-				<!-- Tabs Navigation -->
-				<div class="mb-4">
-					<TabButtons class="inline-block" :buttons="profileTabs" v-model="activeTab" />
-				</div>
+					<!-- Tabs Navigation -->
+					<div class="mb-4 mt-10">
+						<TabButtons class="inline-block" :buttons="profileTabs" v-model="activeTab" />
+					</div>
 
-				<!-- TAB: Profile Details -->
-				<div v-if="activeTab === 'profile'" class="space-y-6 max-w-2xl">
-					<form @submit.prevent="saveProfile" class="space-y-6">
-						<div class="space-y-4">
+					<!-- TAB: Profile Details -->
+					<div v-if="activeTab === 'profile'" class="space-y-6 max-w-2xl mt-6">
+						<form @submit.prevent="saveProfile" class="space-y-6">
+							<Uploader
+								v-if="!isReadOnly"
+								v-model="form.profile_photo"
+								:label="__('Profile Photo')"
+								:required="false"
+								shape="circle"
+							/>
+							<div class="space-y-4">
 							<FormControl v-model="form.tutor_name" :disabled="isReadOnly" type="text"
 								:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
 							<FormControl v-model="form.timezone" :disabled="isReadOnly" type="select"
@@ -365,9 +407,9 @@
 						</Button>
 					</div>
 				</div>
-
 			</div>
 		</div>
+	</div>
 
 		<!-- Rule Edit/Add Modal -->
 		<Dialog v-model="showModal" :options="{
@@ -415,10 +457,12 @@ import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { User, Lock, Plus, AlertCircle } from 'lucide-vue-next'
 import { subjectsList, boardsList, classesList } from '@/resources/bookTutor'
 import MultiSelect from '@/components/Controls/MultiSelect.vue'
+import Uploader from '@/components/Controls/Uploader.vue'
 
 const route = useRoute()
 const router = useRouter()
 const dashboardStore = useTutorDashboardStore()
+const $user = inject('$user')
 
 const activeTab = ref(route.query.tab || 'profile')
 
@@ -500,6 +544,7 @@ const form = reactive({
 	years_of_experience: 1,
 	timezone: getDetectedTimezone(),
 	active: true,
+	profile_photo: '',
 })
 
 const rules = computed(() => dashboardStore.dashboardData.data?.rules || [])
@@ -526,6 +571,7 @@ function syncForm() {
 			years_of_experience: profile.value.years_of_experience,
 			timezone: profile.value.timezone || defaultTz,
 			active: profile.value.active === undefined ? true : !!profile.value.active,
+			profile_photo: profile.value.profile_photo || '',
 		})
 		selectedSubjects.value = profile.value.subjects ? profile.value.subjects.map((s) => s.subject) : []
 		selectedBoards.value = profile.value.boards ? profile.value.boards.map((b) => b.board) : []
@@ -587,6 +633,7 @@ async function saveProfile() {
 			classes: JSON.stringify(selectedClasses.value),
 			qualifications: JSON.stringify(qualifications.value),
 			active: form.active ? 1 : 0,
+			profile_photo: form.profile_photo || null,
 		})
 		if (res && res.success) {
 			frappeToast.success(res.message)
