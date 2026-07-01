@@ -41,8 +41,8 @@
 						{{ __('Please create your tutor profile first to manage generated bookable slots.') }}
 					</p>
 				</div>
-				<router-link :to="{ name: 'TutorProfile' }">
-					<Button variant="solid">
+				<router-link :to="{ name: 'TutorProfile' }" custom v-slot="{ navigate }">
+					<Button variant="solid" @click="navigate" class="mt-2">
 						{{ __('Create Tutor Profile') }}
 					</Button>
 				</router-link>
