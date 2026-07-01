@@ -57,7 +57,7 @@
 							<!-- Header: Student Name & Badges -->
 							<div class="flex justify-between items-start pb-3 border-b">
 								<div>
-									<h4 class="font-bold text-ink-gray-9 text-base">{{ b.student }}</h4>
+									<h4 class="font-semibold text-ink-gray-9 text-base">{{ b.student }}</h4>
 									<p class="text-xs text-ink-gray-5 mt-1">
 										<span class="font-semibold text-ink-gray-4 uppercase tracking-wider text-[10px] mr-1">{{ __('Scheduled') }}:</span>
 										{{ formatTime(b.start_datetime) }}

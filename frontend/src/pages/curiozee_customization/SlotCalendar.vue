@@ -17,7 +17,6 @@
 						v-if="profile"
 						@click="triggerRegenerate"
 						variant="outline"
-						class="text-xs font-semibold"
 					>
 						{{ __('Regenerate Slots') }}
 					</Button>
@@ -25,14 +24,14 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
 				<LoadingIndicator class="w-10 h-10 text-gray-400" />
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile" class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
+			<div v-else-if="!profile" class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<CalendarIcon class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
@@ -43,7 +42,7 @@
 					</p>
 				</div>
 				<router-link :to="{ name: 'TutorProfile' }">
-					<Button variant="solid" class="font-semibold text-xs mt-2">
+					<Button variant="solid">
 						{{ __('Create Tutor Profile') }}
 					</Button>
 				</router-link>
@@ -54,7 +53,7 @@
 				<!-- Header row: title + status counts -->
 				<div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
 					<div>
-						<h2 class="text-xl font-semibold text-ink-gray-9">{{ __('Generated Availability Slots') }}</h2>
+						<h2 class="text-2xl font-semibold text-ink-gray-9">{{ __('Generated Availability Slots') }}</h2>
 						<p class="text-sm text-ink-gray-5 mt-0.5">{{ __('Manage your available slots and view linked booking states.') }}</p>
 					</div>
 					<div class="flex items-center gap-3 text-xs text-ink-gray-5 shrink-0">
@@ -104,12 +103,12 @@
 								v-for="day in weekDays"
 								:key="day.format('YYYY-MM-DD')"
 								class="py-2 px-1 text-center border-r last:border-r-0"
-								:class="day.isSame(today, 'day') ? 'bg-blue-50' : 'bg-surface-gray-2'"
+								:class="day.isSame(today, 'day') ? 'bg-surface-gray-3' : 'bg-surface-gray-2'"
 							>
-								<div class="text-[10px] uppercase tracking-wider" :class="day.isSame(today, 'day') ? 'text-blue-600 font-bold' : 'text-ink-gray-4'">
+								<div class="text-[10px] uppercase tracking-wider" :class="day.isSame(today, 'day') ? 'text-ink-gray-9 font-semibold' : 'text-ink-gray-4'">
 									{{ day.format('ddd') }}
 								</div>
-								<div class="text-sm font-bold mt-0.5" :class="day.isSame(today, 'day') ? 'text-blue-700' : 'text-ink-gray-8'">
+								<div class="text-sm font-semibold mt-0.5" :class="day.isSame(today, 'day') ? 'text-ink-gray-9' : 'text-ink-gray-8'">
 									{{ day.format('D') }}
 								</div>
 							</div>
@@ -133,7 +132,7 @@
 										v-for="day in weekDays"
 										:key="day.format('YYYY-MM-DD') + '-' + hour"
 										class="border-r last:border-r-0 py-0.5 px-0.5 min-h-[3.5rem] space-y-0.5"
-										:class="day.isSame(today, 'day') ? 'bg-blue-50/30' : ''"
+										:class="day.isSame(today, 'day') ? 'bg-surface-gray-1' : ''"
 									>
 										<button
 											v-for="slot in getSlotsForCell(day, hour)"
@@ -167,21 +166,21 @@
 						<div
 							v-for="date in sortedDates"
 							:key="date"
-							class="border rounded-md p-5 bg-surface-white space-y-4"
+							class="border border-outline-gray-2 rounded-md p-5 bg-surface-white space-y-4"
 						>
-							<h3 class="font-bold text-sm text-ink-gray-9 border-b pb-2">
+							<h3 class="font-semibold text-sm text-ink-gray-9 border-b pb-2">
 								{{ formatDateFriendly(date) }}
 							</h3>
 							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 								<div
 									v-for="slot in groupedSlots[date]"
 									:key="slot.name"
-									class="border rounded-md p-4 flex flex-col justify-between bg-surface-white hover:border-outline-gray-3 transition-colors space-y-3"
+									class="border border-outline-gray-2 rounded-md p-5 flex flex-col justify-between bg-surface-white hover:border-outline-gray-3 transition-colors space-y-3"
 								>
 									<div class="space-y-2">
 										<!-- Time Range & Badge -->
 										<div class="flex justify-between items-start">
-											<span class="text-sm font-bold text-ink-gray-9">
+											<span class="text-sm font-semibold text-ink-gray-9">
 												{{ formatTime(slot.start_datetime) }} - {{ formatTime(slot.end_datetime) }}
 											</span>
 											<Badge :theme="getStatusTheme(slot.status)" size="sm">
@@ -221,18 +220,18 @@
 											v-if="slot.status === 'Available'"
 											@click="deleteSlot(slot.name)"
 											variant="outline"
-											class="text-xs font-semibold text-red-600 hover:text-red-700"
+											theme="red"
 										>
 											{{ __('Mark Unavailable') }}
 										</Button>
-										<a
+										<Button
 											v-else-if="slot.status === 'Booked' && getBookingForSlot(slot.name)?.meeting_link"
-											:href="getBookingForSlot(slot.name).meeting_link"
-											target="_blank"
-											class="inline-block px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold transition-colors"
+											variant="solid"
+											size="sm"
+											@click="goToMeeting(getBookingForSlot(slot.name).meeting_link)"
 										>
 											{{ __('Join Class') }}
-										</a>
+										</Button>
 										<span v-else-if="slot.status === 'Temporarily Locked'" class="text-xs text-ink-gray-4 italic">
 											{{ __('Awaiting Payment...') }}
 										</span>
@@ -259,7 +258,7 @@
 					<!-- Time & Status -->
 					<div class="flex justify-between items-center border-b pb-3">
 						<div>
-							<p class="font-bold text-ink-gray-9">
+							<p class="font-semibold text-ink-gray-9">
 								{{ formatTime(selectedSlot.start_datetime) }} – {{ formatTime(selectedSlot.end_datetime) }}
 							</p>
 							<p class="text-xs text-ink-gray-5 mt-0.5">{{ formatDateFriendly(convertToLocal(selectedSlot.start_datetime)?.format('YYYY-MM-DD') || '') }}</p>
@@ -290,13 +289,12 @@
 							</div>
 						</div>
 						<div v-if="getBookingForSlot(selectedSlot.name)?.meeting_link" class="pt-2 border-t">
-							<a
-								:href="getBookingForSlot(selectedSlot.name).meeting_link"
-								target="_blank"
-								class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold transition-colors"
+							<Button
+								variant="solid"
+								@click="goToMeeting(getBookingForSlot(selectedSlot.name).meeting_link)"
 							>
 								{{ __('Join Class') }}
-							</a>
+							</Button>
 						</div>
 					</div>
 
@@ -309,7 +307,7 @@
 					<div v-if="selectedSlot.status === 'Available'" class="flex justify-end border-t pt-3">
 						<Button
 							variant="outline"
-							class="text-xs font-semibold text-red-600 hover:text-red-700"
+							theme="red"
 							@click="deleteSlotFromDialog(selectedSlot.name)"
 						>
 							{{ __('Mark Unavailable') }}
@@ -580,5 +578,11 @@ async function confirmDeleteSlot() {
 async function deleteSlotFromDialog(name) {
 	showSlotDialog.value = false
 	deleteSlot(name)
+}
+
+function goToMeeting(link) {
+	if (link) {
+		window.open(link, '_blank')
+	}
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-gray-2 min-h-screen">
+	<div>
 		<LayoutHeader>
 			<template #left-header>
 				<Breadcrumbs
@@ -11,8 +11,8 @@
 
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Header Section -->
-			<div class="border-b pb-4 mb-6 bg-surface-white p-6 rounded-lg border shadow-sm">
-				<h2 class="text-2xl font-bold text-ink-gray-9">
+			<div class="border-b pb-4 mb-6">
+				<h2 class="text-2xl font-semibold text-ink-gray-9">
 					{{ __('Smart Revision Dashboard') }}
 				</h2>
 				<p class="text-sm text-ink-gray-5 mt-1">
@@ -36,7 +36,7 @@
 					</div>
 
 					<!-- List of recommendations -->
-					<div v-if="revisionStore.revisionFetcher.loading" class="flex justify-center py-20 bg-surface-white border rounded-lg shadow-sm">
+					<div v-if="revisionStore.revisionFetcher.loading" class="flex justify-center py-20 bg-surface-white border border-outline-gray-2 rounded-md">
 						<LoadingIndicator class="w-10 h-10 text-gray-400" />
 					</div>
 					
@@ -48,9 +48,9 @@
 						/>
 					</div>
 					
-					<div v-else class="text-center py-20 text-ink-gray-5 border rounded-lg bg-surface-white shadow-sm px-6">
+					<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white px-6">
 						<div class="text-4xl mb-3">🎉</div>
-						<h3 class="font-bold text-base text-ink-gray-8 mb-1">{{ __('All caught up!') }}</h3>
+						<h3 class="font-semibold text-base text-ink-gray-8 mb-1">{{ __('All caught up!') }}</h3>
 						<p class="text-xs text-ink-gray-5 max-w-md mx-auto">
 							{{ __('No recommendations match this status. Keep studying new lessons or check other tabs!') }}
 						</p>
@@ -61,19 +61,19 @@
 				<div class="space-y-6">
 					
 					<!-- Pending Count Card -->
-					<div class="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-6 rounded-lg shadow-md border border-amber-600">
-						<span class="text-xs font-bold uppercase tracking-wider text-amber-100 block mb-1">
+					<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-md space-y-2">
+						<span class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5 block mb-1">
 							{{ __('Pending Revisions') }}
 						</span>
 						<div class="flex items-baseline gap-2">
-							<span class="text-4xl font-extrabold">{{ pendingCount }}</span>
-							<span class="text-xs text-amber-100">{{ __('lessons to revisit') }}</span>
+							<span class="text-4xl font-extrabold text-ink-gray-9">{{ pendingCount }}</span>
+							<span class="text-xs text-ink-gray-5 font-normal">{{ __('lessons to revisit') }}</span>
 						</div>
 					</div>
 
 					<!-- Weak Subjects widget -->
-					<div class="bg-surface-white border rounded-lg p-5 shadow-sm">
-						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
+					<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5">
+						<h3 class="font-semibold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
 							{{ __('Weak Subjects & Topics') }}
 						</h3>
 						<div v-if="revisionStore.dashboardSummary.weak_subjects && revisionStore.dashboardSummary.weak_subjects.length">
@@ -99,8 +99,8 @@
 					</div>
 
 					<!-- Recommended Topics widget -->
-					<div class="bg-surface-white border rounded-lg p-5 shadow-sm">
-						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
+					<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5">
+						<h3 class="font-semibold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
 							{{ __('Recommended Topics') }}
 						</h3>
 						<div v-if="revisionStore.dashboardSummary.recommended_topics && revisionStore.dashboardSummary.recommended_topics.length">
@@ -132,8 +132,8 @@
 
 
 					<!-- Recently Completed Lessons widget -->
-					<div class="bg-surface-white border rounded-lg p-5 shadow-sm">
-						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
+					<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5">
+						<h3 class="font-semibold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
 							{{ __('Recently Completed Lessons') }}
 						</h3>
 						<div v-if="revisionStore.dashboardSummary.recently_completed && revisionStore.dashboardSummary.recently_completed.length">

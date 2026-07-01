@@ -12,7 +12,7 @@
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<div class="space-y-6">
 				<div class="border-b pb-4">
-					<h2 class="text-2xl font-bold text-ink-gray-9">
+					<h2 class="text-2xl font-semibold text-ink-gray-9">
 						{{ __('Explore Our Tutors') }}
 					</h2>
 					<p class="text-sm text-ink-gray-5 mt-1">
@@ -31,8 +31,8 @@
 						:tutor="tutor"
 					/>
 				</div>
-				<div v-else class="text-center py-20 text-ink-gray-5 border rounded-md bg-surface-white">
-					{{ __('No tutors match the criteria or are verified currently.') }}
+				<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white">
+					<p class="text-sm text-ink-gray-5">{{ __('No tutors match the criteria or are verified currently.') }}</p>
 				</div>
 			</div>
 		</div>

@@ -6,14 +6,14 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
 				<LoadingIndicator class="w-10 h-10 text-gray-400" />
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile" class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
+			<div v-else-if="!profile" class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<HomeIcon class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
@@ -24,7 +24,7 @@
 					</p>
 				</div>
 				<router-link :to="{ name: 'TutorProfile' }">
-					<Button variant="solid" class="font-semibold text-xs mt-2">
+					<Button variant="solid">
 						{{ __('Create Tutor Profile') }}
 					</Button>
 				</router-link>
@@ -35,7 +35,7 @@
 				<!-- Stat Cards -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 					<!-- Availability Card -->
-					<div class="border rounded-md bg-surface-white px-6 pt-5 pb-4 flex flex-col justify-between">
+					<div class="border border-outline-gray-2 rounded-md bg-surface-white px-6 pt-5 pb-4 flex flex-col justify-between">
 						<span class="text-sm text-ink-gray-5">{{ __('Availability Status') }}</span>
 						<div class="mt-2.5">
 							<Badge
@@ -48,45 +48,45 @@
 
 					<!-- Upcoming Sessions -->
 					<NumberChart
-						class="border rounded-md"
+						class="border border-outline-gray-2 rounded-md"
 						:config="{ title: __('Upcoming Sessions'), value: upcomingSessionsCount }"
 					/>
 
 					<!-- Completed Sessions -->
 					<NumberChart
-						class="border rounded-md"
+						class="border border-outline-gray-2 rounded-md"
 						:config="{ title: __('Completed Sessions'), value: completedSessionsCount }"
 					/>
 
 					<!-- Active Students -->
 					<NumberChart
-						class="border rounded-md"
+						class="border border-outline-gray-2 rounded-md"
 						:config="{ title: __('Total Students'), value: uniqueStudentsCount }"
 					/>
 
 					<!-- Available Slots -->
 					<NumberChart
-						class="border rounded-md"
+						class="border border-outline-gray-2 rounded-md"
 						:config="{ title: __('Available Slots'), value: availableSlotsCount }"
 					/>
 
 					<!-- Booked Slots -->
 					<NumberChart
-						class="border rounded-md"
+						class="border border-outline-gray-2 rounded-md"
 						:config="{ title: __('Booked Slots'), value: bookedSlotsCount }"
 					/>
 
 					<!-- Pending Sessions -->
 					<NumberChart
-						class="border rounded-md"
+						class="border border-outline-gray-2 rounded-md"
 						:config="{ title: __('Pending Sessions'), value: pendingSessionsCount }"
 					/>
 				</div>
 
 				<!-- Recent Sessions -->
 				<div class="space-y-3 pt-4">
-					<h3 class="text-lg font-semibold text-ink-gray-9">{{ __('Recent Booked Sessions') }}</h3>
-					<div v-if="bookings.length" class="border rounded-md overflow-hidden bg-surface-white">
+					<h3 class="text-2xl font-semibold text-ink-gray-9">{{ __('Recent Booked Sessions') }}</h3>
+					<div v-if="bookings.length" class="border border-outline-gray-2 rounded-md overflow-hidden bg-surface-white">
 						<div class="overflow-x-auto">
 							<table class="w-full text-left border-collapse text-sm text-ink-gray-7">
 								<thead>
@@ -115,14 +115,14 @@
 											/>
 										</td>
 										<td class="p-4 text-right">
-											<a
+											<Button
 												v-if="b.booking_status === 'Confirmed' && b.meeting_link"
-												:href="b.meeting_link"
-												target="_blank"
-												class="text-blue-600 hover:text-blue-700 hover:underline font-semibold"
+												variant="solid"
+												size="sm"
+												@click="goToMeeting(b.meeting_link)"
 											>
 												{{ __('Join Class') }}
-											</a>
+											</Button>
 											<span v-else-if="b.booking_status === 'Confirmed'" class="text-ink-gray-4 italic text-xs">{{ __('Generating...') }}</span>
 											<span v-else class="text-ink-gray-4 italic text-xs">—</span>
 										</td>
@@ -131,7 +131,7 @@
 							</table>
 						</div>
 					</div>
-					<div v-else class="text-center py-12 border border-dashed rounded-md text-ink-gray-5 bg-surface-white">
+					<div v-else class="text-center py-12 border border-outline-gray-2 border-dashed rounded-md text-ink-gray-5 bg-surface-white">
 						{{ __('No sessions booked yet.') }}
 					</div>
 				</div>
@@ -206,5 +206,11 @@ const uniqueStudentsCount = computed(() => {
 function formatTime(utcTime) {
 	const localObj = convertToLocal(utcTime)
 	return localObj ? localObj.format('DD MMM YYYY, hh:mm A') : 'N/A'
+}
+
+function goToMeeting(link) {
+	if (link) {
+		window.open(link, '_blank')
+	}
 }
 </script>

@@ -195,9 +195,9 @@
 			<!-- ── Recommended Tutors For You ───────────────────────────────── -->
 			<div v-if="!hasActiveFilters" class="mb-8">
 				<div class="mb-4 border-b pb-4">
-					<div class="text-xl font-semibold text-ink-gray-9">
+					<h2 class="text-2xl font-semibold text-ink-gray-9">
 						{{ __('Recommended Tutors For You') }}
-					</div>
+					</h2>
 					<p class="text-sm text-ink-gray-5 mt-1">
 						{{ __('Matched based on your learning activity, weak subjects, and availability.') }}
 					</p>
@@ -255,7 +255,7 @@
 
 			<!-- ── All Tutors ────────────────────────────────────────────────── -->
 			<div class="mb-5 border-b pb-4">
-				<div class="text-xl font-semibold text-ink-gray-9">{{ __('All Tutors') }}</div>
+				<h2 class="text-2xl font-semibold text-ink-gray-9">{{ __('All Tutors') }}</h2>
 				<p class="text-sm text-ink-gray-5 mt-1">
 					{{ __('Find the best mentors customized for your curriculum and goals.') }}
 				</p>

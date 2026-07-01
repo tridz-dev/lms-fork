@@ -5,12 +5,12 @@
 			<Avatar
 				:image="tutor.profile_photo"
 				:label="tutor.tutor_name"
-				size="3xl"
+				size="2xl"
 				class="avatar border border-outline-gray-2 shrink-0 h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover"
 			/>
 			<div class="flex-1 text-center md:text-left space-y-1.5">
 				<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
-					<h1 class="text-2xl sm:text-3xl font-extrabold text-ink-gray-9 leading-tight">
+					<h1 class="text-2xl sm:text-2xl font-extrabold text-ink-gray-9 leading-tight">
 						{{ tutor.tutor_name }}
 					</h1>
 					<Badge
@@ -42,8 +42,8 @@
 		</div>
 
 		<!-- Biography Section -->
-		<div v-if="tutor.bio" class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
-			<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+		<div v-if="tutor.bio" class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
+			<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
 				{{ __('Biography') }}
 			</h3>
 			<p class="text-sm text-ink-gray-7 leading-relaxed whitespace-pre-line">
@@ -54,9 +54,9 @@
 		<!-- Tags Grid (Subjects, Boards, Classes) -->
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 			<!-- Subjects Card -->
-			<div class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
-				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
-					{{ __('Subjects') }}
+			<div class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
+				<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
+					{{ __('Main Subjects') }}
 				</h3>
 				<div v-if="tutor.subjects?.length" class="flex flex-wrap gap-1.5">
 					<Badge
@@ -73,8 +73,8 @@
 			</div>
 
 			<!-- Boards Card -->
-			<div class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
-				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+			<div class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
+				<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
 					{{ __('Boards') }}
 				</h3>
 				<div v-if="tutor.boards?.length" class="flex flex-wrap gap-1.5">
@@ -92,8 +92,8 @@
 			</div>
 
 			<!-- Classes Card -->
-			<div class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2">
-				<h3 class="text-xs font-bold text-ink-gray-5 uppercase tracking-wider">
+			<div class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
+				<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
 					{{ __('Classes') }}
 				</h3>
 				<div v-if="tutor.classes?.length" class="flex flex-wrap gap-1.5">
@@ -113,16 +113,16 @@
 
 		<!-- Qualifications Section -->
 		<div class="space-y-3">
-			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider">
+			<h3 class="text-sm font-semibold text-ink-gray-8 uppercase tracking-wider">
 				{{ __('Qualifications') }}
 			</h3>
 			<div v-if="tutor.qualifications?.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				<div
 					v-for="(q, idx) in tutor.qualifications"
 					:key="idx"
-					class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white shadow-sm space-y-2 hover:shadow-md transition-shadow"
+					class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2"
 				>
-					<h4 class="font-bold text-ink-gray-9 text-sm leading-snug flex items-center gap-1.5 border-b pb-1.5 mb-1.5">
+					<h4 class="font-semibold text-ink-gray-9 text-sm leading-snug flex items-center gap-1.5 border-b pb-1.5 mb-1.5">
 						🎓 {{ q.qualification }}
 					</h4>
 					<div class="space-y-1 text-xs">
@@ -149,14 +149,14 @@
 					</div>
 				</div>
 			</div>
-			<div v-else class="text-sm text-ink-gray-5 py-6 border border-dashed border-outline-gray-2 rounded-xl bg-surface-gray-1 text-center">
+			<div v-else class="text-sm text-ink-gray-5 py-6 border border-dashed border-outline-gray-2 rounded-md bg-surface-gray-1 text-center">
 				{{ __('No qualifications listed.') }}
 			</div>
 		</div>
 
 		<!-- Booking Section -->
-		<div class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white shadow-sm space-y-5">
-			<h3 class="text-sm font-bold text-ink-gray-8 uppercase tracking-wider border-b border-outline-gray-1 pb-2">
+		<div class="border border-outline-gray-2 rounded-md p-5 bg-surface-white space-y-5">
+			<h3 class="text-sm font-semibold text-ink-gray-8 uppercase tracking-wider border-b border-outline-gray-1 pb-2">
 				{{ __('Book a Session') }}
 			</h3>
 
@@ -200,22 +200,22 @@
 
 			<!-- Booking review bar -->
 			<div v-if="selectedSlot"
-				class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+				class="bg-surface-gray-2 border border-outline-gray-2 rounded-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 				<div class="space-y-1">
-					<h4 class="font-bold text-xs text-blue-900 uppercase tracking-wider">
+					<h4 class="font-semibold text-xs text-ink-gray-9 uppercase tracking-wider">
 						{{ __('Booking Review') }}
 					</h4>
-					<p class="text-xs text-blue-800">
-						<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
-						<span class="font-medium text-blue-900">{{ selectedSlotHighlight }}</span>
+					<p class="text-xs text-ink-gray-7">
+						<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
+						<span class="font-medium text-ink-gray-9">{{ selectedSlotHighlight }}</span>
 					</p>
-					<p class="text-xs text-blue-800">
-						<span class="font-semibold text-blue-700 mr-1 uppercase">{{ __('Price') }}:</span>
-						{{ TEST_BOOKING_AMOUNT }} {{ currency }}
+					<p class="text-xs text-ink-gray-7">
+						<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Price') }}:</span>
+						<span class="font-medium text-ink-gray-9">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
 					</p>
 				</div>
 
-				<Button :loading="bookingStore.loading" variant="solid" class="w-full sm:w-auto" @click="startBooking">
+				<Button :loading="bookingStore.loading" variant="solid" @click="startBooking">
 					{{ __('Proceed to Pay') }}
 				</Button>
 			</div>

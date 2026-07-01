@@ -6,10 +6,10 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-6 max-w-3xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Header -->
 			<div class="border-b pb-4 mb-6">
-				<h2 class="text-2xl font-extrabold text-ink-gray-9 tracking-tight">
+				<h2 class="text-2xl font-semibold text-ink-gray-9">
 					{{ __('Create Tutor Profile') }}
 				</h2>
 				<p class="text-sm text-ink-gray-5 mt-1">
@@ -20,8 +20,8 @@
 			<!-- Form Container -->
 			<form @submit.prevent="saveProfile" class="space-y-6">
 				<!-- Section 1: Basic Details -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm space-y-5">
-					<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3 mb-4">
+				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5">
+					<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3 mb-4">
 						{{ __('Basic Information') }}
 					</h3>
 					
@@ -71,8 +71,8 @@
 				</div>
 
 				<!-- Section 2: Specialties / Subjects -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm space-y-6">
-					<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3 mb-4">
+				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-6">
+					<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3 mb-4">
 						{{ __('Subjects & Curriculum') }}
 					</h3>
 
@@ -99,8 +99,8 @@
 				</div>
 
 				<!-- Section 3: Qualifications -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-2xl p-6 shadow-sm space-y-6">
-					<h3 class="text-lg font-bold text-ink-gray-9 border-b pb-3">
+				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-6">
+					<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
 						{{ __('Qualifications') }}
 					</h3>
 
@@ -108,7 +108,7 @@
 						<div
 							v-for="(q, idx) in qualifications"
 							:key="idx"
-							class="flex items-start justify-between border rounded-xl px-4 py-3.5 text-sm text-ink-gray-7 bg-surface-gray-1 hover:border-outline-gray-3 transition-colors"
+							class="flex items-start justify-between border border-outline-gray-2 rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3 transition-colors"
 						>
 							<div class="space-y-1">
 								<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
@@ -124,18 +124,20 @@
 									<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
 								</div>
 							</div>
-							<button
-								type="button"
+							<Button
+								variant="outline"
+								theme="red"
+								size="sm"
 								@click="removeQualification(idx)"
-								class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5"
+								class="ml-4 shrink-0 mt-0.5"
 							>
 								{{ __('Remove') }}
-							</button>
+							</Button>
 						</div>
 					</div>
 					<div
 						v-else
-						class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-xl p-6 text-center"
+						class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-outline-gray-2 border-dashed rounded-md p-5 text-center"
 					>
 						{{ __('No qualifications added yet. At least one qualification is required.') }}
 					</div>
@@ -194,7 +196,6 @@
 								type="button"
 								variant="outline"
 								@click="addQualification"
-								class="rounded-xl text-xs font-semibold px-4 h-9 justify-center"
 							>
 								{{ __('Add Row') }}
 							</Button>
@@ -207,7 +208,6 @@
 					<router-link :to="{ name: 'TutorProfile' }">
 						<Button
 							variant="outline"
-							class="rounded-xl text-xs font-semibold px-5 !py-3"
 						>
 							{{ __('Cancel') }}
 						</Button>
@@ -216,7 +216,6 @@
 						:loading="saving"
 						variant="solid"
 						type="submit"
-						class="rounded-xl text-xs font-semibold px-6 !py-3 !bg-gradient-to-r !from-indigo-600 !to-blue-600 hover:!from-indigo-500 hover:!to-blue-500 !text-white !border-none transition-all duration-300"
 					>
 						{{ __('Create Profile') }}
 					</Button>
@@ -378,11 +377,3 @@ async function saveProfile() {
 }
 </script>
 
-<style scoped>
-:deep(select),
-:deep(button[data-slot="trigger"]),
-:deep(.select-trigger) {
-	width: 100% !important;
-	max-width: 100% !important;
-}
-</style>

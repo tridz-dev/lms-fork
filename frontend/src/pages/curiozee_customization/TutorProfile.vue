@@ -6,7 +6,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-5xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading || loadingOptions" class="flex justify-center py-20">
 				<LoadingIndicator class="w-10 h-10 text-gray-400" />
@@ -14,7 +14,7 @@
 
 			<!-- Empty State: No Profile -->
 			<div v-else-if="!profile"
-				class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
+				class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
@@ -26,18 +26,18 @@
 					</p>
 				</div>
 				<router-link :to="{ name: 'TutorProfileCreate' }">
-					<Button variant="solid" class="font-semibold text-xs mt-2">
+					<Button variant="solid">
 						{{ __('Create Tutor Profile') }}
 					</Button>
 				</router-link>
 			</div>
 
 			<!-- Profile Edit/View Form -->
-			<div v-else class="space-y-6 bg-surface-white">
+			<div v-else class="space-y-6">
 				<div class="flex justify-between items-start border-b pb-4">
 					<div>
 						<div class="flex items-center gap-3">
-							<h2 class="text-xl font-semibold text-ink-gray-9">{{ form.tutor_name || __('Tutor Profile') }}</h2>
+							<h2 class="text-2xl font-semibold text-ink-gray-9">{{ form.tutor_name || __('Tutor Profile') }}</h2>
 							<Badge
 								v-if="profile?.verification_status"
 								:theme="getVerificationTheme(profile.verification_status)"
@@ -56,7 +56,7 @@
 				</div>
 
 				<!-- TAB: Profile Details -->
-				<div v-if="activeTab === 'profile'" class="space-y-6 max-w-3xl">
+				<div v-if="activeTab === 'profile'" class="space-y-6 max-w-2xl">
 					<form @submit.prevent="saveProfile" class="space-y-6">
 						<div class="space-y-4">
 							<FormControl v-model="form.tutor_name" :disabled="isReadOnly" type="text"
@@ -153,7 +153,7 @@
 
 							<div v-if="qualifications.length" class="space-y-2.5">
 								<div v-for="(q, idx) in qualifications" :key="idx"
-									class="flex items-start justify-between border rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
+									class="flex items-start justify-between border border-outline-gray-2 rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
 									<div class="space-y-1">
 										<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
 											<span class="font-semibold">{{ q.qualification }}</span>
@@ -170,14 +170,20 @@
 												}}</span>
 										</div>
 									</div>
-									<button v-if="!isReadOnly" type="button" @click="removeQualification(idx)"
-										class="text-xs font-semibold text-red-500 hover:text-red-600 hover:underline ml-4 shrink-0 mt-0.5">
+									<Button
+										v-if="!isReadOnly"
+										variant="outline"
+										theme="red"
+										size="sm"
+										@click="removeQualification(idx)"
+										class="ml-4 shrink-0 mt-0.5"
+									>
 										{{ __('Remove') }}
-									</button>
+									</Button>
 								</div>
 							</div>
 							<div v-else
-								class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-dashed rounded-md p-4 text-center">
+								class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-outline-gray-2 border-dashed rounded-md p-4 text-center">
 								{{ __('No qualifications added yet. At least one is required.') }}
 							</div>
 
@@ -232,8 +238,7 @@
 								</div>
 								
 								<div class="flex justify-end">
-									<Button type="button" variant="outline" @click="addQualification"
-										class="rounded-xl text-xs font-semibold px-4 h-9 justify-center">
+									<Button type="button" variant="outline" @click="addQualification">
 										{{ __('Add Row') }}
 									</Button>
 								</div>
@@ -255,8 +260,7 @@
 
 						<!-- Submit -->
 						<div v-if="!isReadOnly" class="flex justify-end pt-4 border-t">
-							<Button :loading="saving" variant="solid" type="submit"
-								class="rounded-md text-xs font-semibold px-5">
+							<Button :loading="saving" variant="solid" type="submit">
 								{{ __('Update Profile') }}
 							</Button>
 						</div>
@@ -280,7 +284,7 @@
 							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Weekly Availability Slots') }}</h3>
 							<p class="text-sm text-ink-gray-5 mt-0.5">{{ __('Set up your recurring weekly slot generation patterns.') }}</p>
 						</div>
-						<Button @click="openAddModal" variant="solid" class="text-xs font-semibold">
+						<Button @click="openAddModal" variant="solid">
 							<template #prefix>
 								<Plus class="w-3.5 h-3.5" />
 							</template>
@@ -290,12 +294,12 @@
 
 					<div v-if="rules.length" class="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div v-for="rule in rules" :key="rule.name"
-							class="border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between">
+							class="border border-outline-gray-2 rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between">
 							<div class="space-y-3">
 								<!-- Header: Weekday & Active Status -->
 								<div class="flex justify-between items-start">
 									<div>
-										<h4 class="font-bold text-ink-gray-9 text-sm">
+										<h4 class="font-semibold text-ink-gray-9 text-sm">
 											{{ getWeekdaysString(rule.weekday) }}
 										</h4>
 										<p class="text-xs text-ink-gray-5 mt-0.5">
@@ -342,12 +346,10 @@
 							<div class="flex justify-end items-center gap-2.5 pt-3 border-t mt-4">
 								<!-- Draft-only actions -->
 								<template v-if="rule.docstatus === 0">
-									<Button @click="openEditModal(rule)" variant="outline"
-										class="text-xs font-semibold">
+									<Button @click="openEditModal(rule)" variant="outline">
 										{{ __('Edit') }}
 									</Button>
-									<Button @click="deleteRule(rule.name)" variant="outline"
-										class="text-xs font-semibold text-red-600 hover:text-red-700">
+									<Button @click="deleteRule(rule.name)" variant="outline" theme="red">
 										{{ __('Delete') }}
 									</Button>
 								</template>
@@ -356,10 +358,10 @@
 					</div>
 
 					<div v-else
-						class="text-center py-12 border border-dashed rounded-md text-ink-gray-5 space-y-3 bg-surface-white">
+						class="text-center py-12 border border-outline-gray-2 border-dashed rounded-md text-ink-gray-5 space-y-3 bg-surface-white">
 						<p>{{ __('No availability rules defined yet. Create your first rule to generate booking slots.')
 							}}</p>
-						<Button @click="openAddModal" variant="solid" class="text-xs font-semibold mx-auto">
+						<Button @click="openAddModal" variant="solid" class="mx-auto">
 							{{ __('Create Slots') }}
 						</Button>
 					</div>
@@ -808,11 +810,3 @@ async function confirmDeleteRule() {
 }
 </script>
 
-<style scoped>
-:deep(select),
-:deep(button[data-slot="trigger"]),
-:deep(.select-trigger) {
-	width: 100% !important;
-	max-width: 100% !important;
-}
-</style>
