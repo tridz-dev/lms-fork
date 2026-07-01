@@ -6,7 +6,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
+		<div class="flex min-h-0 w-full flex-1 flex-col pb-10">
 			<!-- Loading State -->
 			<div v-if="profileStore.profile.loading" class="flex justify-center py-20">
 				<div class="flex flex-col items-center gap-3">
@@ -16,189 +16,247 @@
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile"
-				class="text-center py-16 border border-outline-gray-2 rounded-md space-y-5 bg-surface-white max-w-xl mx-auto mt-10">
-				<div class="flex flex-col items-center justify-center space-y-3 px-6">
-					<div class="p-4 bg-surface-gray-2 rounded-full text-ink-gray-7">
-						<User class="w-8 h-8 stroke-1.5" />
+			<div v-else-if="!profile" class="p-5">
+				<div class="text-center py-16 border border-outline-gray-2 rounded-md space-y-5 bg-surface-white max-w-xl mx-auto mt-10">
+					<div class="flex flex-col items-center justify-center space-y-3 px-6">
+						<div class="p-4 bg-surface-gray-2 rounded-full text-ink-gray-7">
+							<User class="w-8 h-8 stroke-1.5" />
+						</div>
+						<h3 class="text-xl font-semibold text-ink-gray-9">{{ __('No Student Profile Linked') }}</h3>
+						<p class="text-sm text-ink-gray-6 max-w-sm">
+							{{ __('Please setup your student profile to configure your academic details and start booking sessions.') }}
+						</p>
 					</div>
-					<h3 class="text-xl font-semibold text-ink-gray-9">{{ __('No Student Profile Linked') }}</h3>
-					<p class="text-sm text-ink-gray-6 max-w-sm">
-						{{ __('Please setup your student profile to configure your academic details and start booking sessions.') }}
-					</p>
+					<router-link :to="{ name: 'StudentProfileCreate' }">
+						<Button variant="solid" size="md" class="mt-2">
+							{{ __('Create Student Profile') }}
+						</Button>
+					</router-link>
 				</div>
-				<router-link :to="{ name: 'StudentProfileCreate' }">
-					<Button variant="solid" size="md" class="mt-2">
-						{{ __('Create Student Profile') }}
-					</Button>
-				</router-link>
 			</div>
 
 			<!-- Profile Edit/View Section -->
-			<div v-else class="space-y-6">
-				<!-- Header Card -->
-				<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-					<div>
-						<div class="flex items-center gap-3">
-							<h2 class="text-2xl font-semibold text-ink-gray-9">{{ form.full_name || __('Student Profile') }}</h2>
-							<Badge theme="blue" size="sm" :label="__('Student')" />
-						</div>
-						<p class="text-sm text-ink-gray-5 mt-1">{{ __('Manage your personal and academic details.') }}</p>
-					</div>
-
-					<!-- Edit Mode Toggle Actions -->
-					<div class="flex gap-2 shrink-0">
-						<template v-if="isReadOnly">
-							<Button
-								variant="solid"
-								@click="enterEditMode"
-							>
-								<template #prefix>
-									<Edit class="w-3.5 h-3.5" />
-								</template>
-								{{ __('Edit Profile') }}
-							</Button>
-						</template>
-						<template v-else>
-							<Button
-								variant="outline"
-								@click="cancelEdit"
-							>
-								{{ __('Cancel') }}
-							</Button>
-							<Button
-								:loading="saving"
-								variant="solid"
-								@click="saveProfile"
-							>
-								{{ __('Save Changes') }}
-							</Button>
-						</template>
-					</div>
+			<div v-else>
+				<!-- Banner Cover Image -->
+				<div class="group relative h-[130px] w-full">
+					<img
+						v-if="$user?.data?.cover_image"
+						:src="$user.data.cover_image"
+						class="h-[130px] w-full object-cover object-center"
+					/>
+					<div
+						v-else
+						class="h-[130px] w-full bg-surface-gray-2"
+					></div>
 				</div>
 
-				<!-- Form Content -->
-				<form @submit.prevent="saveProfile" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-					
-					<!-- Left Details Card (Personal) -->
-					<div class="md:col-span-2 space-y-6">
-						<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5">
-							<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
-								{{ __('Personal Details') }}
-							</h3>
-
-							<div class="space-y-4">
-								<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-									<div class="space-y-1">
-										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Full Name') }}</span>
-										<p class="text-base text-ink-gray-9 font-small">{{ form.full_name }}</p>
-									</div>
-									<div class="space-y-1">
-										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Phone Number') }}</span>
-										<p class="text-base text-ink-gray-9 font-small">{{ form.phone_number || __('Not specified') }}</p>
-									</div>
-									<div class="space-y-1 sm:col-span-2">
-										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Time Zone') }}</span>
-										<p class="text-base text-ink-gray-9 font-small">{{ form.time_zone }}</p>
-									</div>
-								</div>
-								
-								<div v-else class="space-y-4">
-									<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-										<FormControl
-											v-model="form.full_name"
-											type="text"
-											:label="__('Full Name')"
-											:required="true"
-										/>
-										<FormControl
-											v-model="form.phone_number"
-											type="text"
-											:label="__('Phone Number')"
-											:required="true"
-										/>
-									</div>
-									<FormControl
-										v-model="form.time_zone"
-										type="select"
-										:options="tzOptions"
-										:label="__('Timezone')"
-										:required="true"
+				<!-- Main Layout Container -->
+				<div class="mx-auto -mt-10 md:-mt-4 max-w-4xl w-full px-5">
+					<div class="flex flex-col md:flex-row items-center justify-between border-b pb-6">
+						<div class="flex flex-col md:flex-row items-center">
+							<div>
+								<div class="relative">
+									<img
+										v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
+										:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
+										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
 									/>
+									<div
+										v-else
+										class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7"
+									>
+										{{ (form.full_name || $user?.data?.full_name || 'S').charAt(0).toUpperCase() }}
+									</div>
 								</div>
 							</div>
+							<div class="ms-6 mt-5 text-center md:text-left">
+								<div class="flex items-center gap-3 justify-center md:justify-start">
+									<h2 class="text-3xl font-semibold text-ink-gray-9">
+										{{ form.full_name || __('Student Profile') }}
+									</h2>
+									<Badge theme="blue" size="sm" :label="__('Student')" />
+								</div>
+								<p class="text-sm text-ink-gray-5 mt-1">
+									{{ __('Manage your personal and academic details.') }}
+								</p>
+							</div>
+						</div>
+
+						<!-- Edit Mode Toggle Actions -->
+						<div class="flex gap-2 shrink-0 mt-5 md:mt-0">
+							<template v-if="isReadOnly">
+								<Button
+									variant="solid"
+									@click="enterEditMode"
+								>
+									<template #prefix>
+										<Edit class="w-3.5 h-3.5 text-ink-white" />
+									</template>
+									{{ __('Edit Profile') }}
+								</Button>
+							</template>
+							<template v-else>
+								<Button
+									variant="outline"
+									@click="cancelEdit"
+								>
+									{{ __('Cancel') }}
+								</Button>
+								<Button
+									:loading="saving"
+									variant="solid"
+									@click="saveProfile"
+								>
+									{{ __('Save Changes') }}
+								</Button>
+							</template>
 						</div>
 					</div>
 
-					<!-- Right Details Card (Academic) -->
-					<div class="md:col-span-1 space-y-6">
-						<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5 space-y-5 h-full">
-							<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
-								{{ __('Academic Details') }}
-							</h3>
+					<!-- Tabs Navigation -->
+					<div class="mb-4 mt-10">
+						<TabButtons class="inline-block" :buttons="profileTabs" v-model="activeTab" />
+					</div>
 
-							<div class="space-y-4">
-								<div v-if="isReadOnly" class="space-y-4">
-									<div class="space-y-1">
-										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Board') }}</span>
-										<p class="text-base text-ink-gray-9 font-small">{{ form.board }}</p>
-									</div>
-									<div class="space-y-1">
-										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Class') }}</span>
-										<p class="text-base text-ink-gray-9 font-small">{{ form.class }}</p>
-									</div>
-									<div class="space-y-1">
-										<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('School') }}</span>
-										<p class="text-base text-ink-gray-9 font-small">{{ form.school || __('Not specified') }}</p>
-									</div>
-								</div>
+					<!-- Form Content -->
+					<form @submit.prevent="saveProfile" class="space-y-6 max-w-2xl mt-6">
+						<!-- TAB: Personal Details -->
+						<div v-if="activeTab === 'personal'" class="space-y-6">
+							<Uploader
+								v-if="!isReadOnly"
+								v-model="form.profile_photo"
+								:label="__('Profile Photo')"
+								:required="false"
+								shape="circle"
+							/>
+							
+							<div class="bg-surface-white p-5 space-y-5">
+								<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
+									{{ __('Personal Details') }}
+								</h3>
 
-								<div v-else class="space-y-4">
-									<FormControl
-										v-model="form.board"
-										type="text"
-										:label="__('Board')"
-										:required="true"
-										placeholder="e.g. CBSE"
-									/>
-									<FormControl
-										v-model="form.class"
-										type="text"
-										:label="__('Class')"
-										:required="true"
-										placeholder="e.g. Class 10"
-									/>
-									<FormControl
-										v-model="form.school"
-										type="text"
-										:label="__('School')"
-										placeholder="e.g. Lincoln High School"
-									/>
+								<div class="space-y-4">
+									<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+										<div class="space-y-1">
+											<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Full Name') }}</span>
+											<p class="text-base text-ink-gray-9 font-small">{{ form.full_name }}</p>
+										</div>
+										<div class="space-y-1">
+											<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Phone Number') }}</span>
+											<p class="text-base text-ink-gray-9 font-small">{{ form.phone_number || __('Not specified') }}</p>
+										</div>
+										<div class="space-y-1 sm:col-span-2">
+											<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Time Zone') }}</span>
+											<p class="text-base text-ink-gray-9 font-small">{{ form.time_zone }}</p>
+										</div>
+									</div>
+									
+									<div v-else class="space-y-4">
+										<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+											<FormControl
+												v-model="form.full_name"
+												type="text"
+												:label="__('Full Name')"
+												:required="true"
+											/>
+											<FormControl
+												v-model="form.phone_number"
+												type="text"
+												:label="__('Phone Number')"
+												:required="true"
+											/>
+										</div>
+										<FormControl
+											v-model="form.time_zone"
+											type="select"
+											:options="tzOptions"
+											:label="__('Timezone')"
+											:required="true"
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
-				</form>
+						<!-- TAB: Academic Details -->
+						<div v-if="activeTab === 'academic'" class="space-y-6">
+							<div class="bg-surface-white p-5 space-y-5">
+								<h3 class="text-lg font-semibold text-ink-gray-9 border-b pb-3">
+									{{ __('Academic Details') }}
+								</h3>
+
+								<div class="space-y-4">
+									<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+										<div class="space-y-1">
+											<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Board') }}</span>
+											<p class="text-base text-ink-gray-9 font-small">{{ form.board }}</p>
+										</div>
+										<div class="space-y-1">
+											<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Class') }}</span>
+											<p class="text-base text-ink-gray-9 font-small">{{ form.class }}</p>
+										</div>
+										<div class="space-y-1">
+											<span class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('School') }}</span>
+											<p class="text-base text-ink-gray-9 font-small">{{ form.school || __('Not specified') }}</p>
+										</div>
+									</div>
+
+									<div v-else class="space-y-4">
+										<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+											<FormControl
+												v-model="form.board"
+												type="text"
+												:label="__('Board')"
+												:required="true"
+												placeholder="e.g. CBSE"
+											/>
+											<FormControl
+												v-model="form.class"
+												type="text"
+												:label="__('Class')"
+												:required="true"
+												placeholder="e.g. Class 10"
+											/>
+											<FormControl
+												v-model="form.school"
+												type="text"
+												:label="__('School')"
+												placeholder="e.g. Lincoln High School"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { computed, reactive, ref, onMounted } from 'vue'
-import { Breadcrumbs, Button, FormControl, call, toast as frappeToast, usePageMeta } from 'frappe-ui'
+import { computed, inject, reactive, ref, onMounted } from 'vue'
+import { Breadcrumbs, Button, FormControl, TabButtons, Badge, call, toast as frappeToast, usePageMeta } from 'frappe-ui'
 import { useStudentProfileStore } from '@/stores/useStudentProfileStore'
 import { usersStore } from '@/stores/user'
 import { getTimezones } from '@/utils'
 import { User, Edit } from 'lucide-vue-next'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
+import Uploader from '@/components/Controls/Uploader.vue'
 
 const profileStore = useStudentProfileStore()
 const userStore = usersStore()
+const $user = inject('$user')
 
 const isReadOnly = ref(true)
 const saving = ref(false)
+const activeTab = ref('personal')
+
+const profileTabs = [
+	{ value: 'personal', label: __('Personal Details') },
+	{ value: 'academic', label: __('Academic Details') }
+]
 
 usePageMeta(() => {
 	return {
@@ -222,6 +280,7 @@ const form = reactive({
 	board: '',
 	class: '',
 	school: '',
+	profile_photo: '',
 })
 
 onMounted(async () => {
@@ -241,6 +300,7 @@ function resetForm() {
 		form.board = profile.value.board || ''
 		form.class = profile.value.class || ''
 		form.school = profile.value.school || ''
+		form.profile_photo = profile.value.profile_photo || ''
 	}
 }
 
@@ -268,6 +328,7 @@ async function saveProfile() {
 			board: form.board,
 			class_name: form.class,
 			school: form.school || null,
+			profile_photo: form.profile_photo || null,
 		})
 		if (res && res.success) {
 			frappeToast.success(res.message)
@@ -285,4 +346,3 @@ async function saveProfile() {
 	}
 }
 </script>
-
