@@ -77,6 +77,8 @@ const props = defineProps({
 	},
 })
 
+const emit = defineEmits(['status-updated'])
+
 const dayjs = inject('$dayjs')
 const resolving = ref(false)
 const completing = ref(false)
@@ -125,6 +127,7 @@ async function markCompleted() {
 	completing.value = true
 	try {
 		await revisionStore.updateRecommendationStatus(props.recommendation.name, 'Completed')
+		emit('status-updated', props.recommendation.name, 'Completed')
 	} catch (e) {
 		console.error(e)
 	} finally {
@@ -136,6 +139,7 @@ async function dismiss() {
 	dismissing.value = true
 	try {
 		await revisionStore.updateRecommendationStatus(props.recommendation.name, 'Dismissed')
+		emit('status-updated', props.recommendation.name, 'Dismissed')
 	} catch (e) {
 		console.error(e)
 	} finally {

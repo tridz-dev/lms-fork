@@ -29,7 +29,7 @@
 			:liveClasses="adminLiveClasses"
 			:evals="adminEvals"
 		/>
-		<StudentHome
+		<StudentDashboard
 			v-else-if="currentTab === 'student'"
 			:myLiveClasses="myLiveClasses"
 		/>
@@ -41,7 +41,7 @@ import { computed, inject, onMounted, ref } from 'vue'
 import { call, createResource, usePageMeta } from 'frappe-ui'
 import { sessionStore } from '@/stores/session'
 import { useRouter } from 'vue-router'
-import StudentHome from '@/pages/Home/StudentHome.vue'
+import StudentDashboard from '@/pages/curiozee_customization/StudentDashboard.vue'
 import AdminHome from '@/pages/Home/AdminHome.vue'
 import Streak from '@/pages/Home/Streak.vue'
 import { useStudentProfileStore } from '@/stores/useStudentProfileStore'
