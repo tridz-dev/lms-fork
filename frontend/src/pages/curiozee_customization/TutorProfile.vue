@@ -19,14 +19,13 @@
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
 					</div>
-					<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Tutor Profile linked to your account') }}
-					</h3>
+					<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Tutor Profile linked to your account') }}</h3>
 					<p class="text-sm text-ink-gray-7 max-w-sm">
 						{{ __('Create a tutor profile to start configuring availability rules and taking bookings.') }}
 					</p>
 				</div>
-				<router-link :to="{ name: 'TutorProfileCreate' }">
-					<Button variant="solid">
+				<router-link :to="{ name: 'TutorProfileCreate' }" custom v-slot="{ navigate }">
+					<Button variant="solid" @click="navigate" class="mt-2">
 						{{ __('Create Tutor Profile') }}
 					</Button>
 				</router-link>

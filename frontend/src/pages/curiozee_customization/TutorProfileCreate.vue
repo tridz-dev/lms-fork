@@ -205,9 +205,10 @@
 
 				<!-- Form Actions -->
 				<div class="flex justify-end gap-3 pt-4 border-t">
-					<router-link :to="{ name: 'TutorProfile' }">
+					<router-link :to="{ name: 'TutorProfile' }" custom v-slot="{ navigate }">
 						<Button
 							variant="outline"
+							@click="navigate"
 						>
 							{{ __('Cancel') }}
 						</Button>
