@@ -52,7 +52,7 @@
 
 				<!-- Main Layout Container -->
 				<div class="mx-auto -mt-10 md:-mt-4 max-w-4xl w-full px-5">
-					<div class="flex flex-col md:flex-row items-center justify-between border-b pb-6">
+					<div class="flex flex-col md:flex-row items-center justify-between pb-5">
 						<div class="flex flex-col md:flex-row items-center">
 							<div>
 								<div class="relative">

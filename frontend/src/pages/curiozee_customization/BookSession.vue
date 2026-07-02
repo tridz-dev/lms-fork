@@ -7,82 +7,59 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
-			<div v-if="tutorDetails.loading" class="space-y-8 animate-pulse">
-				<!-- Header Skeleton -->
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b">
-					<div class="flex items-center gap-4">
-						<div class="h-20 w-20 rounded-full bg-surface-gray-3 shrink-0"></div>
-						<div class="space-y-3">
-							<div class="h-6 w-48 rounded bg-surface-gray-3"></div>
-							<div class="h-4 w-64 rounded bg-surface-gray-2"></div>
+		<div class="flex min-h-0 w-full flex-1 flex-col pb-10">
+			<!-- Loading State (Skeleton) -->
+			<div v-if="tutorDetails.loading" class="w-full">
+				<!-- Banner Cover Skeleton -->
+				<div class="h-[130px] w-full bg-surface-gray-2 animate-pulse"></div>
+				<!-- Content Skeleton -->
+				<div class="mx-auto -mt-10 max-w-4xl w-full px-5 space-y-8 animate-pulse">
+					<div class="flex flex-col md:flex-row justify-between items-center gap-6">
+						<div class="flex flex-col md:flex-row items-center">
+							<div class="h-[100px] w-[100px] rounded-full bg-surface-gray-3 border-4 border-white shrink-0 shadow-sm"></div>
+							<div class="text-center md:text-left md:ms-6 mt-5 md:mt-0 space-y-3">
+								<div class="h-6 w-48 rounded bg-surface-gray-3 mx-auto md:mx-0"></div>
+								<div class="h-4 w-64 rounded bg-surface-gray-2 mx-auto md:mx-0"></div>
+							</div>
+						</div>
+						<div class="h-16 w-32 rounded bg-surface-gray-3 shrink-0 shadow-sm"></div>
+					</div>
+
+					<!-- Bio Skeleton -->
+					<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white space-y-4">
+						<div class="h-4 w-24 rounded bg-surface-gray-3"></div>
+						<div class="space-y-2">
+							<div class="h-3 w-full rounded bg-surface-gray-2"></div>
+							<div class="h-3 w-11/12 rounded bg-surface-gray-2"></div>
+							<div class="h-3 w-4/5 rounded bg-surface-gray-2"></div>
 						</div>
 					</div>
-					<div class="space-y-2 text-left sm:text-right shrink-0">
-						<div class="h-3 w-16 rounded bg-surface-gray-2 sm:ml-auto"></div>
-						<div class="h-6 w-24 rounded bg-surface-gray-3 sm:ml-auto"></div>
-					</div>
-				</div>
 
-				<!-- Bio Skeleton -->
-				<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white space-y-4">
-					<div class="h-4 w-24 rounded bg-surface-gray-3"></div>
-					<div class="space-y-2">
-						<div class="h-3 w-full rounded bg-surface-gray-2"></div>
-						<div class="h-3 w-11/12 rounded bg-surface-gray-2"></div>
-						<div class="h-3 w-4/5 rounded bg-surface-gray-2"></div>
-					</div>
-				</div>
-
-				<!-- Tags (Subjects / Boards / Classes) Skeleton -->
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-					<div v-for="i in 3" :key="i" class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white space-y-3">
-						<div class="h-3 w-20 rounded bg-surface-gray-3"></div>
-						<div class="flex flex-wrap gap-1.5 pt-1">
-							<div class="h-6 w-16 rounded bg-surface-gray-2"></div>
-							<div class="h-6 w-20 rounded bg-surface-gray-2"></div>
-							<div class="h-6 w-14 rounded bg-surface-gray-2"></div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Qualifications Skeleton -->
-				<div class="space-y-3">
-					<div class="h-4 w-32 rounded bg-surface-gray-3"></div>
-					<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-						<div v-for="i in 2" :key="i" class="border border-outline-gray-2 rounded-xl p-4 bg-surface-white space-y-3">
-							<div class="h-4 w-24 rounded bg-surface-gray-3"></div>
-							<div class="h-3.5 w-32 rounded bg-surface-gray-2"></div>
-							<div class="h-3 w-16 rounded bg-surface-gray-2"></div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Slot Picker Skeleton -->
-				<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white space-y-6">
-					<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b pb-5">
-						<div v-for="i in 3" :key="i" class="space-y-2">
-							<div class="h-3 w-16 rounded bg-surface-gray-3"></div>
-							<div class="h-10 w-full rounded bg-surface-gray-2"></div>
-						</div>
-					</div>
-					<div class="space-y-3">
-						<div class="h-4 w-28 rounded bg-surface-gray-3"></div>
-						<div class="flex gap-2 pb-1 overflow-x-auto">
-							<div v-for="i in 5" :key="i" class="h-16 w-16 rounded-lg bg-surface-gray-2 shrink-0"></div>
+					<!-- Tags Skeleton -->
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+						<div v-for="i in 3" :key="i" class="border border-outline-gray-2 rounded-xl p-5 bg-surface-white space-y-3">
+							<div class="h-3 w-20 rounded bg-surface-gray-3"></div>
+							<div class="flex flex-wrap gap-1.5 pt-1">
+								<div class="h-6 w-16 rounded bg-surface-gray-2"></div>
+								<div class="h-6 w-20 rounded bg-surface-gray-2"></div>
+								<div class="h-6 w-14 rounded bg-surface-gray-2"></div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			
 			<div v-else-if="tutorDetails.data">
 				<BookingFlow :tutor="tutorDetails.data" />
 			</div>
-			<EmptyStateLayout
-				v-else
-				name="Tutor"
-				:title="__('Failed to load tutor details')"
-				:description="__('Please go back and select a tutor.')"
-			/>
+			
+			<div v-else class="p-5">
+				<EmptyStateLayout
+					name="Tutor"
+					:title="__('Failed to load tutor details')"
+					:description="__('Please go back and select a tutor.')"
+				/>
+			</div>
 		</div>
 	</div>
 
