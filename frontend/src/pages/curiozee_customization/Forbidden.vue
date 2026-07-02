@@ -15,7 +15,7 @@
 					403 Forbidden
 				</h1>
 				<p class="text-ink-gray-5 text-sm mt-1">
-					{{ __('You do not have permission to access this page. This area is reserved for authenticated Tutors.') }}
+					{{ __('You do not have permission to access this page.') }}
 				</p>
 			</div>
 

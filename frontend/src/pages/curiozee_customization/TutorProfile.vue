@@ -55,7 +55,7 @@
 								<img
 									v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
 									:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
-									class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+									class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white"
 								/>
 								<div
 									v-else
@@ -637,7 +637,6 @@ async function saveProfile() {
 		})
 		if (res && res.success) {
 			frappeToast.success(res.message)
-			isCreating.value = false
 			await dashboardStore.dashboardData.submit()
 		} else {
 			frappeToast.error(res.error || __('Failed to save profile.'))

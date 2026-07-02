@@ -177,7 +177,8 @@
 									<Button
 										v-if="hasActiveFilters"
 										variant="ghost"
-										class="w-full text-red-500 hover:bg-red-50"
+										theme="red"
+										class="w-full"
 										@click="() => { clearFilters(); close(); }"
 									>
 										{{ __('Clear') }}

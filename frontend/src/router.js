@@ -250,12 +250,18 @@ const routes = [
 	{
 		path: '/sessions',
 		name: 'Sessions',
-		component: () => import('@/pages/curiozee_customization/Sessions.vue')
+		component: () => import('@/pages/curiozee_customization/Sessions.vue'),
+		beforeEnter: requireStudentRole
 	},
 	{
 		path: '/sessions/book',
 		name: 'BookSession',
-		component: () => import('@/pages/curiozee_customization/BookSession.vue')
+		component: () => import('@/pages/curiozee_customization/BookSession.vue'),
+		beforeEnter: requireStudentRole
+	},
+	{
+		path: '/book-a-tutor',
+		redirect: { name: 'BookSession' }
 	},
 	{
 		path: '/sessions/history',
@@ -265,12 +271,14 @@ const routes = [
 	{
 		path: '/tutors',
 		name: 'TutorSearch',
-		component: () => import('@/pages/curiozee_customization/TutorSearch.vue')
+		component: () => import('@/pages/curiozee_customization/TutorSearch.vue'),
+		beforeEnter: requireStudentRole
 	},
 	{
 		path: '/revision',
 		name: 'Revision',
-		component: () => import('@/pages/curiozee_customization/Revision.vue')
+		component: () => import('@/pages/curiozee_customization/Revision.vue'),
+		beforeEnter: requireStudentRole
 	},
 	{
 		path: '/forbidden',
@@ -353,9 +361,12 @@ export async function requireTutorRole(to, from, next) {
 		return
 	}
 
-	// 2. Check Tutor role.
+	// 2. Check Tutor/System Manager role.
 	const roles = userResource.data?.roles || []
-	if (!roles.includes('Tutor')) {
+	const isTutor = roles.includes('Tutor')
+	const isSystemManager = roles.includes('System Manager') || roles.includes('Administrator')
+
+	if (!isTutor && !isSystemManager) {
 		return next({ name: 'Forbidden' })
 	}
 
@@ -387,7 +398,7 @@ export async function requireStudentRole(to, from, next) {
 	const isStudent = roles.includes('LMS Student')
 	const isSystemManager = roles.includes('System Manager') || roles.includes('Administrator')
 
-	if (isTutor) {
+	if (isTutor && !isSystemManager) {
 		return next({ name: 'Forbidden' })
 	}
 
@@ -417,6 +428,16 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 	if (!isLoggedIn) {
+		const protectedRoutes = [
+			'Sessions', 'BookSession', 'Revision', 'StudentProfile', 'StudentProfileCreate', 'StudentDashboard',
+			'TutorDashboard', 'AvailabilityRules', 'SlotCalendar', 'TutorSessions', 'TutorProfileCreate', 'TutorProfile', 'TutorSearch'
+		]
+		if (protectedRoutes.includes(to.name) || to.path.startsWith('/tutor/') || to.path.startsWith('/student/') || to.path.startsWith('/sessions/')) {
+			const currentUrl = window.location.pathname + window.location.search
+			window.location.href = `/login?redirect-to=${encodeURIComponent(currentUrl)}`
+			return
+		}
+
 		if (to.name == 'Home') router.push({ name: 'Courses' })
 
 		await settings.promise

@@ -59,7 +59,7 @@
 									<img
 										v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
 										:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
-										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white"
 									/>
 									<div
 										v-else

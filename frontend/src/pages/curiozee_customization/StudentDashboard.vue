@@ -38,47 +38,44 @@
 
 				<!-- 1. Continue Learning Banner -->
 				<div v-if="dashboardData.data?.continue_learning?.has_course"
-					class="continue-learning-banner relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300">
-					<!-- Background pattern -->
-					<div class="absolute right-0 top-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10 blur-xl"></div>
-					<div class="absolute bottom-0 left-1/3 -mb-6 h-48 w-48 rounded-full bg-white/10 blur-2xl"></div>
-
+					class="relative overflow-hidden rounded-2xl p-6 sm:p-8 bg-surface-gray-2 text-ink-gray-9 border border-outline-gray-2 shadow-sm hover:shadow-md transition-all duration-300">
 					<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
 						<div class="space-y-3 flex-1">
 							<span
-								class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
-								<Sparkles class="h-3.5 w-3.5 text-white" />
+								class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400">
+								<Sparkles class="h-3.5 w-3.5" />
 								{{ __('Continue Learning') }}
 							</span>
 							<div>
-								<h3 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+								<h3 class="text-2xl font-semibold tracking-tight text-ink-gray-9 sm:text-3xl">
 									{{ dashboardData.data.continue_learning.course_title }}
 								</h3>
-								<p class="mt-2 text-indigo-100 text-sm font-medium leading-relaxed">
-									<span class="text-white font-semibold">{{ __('Next Lesson:') }}</span>
+								<p class="mt-2 text-ink-gray-7 text-sm font-medium leading-relaxed">
+									<span class="text-ink-gray-9 font-semibold">{{ __('Next Lesson:') }}</span>
 									{{ ' ' + dashboardData.data.continue_learning.lesson_title }}
 								</p>
 							</div>
 
 							<!-- Progress bar -->
 							<div class="mt-4 max-w-md">
-								<div class="flex items-center justify-between text-xs text-indigo-100 font-semibold mb-1">
+								<div class="flex items-center justify-between text-xs text-ink-gray-5 font-semibold mb-1">
 									<span>{{ __('Course Progress') }}</span>
 									<span>{{ Math.round(dashboardData.data.continue_learning.progress) }}%</span>
 								</div>
-								<div class="h-2 w-full bg-white/25 rounded-full overflow-hidden">
-									<div class="h-full bg-emerald-400 rounded-full transition-all duration-500"
+								<div class="h-2 w-full bg-surface-gray-3 dark:bg-slate-800 rounded-full overflow-hidden">
+									<div class="h-full bg-emerald-500 rounded-full transition-all duration-500"
 										:style="{ width: `${dashboardData.data.continue_learning.progress}%` }"></div>
 								</div>
 							</div>
 						</div>
 
 						<div class="flex items-center">
-							<button @click="resumeLesson"
-								class="resume-button inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl shadow-md active:scale-95 transition-all duration-150">
-								<Play class="h-5 w-5 fill-current" />
+							<Button variant="solid" size="lg" @click="resumeLesson">
+								<template #prefix>
+									<Play class="h-4 w-4 fill-current" />
+								</template>
 								{{ __('Resume Lesson') }}
-							</button>
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -281,7 +278,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref, onMounted } from 'vue'
-import { createResource, call, usePageMeta } from 'frappe-ui'
+import { createResource, call, usePageMeta, Button } from 'frappe-ui'
 import { useRouter } from 'vue-router'
 import {
 	Calendar,
@@ -497,14 +494,14 @@ function getActivityIconClass(type: string) {
 function getActivityIconBorder(type: string) {
 	switch (type) {
 		case 'quiz':
-			return 'activity-badge-quiz'
+			return 'bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/30'
 		case 'session':
-			return 'activity-badge-session'
+			return 'bg-indigo-50 border-indigo-200 dark:bg-indigo-950/20 dark:border-indigo-900/30'
 		case 'revision':
-			return 'activity-badge-revision'
+			return 'bg-purple-50 border-purple-200 dark:bg-purple-950/20 dark:border-purple-900/30'
 		case 'lesson':
 		default:
-			return 'activity-badge-lesson'
+			return 'bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900/30'
 	}
 }
 
@@ -526,72 +523,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.continue-learning-banner {
-	background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%) !important;
-	color: #ffffff !important;
-}
-
-:global([data-theme="dark"]) .continue-learning-banner {
-	background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%) !important;
-	border: 1px solid #334155 !important;
-}
-
-.resume-button {
-	background-color: #ffffff !important;
-	color: #4f46e5 !important;
-}
-
-.resume-button:hover {
-	background-color: #f3f4f6 !important;
-}
-
-:global([data-theme="dark"]) .resume-button {
-	background-color: #1e293b !important;
-	color: #f8fafc !important;
-	border: 1px solid #475569 !important;
-}
-
-:global([data-theme="dark"]) .resume-button:hover {
-	background-color: #334155 !important;
-}
-
-.activity-badge-quiz {
-	background-color: #fef3c7;
-	border-color: #fde68a;
-}
-
-:global([data-theme="dark"]) .activity-badge-quiz {
-	background-color: rgba(217, 119, 6, 0.15) !important;
-	border-color: rgba(217, 119, 6, 0.3) !important;
-}
-
-.activity-badge-session {
-	background-color: #e0e7ff;
-	border-color: #c7d2fe;
-}
-
-:global([data-theme="dark"]) .activity-badge-session {
-	background-color: rgba(79, 70, 229, 0.15) !important;
-	border-color: rgba(79, 70, 229, 0.3) !important;
-}
-
-.activity-badge-revision {
-	background-color: #f3e8ff;
-	border-color: #e9d5ff;
-}
-
-:global([data-theme="dark"]) .activity-badge-revision {
-	background-color: rgba(147, 51, 234, 0.15) !important;
-	border-color: rgba(147, 51, 234, 0.3) !important;
-}
-
-.activity-badge-lesson {
-	background-color: #eff6ff;
-	border-color: #dbeafe;
-}
-
-:global([data-theme="dark"]) .activity-badge-lesson {
-	background-color: rgba(37, 99, 235, 0.15) !important;
-	border-color: rgba(37, 99, 235, 0.3) !important;
-}
 </style>
