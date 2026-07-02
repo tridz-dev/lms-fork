@@ -52,14 +52,14 @@
 
 				<!-- Main Layout Container -->
 				<div class="mx-auto -mt-10 md:-mt-4 max-w-4xl w-full px-5">
-					<div class="flex flex-col md:flex-row items-center justify-between border-b pb-6">
+					<div class="flex flex-col md:flex-row items-center justify-between pb-5">
 						<div class="flex flex-col md:flex-row items-center">
 							<div>
 								<div class="relative">
 									<img
 										v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
 										:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
-										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white object-cover"
+										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white"
 									/>
 									<div
 										v-else

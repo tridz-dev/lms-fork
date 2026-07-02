@@ -1,249 +1,259 @@
 <template>
-	<div class="space-y-6">
-		<!-- Tutor Profile Header -->
-		<div class="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-outline-gray-2 pb-5">
-			<Avatar
-				:image="tutor.profile_photo"
-				:label="tutor.tutor_name"
-				size="2xl"
-				class="avatar border border-outline-gray-2 shrink-0 h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover"
+	<div class="w-full">
+		<!-- Banner Cover Image -->
+		<div class="group relative h-[130px] w-full">
+			<img
+				v-if="tutor.cover_image"
+				:src="tutor.cover_image"
+				class="h-[130px] w-full object-cover object-center"
 			/>
-			<div class="flex-1 text-center md:text-left space-y-1.5">
-				<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
-					<h1 class="text-2xl sm:text-2xl font-extrabold text-ink-gray-9 leading-tight">
-						{{ tutor.tutor_name }}
-					</h1>
-					<Badge
-						v-if="tutor.verification_status === 'Verified' || true"
-						label="Verified"
-						theme="green"
-						size="sm"
-					>
-						<template #prefix>
-							<span class="mr-1">✔</span>
-						</template>
-					</Badge>
-				</div>
-				<p class="text-sm text-ink-gray-6 flex flex-wrap justify-center md:justify-start items-center gap-2">
-					<span class="font-medium">{{ tutor.years_of_experience || 0 }} {{ __('Years Experience') }}</span>
-					<span class="text-ink-gray-3">•</span>
-					<span>{{ tutor.timezone || systemTimezone }}</span>
-				</p>
-			</div>
-			<div class="text-center md:text-right shrink-0 md:border-l md:pl-6 border-outline-gray-2">
-				<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1">
-					{{ __('Hourly Rate') }}
-				</span>
-				<span class="text-2xl font-black text-ink-gray-9">
-					{{ TEST_BOOKING_AMOUNT }} {{ currency }}
-				</span>
-				<span class="text-xs text-ink-gray-5 block mt-0.5">/ {{ __('Hour') }}</span>
-			</div>
+			<div
+				v-else
+				class="h-[130px] w-full bg-surface-gray-2"
+			></div>
 		</div>
 
-		<!-- Biography Section -->
-		<div v-if="tutor.bio" class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
-			<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
-				{{ __('Biography') }}
-			</h3>
-			<p class="text-sm text-ink-gray-7 leading-relaxed whitespace-pre-line">
-				{{ tutor.bio }}
-			</p>
-		</div>
-
-		<!-- Tags Grid (Subjects, Boards, Classes) -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-			<!-- Subjects Card -->
-			<div class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
-				<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
-					{{ __('Main Subjects') }}
-				</h3>
-				<div v-if="tutor.subjects?.length" class="flex flex-wrap gap-1.5">
-					<Badge
-						v-for="sub in tutor.subjects"
-						:key="sub.subject"
-						:label="sub.subject"
-						theme="gray"
-						size="md"
-					/>
+		<!-- Main Layout Container -->
+		<div class="mx-auto -mt-10 md:-mt-4 max-w-4xl w-full px-5">
+			<!-- Tutor Profile Header -->
+			<div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-5">
+				<div class="flex flex-col md:flex-row items-center">
+					<div>
+						<div class="relative">
+							<img
+								v-if="tutor.profile_photo"
+								:src="tutor.profile_photo"
+								class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm"
+							/>
+							<div
+								v-else
+								class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm"
+							>
+								{{ (tutor.tutor_name || 'T').charAt(0).toUpperCase() }}
+							</div>
+						</div>
+					</div>
+					<div class="text-center md:text-left md:ms-6 mt-5 md:mt-0 flex-1">
+						<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+							<h2 class="text-3xl font-semibold text-ink-gray-9">
+								{{ tutor.tutor_name }}
+							</h2>
+							<Badge
+								v-if="tutor.verification_status"
+								:theme="tutor.verification_status === 'Verified' ? 'green' : 'gray'"
+								size="sm"
+							>
+								{{ tutor.verification_status }}
+							</Badge>
+						</div>
+						<p class="text-sm text-ink-gray-5 mt-1">
+							<span class="font-medium">{{ tutor.years_of_experience || 0 }} {{ __('Years of Experience') }}</span>
+							<span class="mx-2 text-ink-gray-3">•</span>
+							<span>{{ tutor.timezone || systemTimezone }}</span>
+						</p>
+					</div>
 				</div>
-				<p v-else class="text-xs text-ink-gray-4">
-					{{ __('No subjects listed.') }}
-				</p>
+
+				<!-- Hourly Rate -->
+				<!-- <div class="text-center md:text-right shrink-0 bg-surface-white px-5 py-3 border border-outline-gray-2 rounded-xl shadow-sm">
+					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1">
+						{{ __('Hourly Rate') }}
+					</span>
+					<span class="text-2xl font-black text-ink-gray-9">
+						{{ TEST_BOOKING_AMOUNT }} {{ currency }}
+					</span>
+					<span class="text-xs text-ink-gray-5 block mt-0.5">/ {{ __('Hour') }}</span>
+				</div> -->
 			</div>
 
-			<!-- Boards Card -->
-			<div class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
-				<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
-					{{ __('Boards') }}
-				</h3>
-				<div v-if="tutor.boards?.length" class="flex flex-wrap gap-1.5">
-					<Badge
-						v-for="b in tutor.boards"
-						:key="b.board"
-						:label="b.board"
-						theme="blue"
-						size="md"
-					/>
-				</div>
-				<p v-else class="text-xs text-ink-gray-4">
-					{{ __('No boards listed.') }}
-				</p>
+			<!-- Tabs Navigation -->
+			<div class="mb-4 mt-10">
+				<TabButtons class="inline-block" :buttons="profileTabs" v-model="activeTab" />
 			</div>
 
-			<!-- Classes Card -->
-			<div class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2">
-				<h3 class="text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">
-					{{ __('Classes') }}
-				</h3>
-				<div v-if="tutor.classes?.length" class="flex flex-wrap gap-1.5">
-					<Badge
-						v-for="c in tutor.classes"
-						:key="c.class"
-						:label="c.class"
-						theme="orange"
-						size="md"
-					/>
-				</div>
-				<p v-else class="text-xs text-ink-gray-4">
-					{{ __('No classes listed.') }}
-				</p>
-			</div>
-		</div>
+			<!-- TAB: Profile Details -->
+			<div v-show="activeTab === 'profile'" class="space-y-6 max-w-2xl mt-6 pb-10">
+				<div class="space-y-6">
+					<div class="space-y-4">
+						<FormControl :modelValue="tutor.tutor_name" :disabled="true" type="text" :label="__('Display Name')" />
+						<FormControl :modelValue="tutor.timezone" :disabled="true" type="text" :label="__('Timezone')" />
+						<FormControl :modelValue="tutor.years_of_experience" :disabled="true" type="number" :label="__('Years of Experience')" />
+					</div>
 
-		<!-- Qualifications Section -->
-		<div class="space-y-3">
-			<h3 class="text-sm font-semibold text-ink-gray-8 uppercase tracking-wider">
-				{{ __('Qualifications') }}
-			</h3>
-			<div v-if="tutor.qualifications?.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-				<div
-					v-for="(q, idx) in tutor.qualifications"
-					:key="idx"
-					class="border border-outline-gray-2 rounded-md p-4 bg-surface-white space-y-2"
-				>
-					<h4 class="font-semibold text-ink-gray-9 text-sm leading-snug flex items-center gap-1.5 border-b pb-1.5 mb-1.5">
-						🎓 {{ q.qualification }}
-					</h4>
-					<div class="space-y-1 text-xs">
-						<div v-if="q.level" class="flex items-start gap-1">
-							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Level') }}:</span>
-							<span class="text-ink-gray-9 font-semibold">{{ q.level }}</span>
+					<FormControl :modelValue="tutor.bio" :disabled="true" type="textarea" rows="4" :label="__('Biography')" />
+
+					<!-- Subjects -->
+					<div class="border-t pt-5">
+						<div class="space-y-2">
+							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
+							<div class="flex flex-wrap gap-2">
+								<Badge
+									v-for="sub in tutor.subjects"
+									:key="sub.subject"
+									theme="gray"
+									size="md"
+								>
+									{{ sub.subject }}
+								</Badge>
+								<p v-if="!tutor.subjects?.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
+							</div>
 						</div>
-						<div class="flex items-start gap-1">
-							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Institution') }}:</span>
-							<span class="text-ink-gray-9 font-semibold">{{ q.institution }}</span>
+					</div>
+
+					<!-- Boards -->
+					<div class="border-t pt-5">
+						<div class="space-y-2">
+							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
+							<div class="flex flex-wrap gap-2">
+								<Badge
+									v-for="brd in tutor.boards"
+									:key="brd.board"
+									theme="gray"
+									size="md"
+								>
+									{{ brd.board }}
+								</Badge>
+								<p v-if="!tutor.boards?.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
+							</div>
 						</div>
-						<div class="flex items-start gap-1">
-							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Year of Passing') }}:</span>
-							<span class="text-ink-gray-9 font-semibold">{{ q.year_of_passing }}</span>
+					</div>
+
+					<!-- Classes -->
+					<div class="border-t pt-5">
+						<div class="space-y-2">
+							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
+							<div class="flex flex-wrap gap-2">
+								<Badge
+									v-for="cls in tutor.classes"
+									:key="cls.class"
+									theme="gray"
+									size="md"
+								>
+									{{ cls.class }}
+								</Badge>
+								<p v-if="!tutor.classes?.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
+							</div>
 						</div>
-						<div v-if="q.class_per" class="flex items-start gap-1">
-							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Class / Pct') }}:</span>
-							<span class="text-ink-gray-9 font-semibold">{{ q.class_per }}</span>
+					</div>
+
+					<!-- Qualifications -->
+					<div class="border-t pt-5 space-y-4">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Qualifications') }}</label>
+
+						<div v-if="tutor.qualifications?.length" class="space-y-2.5">
+							<div v-for="(q, idx) in tutor.qualifications" :key="idx"
+								class="flex items-start justify-between border border-outline-gray-2 rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
+								<div class="space-y-1">
+									<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
+										<span class="font-semibold">{{ q.qualification }}</span>
+										<span class="text-ink-gray-4">·</span>
+										<span>{{ q.institution }}</span>
+										<span class="text-ink-gray-4">·</span>
+										<span class="font-medium text-ink-gray-5">{{ q.year_of_passing }}</span>
+									</div>
+									<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
+										<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
+										<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
+										<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div v-if="q.maj_opt_subj" class="flex items-start gap-1">
-							<span class="text-ink-gray-5 inline-block min-w-[90px] shrink-0 font-medium">{{ __('Subjects') }}:</span>
-							<span class="text-ink-gray-9 font-semibold">{{ q.maj_opt_subj }}</span>
+						<div v-else
+							class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-outline-gray-2 border-dashed rounded-md p-4 text-center">
+							{{ __('No qualifications specified.') }}
 						</div>
 					</div>
 				</div>
 			</div>
-			<div v-else class="text-sm text-ink-gray-5 py-6 border border-dashed border-outline-gray-2 rounded-md bg-surface-gray-1 text-center">
-				{{ __('No qualifications listed.') }}
-			</div>
-		</div>
 
-		<!-- Booking Section -->
-		<div class="border border-outline-gray-2 rounded-md p-5 bg-surface-white space-y-5">
-			<h3 class="text-sm font-semibold text-ink-gray-8 uppercase tracking-wider border-b border-outline-gray-1 pb-2">
-				{{ __('Book a Session') }}
-			</h3>
+			<!-- TAB: Book Session -->
+			<div v-show="activeTab === 'book'" class="space-y-6 mt-6 pb-10">
+				<!-- Session filters: Subject / Board / Class -->
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+					<div>
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
+							{{ __('Subject') }}
+						</label>
+						<Select v-model="filters.subject" :options="subjectOptions" :placeholder="__('Select Subject')" />
+					</div>
+					<div>
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
+							{{ __('Board') }}
+						</label>
+						<Select v-model="filters.board" :options="boardOptions" :placeholder="__('Select Board')" />
+					</div>
+					<div>
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
+							{{ __('Class') }}
+						</label>
+						<Select v-model="filters.class_name" :options="classOptions" :placeholder="__('Select Class')" />
+					</div>
+				</div>
 
-			<!-- Session filters: Subject / Board / Class -->
-			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-				<div>
-					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
-						{{ __('Subject') }}
-					</label>
-					<Select v-model="filters.subject" :options="subjectOptions" :placeholder="__('Select Subject')" />
+				<!-- Slot picker -->
+				<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
+					<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
 				</div>
-				<div>
-					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
-						{{ __('Board') }}
-					</label>
-					<Select v-model="filters.board" :options="boardOptions" :placeholder="__('Select Board')" />
+				<div v-else>
+					<SlotPicker
+						:slots="slots"
+						:selectedSlotName="selectedSlot?.name"
+						:systemTimezone="systemTimezone"
+						:loading-more="slotsList.loading"
+						:has-more="tutorStore.hasMoreSlotsBackend"
+						@selectSlot="onSelectSlot"
+						@loadMore="tutorStore.loadMoreSlotsBackend"
+					/>
 				</div>
-				<div>
-					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
-						{{ __('Class') }}
-					</label>
-					<Select v-model="filters.class_name" :options="classOptions" :placeholder="__('Select Class')" />
-				</div>
-			</div>
 
-			<!-- Slot picker -->
-			<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
-				<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
-			</div>
-			<div v-else>
-				<SlotPicker
-					:slots="slots"
-					:selectedSlotName="selectedSlot?.name"
-					:systemTimezone="systemTimezone"
-					:loading-more="slotsList.loading"
-					:has-more="tutorStore.hasMoreSlotsBackend"
-					@selectSlot="onSelectSlot"
-					@loadMore="tutorStore.loadMoreSlotsBackend"
+				<!-- Booking review bar -->
+				<div v-if="selectedSlot"
+					class="bg-surface-gray-2 border border-outline-gray-2 rounded-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+					<div class="space-y-1">
+						<h4 class="font-semibold text-xs text-ink-gray-9 uppercase tracking-wider">
+							{{ __('Booking Review') }}
+						</h4>
+						<p class="text-xs text-ink-gray-7">
+							<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
+							<span class="font-medium text-ink-gray-9">{{ selectedSlotHighlight }}</span>
+						</p>
+						<p class="text-xs text-ink-gray-7">
+							<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Price') }}:</span>
+							<span class="font-medium text-ink-gray-9">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
+						</p>
+					</div>
+
+					<Button :loading="bookingStore.loading" variant="solid" @click="startBooking">
+						{{ __('Proceed to Pay') }}
+					</Button>
+				</div>
+
+				<!-- Payment verifying overlay -->
+				<div
+					v-if="verifyingPayment"
+					class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
+				>
+					<LoadingIndicator class="w-10 h-10 text-blue-600" />
+					<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
+					<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
+				</div>
+
+				<!-- Razorpay headless — kept mounted until success or explicit dismiss -->
+				<RazorpayCheckout
+					v-if="checkoutDetails"
+					:checkoutDetails="checkoutDetails"
+					@success="onPaymentSuccess"
+					@dismissed="onPaymentDismissed"
 				/>
 			</div>
-
-			<!-- Booking review bar -->
-			<div v-if="selectedSlot"
-				class="bg-surface-gray-2 border border-outline-gray-2 rounded-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-				<div class="space-y-1">
-					<h4 class="font-semibold text-xs text-ink-gray-9 uppercase tracking-wider">
-						{{ __('Booking Review') }}
-					</h4>
-					<p class="text-xs text-ink-gray-7">
-						<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
-						<span class="font-medium text-ink-gray-9">{{ selectedSlotHighlight }}</span>
-					</p>
-					<p class="text-xs text-ink-gray-7">
-						<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Price') }}:</span>
-						<span class="font-medium text-ink-gray-9">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
-					</p>
-				</div>
-
-				<Button :loading="bookingStore.loading" variant="solid" @click="startBooking">
-					{{ __('Proceed to Pay') }}
-				</Button>
-			</div>
-
-			<!-- Payment verifying overlay -->
-			<div
-				v-if="verifyingPayment"
-				class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
-			>
-				<LoadingIndicator class="w-10 h-10 text-blue-600" />
-				<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
-				<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
-			</div>
-
-			<!-- Razorpay headless — kept mounted until success or explicit dismiss -->
-			<RazorpayCheckout
-				v-if="checkoutDetails"
-				:checkoutDetails="checkoutDetails"
-				@success="onPaymentSuccess"
-				@dismissed="onPaymentDismissed"
-			/>
 		</div>
 	</div>
 </template>
 
 <script setup>
 import { computed, inject, reactive, ref, watch } from 'vue'
-import { Avatar, Badge, Button, LoadingIndicator, Select, toast } from 'frappe-ui'
+import { Avatar, Badge, Button, FormControl, LoadingIndicator, Select, TabButtons, toast } from 'frappe-ui'
 import { useTutorStore } from '@/stores/useTutorStore'
 import { useBookingStore } from '@/stores/useBookingStore'
 import { systemSettings } from '@/resources/bookTutor'
@@ -251,6 +261,13 @@ import SlotPicker from './SlotPicker.vue'
 import RazorpayCheckout from './RazorpayCheckout.vue'
 import { useRouter } from 'vue-router'
 import { formatTimeRangeLocal, convertToLocal, getBrowserTimezone } from '@/utils/timezone'
+
+// Tabs definition
+const activeTab = ref('profile')
+const profileTabs = computed(() => [
+	{ value: 'profile', label: __('Profile Details') },
+	{ value: 'book', label: __('Book Session') },
+])
 
 // Temporary: centralized test booking amount — restore to tutor.hourly_rate when live
 const TEST_BOOKING_AMOUNT = 500
