@@ -110,7 +110,7 @@
 										<td class="p-4">
 											<Badge
 												:label="b.booking_status"
-												:theme="b.booking_status === 'Confirmed' ? 'blue' : b.booking_status === 'Completed' ? 'green' : 'gray'"
+												:theme="b.booking_status === 'Confirmed' ? 'blue' : b.booking_status === 'Completed' ? 'green' :  b.booking_status === 'Cancelled' ? 'red' : 'gray'"
 												size="sm"
 											/>
 										</td>
