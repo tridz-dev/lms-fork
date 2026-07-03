@@ -378,19 +378,23 @@ const tabButtons = computed(() => {
 		(s.booking_status === 'Confirmed' || s.booking_status === 'Payment Success') &&
 		isSessionUpcoming(s.start_datetime)
 	).length
+	const confirmed = sessions.value.filter(s =>
+		s.booking_status === 'Confirmed' ||
+		(s.booking_status === 'Payment Success' || s.booking_status === 'Confirmed') &&
+		isSessionUpcoming(s.start_datetime)
+	).length
 	const completed = sessions.value.filter(s =>
-		s.booking_status === 'Completed' ||
-		((s.booking_status === 'Confirmed' || s.booking_status === 'Payment Success') &&
-		!isSessionUpcoming(s.start_datetime))
+		s.booking_status === 'Completed'
 	).length
 	const cancelled = sessions.value.filter(s => s.booking_status === 'Cancelled').length
 	const failed = sessions.value.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed' || s.booking_status === 'Pending Payment').length
 
 	return [
 		{ value: 'upcoming', label: `${__('Upcoming')} (${upcoming})` },
+		{ value: 'confirmed', label: `${__('Confirmed')} (${confirmed})` },
 		{ value: 'completed', label: `${__('Completed')} (${completed})` },
 		{ value: 'cancelled', label: `${__('Cancelled')} (${cancelled})` },
-		{ value: 'failed', label: `${__('Failed')} (${failed})` },
+		// { value: 'failed', label: `${__('Failed')} (${failed})` },
 	]
 })
 
@@ -400,13 +404,18 @@ const filteredSessions = computed(() => {
 			(s.booking_status === 'Confirmed' || s.booking_status === 'Payment Success') &&
 			isSessionUpcoming(s.start_datetime)
 		)
-	} else if (activeTab.value === 'completed') {
+	} else if (activeTab.value === 'confirmed') {
 		return sessions.value.filter(s =>
-			s.booking_status === 'Completed' ||
+			s.booking_status === 'Confirmed' ||
 			((s.booking_status === 'Confirmed' || s.booking_status === 'Payment Success') &&
 			!isSessionUpcoming(s.start_datetime))
 		)
-	} else if (activeTab.value === 'cancelled') {
+	} else if (activeTab.value === 'completed') {
+		return sessions.value.filter(s =>
+			s.booking_status === 'Completed'
+		)
+	}
+	 else if (activeTab.value === 'cancelled') {
 		return sessions.value.filter(s => s.booking_status === 'Cancelled')
 	} else {
 		return sessions.value.filter(s => s.booking_status === 'Expired' || s.booking_status === 'Failed' || s.booking_status === 'Pending Payment')
