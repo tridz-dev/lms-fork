@@ -148,19 +148,20 @@
 							<div class="flex items-center justify-between">
 								<p class="text-xs text-ink-gray-5">{{ __('Online live tutoring session') }}</p>
 								<div v-if="session.meeting_link">
-									<Button
+									<a
 										:href="session.meeting_link"
 										target="_blank"
-										as="a"
-										variant="solid"
-										theme="blue"
-										size="sm"
 									>
-										<template #icon>
-											<Video class="w-3.5 h-3.5" />
-										</template>
-										{{ __('Join Meeting') }}
-									</Button>
+										<Button
+											variant="solid"
+											theme="blue"
+											size="sm"
+										>
+											<template #icon>
+												<Video class="w-3.5 h-3.5" />
+											</template>
+										</Button>
+									</a>
 								</div>
 								<div v-else class="text-xs text-ink-gray-4 italic">
 									{{ __('Generating meeting link...') }}
