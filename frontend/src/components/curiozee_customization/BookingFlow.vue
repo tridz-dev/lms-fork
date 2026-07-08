@@ -54,16 +54,17 @@
 					</div>
 				</div>
 
-				<!-- Hourly Rate -->
-				<!-- <div class="text-center md:text-right shrink-0 bg-surface-white px-5 py-3 border border-outline-gray-2 rounded-xl shadow-sm">
+				<!-- Match Score -->
+				<div v-if="tutor.score != null" class="text-center md:text-right shrink-0 bg-surface-white px-5 py-3 ">
 					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1">
-						{{ __('Hourly Rate') }}
+						{{ __('Match Score') }}
 					</span>
-					<span class="text-2xl font-black text-ink-gray-9">
-						{{ TEST_BOOKING_AMOUNT }} {{ currency }}
-					</span>
-					<span class="text-xs text-ink-gray-5 block mt-0.5">/ {{ __('Hour') }}</span>
-				</div> -->
+					<Badge
+						:label="tutor.score.toString()"
+						:theme="scoreTheme"
+						size="md"
+					/>
+				</div>
 			</div>
 
 			<!-- Tabs Navigation -->
@@ -274,6 +275,13 @@ const TEST_BOOKING_AMOUNT = 500
 
 const props = defineProps({
 	tutor: { type: Object, required: true },
+})
+
+const scoreTheme = computed(() => {
+	const s = props.tutor.score ?? 0
+	if (s >= 70) return 'green'
+	if (s >= 40) return 'amber'
+	return 'gray'
 })
 
 const dayjs = inject('$dayjs')
