@@ -42,7 +42,7 @@
 					<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
 						<div class="space-y-3 flex-1">
 							<span
-								class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400">
+								class="inline-flex items-center gap-1.5 px-0.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400">
 								<Sparkles class="h-3.5 w-3.5" />
 								{{ __('Continue Learning') }}
 							</span>
