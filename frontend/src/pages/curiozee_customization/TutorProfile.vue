@@ -377,7 +377,8 @@
 
 					<div v-if="rules.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div v-for="rule in rules" :key="rule.name"
-							class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white hover:border-outline-gray-3 hover:shadow-sm transition-all duration-150 flex flex-col justify-between min-h-[180px]">
+							@click="goToMySlots"
+							class="cursor-pointer border border-outline-gray-2 rounded-xl p-6 bg-surface-white hover:border-outline-gray-3 hover:shadow-sm transition-all duration-150 flex flex-col justify-between min-h-[180px]">
 							<div class="space-y-4">
 								<!-- Header: Weekday & Active Status -->
 								<div class="flex justify-between items-start">
@@ -421,10 +422,10 @@
 							<div class="flex justify-end items-center gap-2.5 pt-4 border-t mt-4">
 								<!-- Draft-only actions -->
 								<template v-if="rule.docstatus === 0">
-									<Button @click="openEditModal(rule)" variant="outline" class="h-9 px-5 rounded-lg font-semibold">
+									<Button @click.stop="openEditModal(rule)" variant="outline" class="h-9 px-5 rounded-lg font-semibold">
 										{{ __('Edit') }}
 									</Button>
-									<Button @click="deleteRule(rule.name)" variant="outline" theme="red" class="h-9 px-5 rounded-lg font-semibold">
+									<Button @click.stop="deleteRule(rule.name)" variant="outline" theme="red" class="h-9 px-5 rounded-lg font-semibold">
 										{{ __('Delete') }}
 									</Button>
 								</template>
@@ -506,6 +507,10 @@ watch(() => route.query.tab, (newTab) => {
 watch(activeTab, (newTab) => {
 	router.replace({ query: { ...route.query, tab: newTab } })
 })
+
+function goToMySlots() {
+	router.push({ name: 'SlotCalendar' })
+}
 
 const profileTabs = [
 	{ value: 'profile', label: __('Profile Details') },
