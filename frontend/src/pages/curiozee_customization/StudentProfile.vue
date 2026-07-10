@@ -171,42 +171,30 @@
 						<!-- TAB: Personal Details -->
 						<div v-if="activeTab === 'personal'" class="space-y-8">
 							<div class="space-y-4">
-								<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-									<div class="space-y-1">
-										<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Full Name') }}</label>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.full_name }}</p>
-									</div>
-									<div class="space-y-1">
-										<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Phone Number') }}</label>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.phone_number || __('Not specified') }}</p>
-									</div>
-									<div class="space-y-1 sm:col-span-2">
-										<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Timezone') }}</label>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.time_zone }}</p>
-									</div>
-								</div>
-								
-								<div v-else class="space-y-4 pt-4">
+								<div class="space-y-4 pt-4">
 									<FormControl
 										v-model="form.full_name"
 										type="text"
 										:label="__('Full Name')"
-										:required="true"
+										:required="!isReadOnly"
+										:disabled="isReadOnly"
 										placeholder="e.g. Jane Doe"
 									/>
 									<FormControl
 										v-model="form.phone_number"
 										type="text"
 										:label="__('Phone Number')"
-										:required="true"
+										:required="!isReadOnly"
+										:disabled="isReadOnly"
 										placeholder="e.g. +1 555-0199"
 									/>
 									<FormControl
 										v-model="form.time_zone"
-										type="select"
+										:type="isReadOnly ? 'text' : 'select'"
 										:options="tzOptions"
 										:label="__('Timezone')"
-										:required="true"
+										:required="!isReadOnly"
+										:disabled="isReadOnly"
 									/>
 								</div>
 							</div>
@@ -215,35 +203,22 @@
 						<!-- TAB: Academic Details -->
 						<div v-if="activeTab === 'academic'" class="space-y-8">
 							<div class="space-y-4">
-								<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-									<div class="space-y-1">
-										<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Board') }}</label>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.board }}</p>
-									</div>
-									<div class="space-y-1">
-										<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Class') }}</label>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.class }}</p>
-									</div>
-									<div class="space-y-1 sm:col-span-2">
-										<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('School') }}</label>
-										<p class="text-base text-ink-gray-9 font-medium">{{ form.school || __('Not specified') }}</p>
-									</div>
-								</div>
-
-								<div v-else class="space-y-4 pt-4">
+								<div class="space-y-4 pt-4">
 									<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 										<FormControl
 											v-model="form.board"
 											type="text"
 											:label="__('Board')"
-											:required="true"
+											:required="!isReadOnly"
+											:disabled="isReadOnly"
 											placeholder="e.g. CBSE"
 										/>
 										<FormControl
 											v-model="form.class"
 											type="text"
 											:label="__('Class')"
-											:required="true"
+											:required="!isReadOnly"
+											:disabled="isReadOnly"
 											placeholder="e.g. Class 10"
 										/>
 									</div>
@@ -251,6 +226,7 @@
 										v-model="form.school"
 										type="text"
 										:label="__('School')"
+										:disabled="isReadOnly"
 										placeholder="e.g. Lincoln High School"
 									/>
 								</div>

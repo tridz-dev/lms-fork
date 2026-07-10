@@ -41,7 +41,27 @@
 				</div>
 
 				<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white">
-					<p class="text-sm text-ink-gray-5">{{ __('No sessions found matching this status filter.') }}</p>
+					<div class="flex flex-col items-center justify-center space-y-4 px-6">
+						<div v-if="activeTab === 'upcoming'" class="p-3 bg-surface-gray-2 rounded-full text-ink-gray-5">
+							<Calendar class="w-8 h-8 stroke-1.5" />
+						</div>
+						<div class="space-y-1">
+							<h3 v-if="activeTab === 'upcoming'" class="text-lg font-medium text-ink-gray-9">
+								{{ __('No Upcoming Sessions') }}
+							</h3>
+							<p class="text-sm text-ink-gray-5">
+								{{ activeTab === 'upcoming'
+									? __('You don\'t have any live tutoring sessions scheduled yet.')
+									: __('No sessions found matching this status filter.')
+								}}
+							</p>
+						</div>
+						<router-link v-if="activeTab === 'upcoming'" :to="{ name: 'BookSession' }" custom v-slot="{ navigate }">
+							<Button variant="solid" @click="navigate" class="mt-2">
+								{{ __('Book a Tutor') }}
+							</Button>
+						</router-link>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -51,7 +71,7 @@
 			v-if="verifyingPayment"
 			class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
 		>
-			<LoadingIndicator class="w-10 h-10 text-blue-600" />
+			<LoadingIndicator class="w-10 h-10 text-ink-blue-3" />
 			<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
 			<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
 		</div>
@@ -74,6 +94,7 @@ import SessionCard from '@/components/curiozee_customization/SessionCard.vue'
 import RazorpayCheckout from '@/components/curiozee_customization/RazorpayCheckout.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { isSessionUpcoming } from '@/utils/timezone'
+import { Calendar } from 'lucide-vue-next'
 
 const sessionStore = useSessionStore()
 const bookingStore = useBookingStore()
