@@ -21,7 +21,7 @@
 					</div>
 					<div class="text-center md:text-left mt-5 md:mt-0 flex-1">
 						<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
-							<h2 class="text-[28px] font-bold text-ink-gray-9 leading-tight">
+							<h2 class="text-3xl font-bold text-ink-gray-9 leading-tight">
 								{{ tutor.tutor_name }}
 							</h2>
 							<Badge v-if="tutor.verification_status"
@@ -40,10 +40,10 @@
 				<!-- Match Score Card -->
 				<div v-if="tutor.score != null"
 					class="flex flex-col items-center justify-center border border-outline-gray-2 rounded-lg p-4 bg-surface-gray-1 min-w-[100px] text-center shadow-sm">
-					<span class="text-[11px] font-medium text-ink-gray-5 block mb-1">
+					<span class="text-xs font-medium text-ink-gray-5 block mb-1">
 						{{ __('Match Score') }}
 					</span>
-					<span class="text-[24px] font-bold text-ink-gray-9 leading-none">
+					<span class="text-2xl font-bold text-ink-gray-9 leading-none">
 						{{ tutor.score }}
 					</span>
 				</div>
@@ -56,19 +56,25 @@
 
 			<!-- TAB: Profile Details -->
 			<div v-if="activeTab === 'profile'" class="space-y-8 max-w-3xl pb-8">
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-					<FormControl :modelValue="tutor.tutor_name" :disabled="true" type="text"
-						:label="__('Display Name')" />
-					<FormControl :modelValue="tutor.timezone" :disabled="true" type="text"
-						:label="__('Timezone')" />
-					<FormControl :modelValue="tutor.years_of_experience" :disabled="true" type="number"
-						:label="__('Years of Experience')" />
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div class="space-y-1.5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Display Name') }}</label>
+						<div class="text-sm font-medium text-ink-gray-9">{{ tutor.tutor_name }}</div>
+					</div>
+					<div class="space-y-1.5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Timezone') }}</label>
+						<div class="text-sm font-medium text-ink-gray-9">{{ tutor.timezone || systemTimezone }}</div>
+					</div>
+					<div class="space-y-1.5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Years of Experience') }}</label>
+						<div class="text-sm font-medium text-ink-gray-9">{{ tutor.years_of_experience || 0 }}</div>
+					</div>
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
 					<!-- Subjects -->
-					<div class="space-y-2">
-						<label class="block text-xs font-semibold text-ink-gray-7 mb-2">{{ __('Subjects Taught') }}</label>
+					<div class="space-y-3">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
 						<div class="flex flex-wrap gap-2">
 							<Badge v-for="sub in tutor.subjects" :key="sub.subject" theme="gray" size="md">
 								{{ sub.subject }}
@@ -78,8 +84,8 @@
 					</div>
 
 					<!-- Boards -->
-					<div class="space-y-2">
-						<label class="block text-xs font-semibold text-ink-gray-7 mb-2">{{ __('Boards Supported') }}</label>
+					<div class="space-y-3">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
 						<div class="flex flex-wrap gap-2">
 							<Badge v-for="brd in tutor.boards" :key="brd.board" theme="gray" size="md">
 								{{ brd.board }}
@@ -89,8 +95,8 @@
 					</div>
 
 					<!-- Classes -->
-					<div class="space-y-2">
-						<label class="block text-xs font-semibold text-ink-gray-7 mb-2">{{ __('Classes Target') }}</label>
+					<div class="space-y-3">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
 						<div class="flex flex-wrap gap-2">
 							<Badge v-for="cls in tutor.classes" :key="cls.class" theme="gray" size="md">
 								{{ cls.class }}
@@ -103,12 +109,14 @@
 
 			<!-- TAB: Additional Details -->
 			<div v-else-if="activeTab === 'additional'" class="space-y-8 max-w-3xl pb-8">
-				<FormControl :modelValue="tutor.bio" :disabled="true" type="textarea" rows="4"
-					:label="__('Biography')" />
+				<div class="space-y-1.5">
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Biography') }}</label>
+					<div class="text-sm text-ink-gray-9 whitespace-pre-line leading-relaxed">{{ tutor.bio || __('No biography provided.') }}</div>
+				</div>
 
 				<!-- Qualifications -->
 				<div class="space-y-4">
-					<label class="block text-xs font-semibold text-ink-gray-7 mb-2">{{ __('Qualifications') }}</label>
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Qualifications') }}</label>
 
 					<div v-if="tutor.qualifications?.length" class="space-y-3">
 						<div v-for="(q, idx) in tutor.qualifications" :key="idx"
@@ -168,18 +176,18 @@
 				<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
 					<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
 				</div>
-				<div v-else class="mt-6 border-t border-outline-gray-2 pt-6">
-					<SlotPicker :slots="slots" :selectedSlotName="selectedSlot?.name"
-						:systemTimezone="systemTimezone" :loading-more="slotsList.loading"
-						:has-more="tutorStore.hasMoreSlotsBackend" @selectSlot="onSelectSlot"
+				<div v-else class="mt-6 pt-6">
+					<SlotPicker :slots="slots" :selected-slot-name="selectedSlot?.name"
+						:system-timezone="systemTimezone" :loading-more="slotsList.loading"
+						:has-more="tutorStore.hasMoreSlotsBackend" @select-slot="onSelectSlot"
 						@loadMore="tutorStore.loadMoreSlotsBackend" />
 				</div>
 
 				<!-- Booking review card -->
 				<div v-if="selectedSlot"
-					class="mt-8 bg-surface-gray-1 border border-outline-gray-2 rounded-lg p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+					class="mt-8 bg-surface-gray-2 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
 					<div class="space-y-4 w-full md:w-auto">
-						<h4 class="text-[18px] font-semibold text-ink-gray-9">
+						<h4 class="text-lg font-semibold text-ink-gray-9">
 							{{ __('Booking Review') }}
 						</h4>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
@@ -197,12 +205,12 @@
 							</div>
 							<div>
 								<span class="block text-sm font-medium text-ink-gray-5 mb-1">{{ __('Price') }}</span>
-								<span class="text-[20px] font-bold text-ink-gray-9 leading-none">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
+								<span class="text-xl font-bold text-ink-gray-9 leading-none">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
 							</div>
 						</div>
 					</div>
 					<Button :loading="bookingStore.loading" variant="solid" theme="gray"
-						class="w-full sm:w-auto h-[42px] px-7 rounded font-semibold transition-all duration-200 hover:shadow-md hover:bg-gray-800 shrink-0" @click="startBooking">
+						class="w-full sm:w-auto h-9 px-5 rounded-lg font-semibold shadow-sm shrink-0" @click="startBooking">
 						{{ __('Proceed to Pay') }}
 					</Button>
 				</div>
