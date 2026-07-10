@@ -55,6 +55,7 @@
 			</div>
 
 			<!-- TAB: Profile Details -->
+			<!-- Customization for Smart Learning App: Clean read-only layout replacing disabled FormControl inputs -->
 			<div v-if="activeTab === 'profile'" class="space-y-8 max-w-3xl pb-8">
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 					<div class="space-y-1.5">
@@ -108,7 +109,8 @@
 			</div>
 
 			<!-- TAB: Additional Details -->
-			<div v-else-if="activeTab === 'additional'" class="space-y-8 max-w-3xl pb-8">
+			<!-- Customization for Smart Learning App: Clean read-only layout replacing biography text block input -->
+			<div v-if="activeTab === 'additional'" class="space-y-8 max-w-3xl pb-8">
 				<div class="space-y-1.5">
 					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Biography') }}</label>
 					<div class="text-sm text-ink-gray-9 whitespace-pre-line leading-relaxed">{{ tutor.bio || __('No biography provided.') }}</div>

@@ -115,7 +115,24 @@ const filterLinksToShow = (data) => {
 }
 
 const addOtherLinks = () => {
+	otherLinks.value = []
 	if (user) {
+		// Customization for Smart Learning App: Inject role-based links for Tutors and Students
+		const roles = userResource.data?.roles || []
+		const isTutor = roles.includes('Tutor')
+
+		if (isTutor) {
+			addLink('Availability', 'Clock', 'AvailabilityRules')
+			addLink('My Slots', 'Calendar', 'SlotCalendar')
+			addLink('My Sessions', 'Users', 'TutorSessions')
+			addLink('Tutor Profile', 'User', 'TutorProfile')
+		} else {
+			addLink('Book a Tutor', 'Search', 'BookSession')
+			addLink('Upcoming Sessions', 'Calendar', 'Sessions')
+			addLink('Revision', 'RefreshCw', 'Revision')
+			addLink('Student Profile', 'User', 'StudentProfile')
+		}
+
 		addLink('Notifications', 'Bell', 'Notifications')
 		addLink('Profile', 'UserRound')
 		addLink('Log out', 'LogOut')
@@ -185,17 +202,6 @@ const addPrograms = async () => {
 	})
 }
 
-watch(
-	() => userResource.data,
-	async (data) => {
-		if (data) {
-			isModerator.value = data.is_moderator
-			isInstructor.value = data.is_instructor
-		}
-		updateSidebarLinks()
-	},
-	{ immediate: true }
-)
 
 const checkIfCanAddProgram = async () => {
 	if (!userResource.data) return false
@@ -231,6 +237,19 @@ const isVisible = (tab) => {
 	else if (tab.label == 'Log out') return isLoggedIn
 	else return true
 }
+
+// Customization for Smart Learning App: Move watcher to the bottom to avoid Temporal Dead Zone (TDZ) ReferenceErrors on immediate execution
+watch(
+	() => userResource.data,
+	async (data) => {
+		if (data) {
+			isModerator.value = data.is_moderator
+			isInstructor.value = data.is_instructor
+		}
+		updateSidebarLinks()
+	},
+	{ immediate: true }
+)
 
 const toggleMenu = () => {
 	showMenu.value = !showMenu.value
