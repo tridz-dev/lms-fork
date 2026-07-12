@@ -115,7 +115,6 @@
 										theme="blue"
 										size="md"
 										:label="__('Student')"
-										class="h-6 px-2.5 rounded-full text-xs font-medium flex items-center justify-center"
 									/>
 								</div>
 								<p class="text-sm font-normal text-ink-gray-5 mt-1.5">
