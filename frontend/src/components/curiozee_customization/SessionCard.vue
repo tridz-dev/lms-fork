@@ -99,7 +99,7 @@
 						<div class="col-span-2">
 							<Card
 								:title="__('Scheduled Date & Time')"
-								class="!p-4 shadow-none border bg-gray-50/50"
+								class="shadow-none border border-outline-gray-2 bg-surface-gray-1"
 							>
 								<div class="flex items-center gap-2">
 									<Calendar class="h-4 w-4 text-blue-600 shrink-0" />
@@ -140,7 +140,7 @@
 					<div v-if="session.booking_status === 'Confirmed'" class="mt-3">
 						<Card
 							:title="__('Meeting Room')"
-							class="!p-4 shadow-none border bg-gray-50/50"
+							class="shadow-none border border-outline-gray-2 bg-surface-gray-1"
 						>
 							<template #actions>
 								<Badge label="Google Meet" theme="blue" size="sm" />
@@ -206,20 +206,20 @@
 					<p class="text-sm text-ink-gray-7 leading-relaxed">
 						{{ __('Are you sure you want to cancel this session?') }}
 						<br />
-						<span class="text-red-500 font-semibold mt-1 block">
+						<span class="text-ink-red-3 font-semibold mt-1 block">
 							{{ __('This action will cancel the booking.') }}
 						</span>
 					</p>
 					<div>
 						<label class="text-xs font-medium text-ink-gray-5 block mb-1">
-							{{ __('Reason for Cancellation') }} <span class="text-red-500">*</span>
+							{{ __('Reason for Cancellation') }} <span class="text-ink-red-3">*</span>
 						</label>
-						<textarea
+						<FormControl
 							v-model="cancelReason"
-							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"
+							type="textarea"
 							rows="3"
 							:placeholder="__('Please provide a reason...')"
-						></textarea>
+						/>
 					</div>
 				</div>
 			</template>
@@ -248,7 +248,7 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue'
-import { Dialog, Button, Badge, Card, toast } from 'frappe-ui'
+import { Dialog, Button, Badge, Card, FormControl, toast } from 'frappe-ui'
 import { Video, Calendar } from 'lucide-vue-next'
 import { useSessionStore } from '@/stores/useSessionStore'
 import { formatLocal, formatTimeRangeLocal, isSessionUpcoming } from '@/utils/timezone'
