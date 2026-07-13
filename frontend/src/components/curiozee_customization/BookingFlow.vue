@@ -1,252 +1,233 @@
 <template>
 	<div class="w-full">
 		<!-- Banner Cover Image -->
-		<div class="group relative h-[130px] w-full">
-			<img
-				v-if="tutor.cover_image"
-				:src="tutor.cover_image"
-				class="h-[130px] w-full object-cover object-center"
-			/>
-			<div
-				v-else
-				class="h-[130px] w-full bg-surface-gray-2"
-			></div>
+		<div class="group relative h-[68px] w-full">
+			<img v-if="tutor.cover_image" :src="tutor.cover_image" class="h-[68px] w-full object-cover object-center" />
+			<div v-else class="h-[68px] w-full bg-surface-gray-2"></div>
 		</div>
 
 		<!-- Main Layout Container -->
-		<div class="mx-auto -mt-10 md:-mt-4 max-w-4xl w-full px-5">
+		<div class="mx-auto -mt-6 max-w-[1150px] w-full px-4 sm:px-6 lg:px-8">
 			<!-- Tutor Profile Header -->
 			<div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-5">
-				<div class="flex flex-col md:flex-row items-center">
-					<div>
-						<div class="relative">
-							<img
-								v-if="tutor.profile_photo"
-								:src="tutor.profile_photo"
-								class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm"
-							/>
-							<div
-								v-else
-								class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm"
-							>
-								{{ (tutor.tutor_name || 'T').charAt(0).toUpperCase() }}
-							</div>
+				<div class="flex flex-col md:flex-row items-center gap-5">
+					<div class="relative flex shrink-0">
+						<img v-if="tutor.profile_photo" :src="tutor.profile_photo"
+							class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm" />
+						<div v-else
+							class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm">
+							{{ (tutor.tutor_name || 'T').charAt(0).toUpperCase() }}
 						</div>
 					</div>
-					<div class="text-center md:text-left md:ms-6 mt-5 md:mt-0 flex-1">
+					<div class="text-center md:text-left mt-5 md:mt-0 flex-1">
 						<div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
-							<h2 class="text-3xl font-semibold text-ink-gray-9">
+							<h2 class="text-3xl font-bold text-ink-gray-9 leading-tight">
 								{{ tutor.tutor_name }}
 							</h2>
-							<Badge
-								v-if="tutor.verification_status"
-								:theme="tutor.verification_status === 'Verified' ? 'green' : 'gray'"
-								size="sm"
-							>
+							<Badge v-if="tutor.verification_status"
+								:theme="tutor.verification_status === 'Verified' ? 'green' : 'gray'" size="sm">
 								{{ tutor.verification_status }}
 							</Badge>
 						</div>
-						<p class="text-sm text-ink-gray-5 mt-1">
-							<span class="font-medium">{{ tutor.years_of_experience || 0 }} {{ __('Years of Experience') }}</span>
+						<p class="text-base font-normal text-ink-gray-5 mt-1.5 leading-none">
+							<span>{{ tutor.years_of_experience || 0 }} {{ __('Years of Experience') }}</span>
 							<span class="mx-2 text-ink-gray-3">•</span>
 							<span>{{ tutor.timezone || systemTimezone }}</span>
 						</p>
 					</div>
 				</div>
 
-				<!-- Match Score -->
-				<div v-if="tutor.score != null" class="text-center md:text-right shrink-0 bg-surface-white px-5 py-3 ">
-					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1">
+				<!-- Match Score Card -->
+				<div v-if="tutor.score != null"
+					class="flex flex-col items-center justify-center border border-outline-gray-2 rounded-lg p-4 bg-surface-gray-1 min-w-[100px] text-center shadow-sm">
+					<span class="text-xs font-medium text-ink-gray-5 block mb-1">
 						{{ __('Match Score') }}
 					</span>
-					<Badge
-						:label="tutor.score.toString()"
-						:theme="scoreTheme"
-						size="md"
-					/>
+					<span class="text-2xl font-bold text-ink-gray-9 leading-none">
+						{{ tutor.score }}
+					</span>
 				</div>
 			</div>
 
 			<!-- Tabs Navigation -->
-			<div class="mb-4 mt-10">
-				<TabButtons class="inline-block" :buttons="profileTabs" v-model="activeTab" />
+			<div class="mt-5 mb-6">
+				<TabButtons :buttons="profileTabs" v-model="activeTab" />
 			</div>
 
 			<!-- TAB: Profile Details -->
-			<div v-show="activeTab === 'profile'" class="space-y-6 max-w-2xl mt-6 pb-10">
-				<div class="space-y-6">
-					<div class="space-y-4">
-						<FormControl :modelValue="tutor.tutor_name" :disabled="true" type="text" :label="__('Display Name')" />
-						<FormControl :modelValue="tutor.timezone" :disabled="true" type="text" :label="__('Timezone')" />
-						<FormControl :modelValue="tutor.years_of_experience" :disabled="true" type="number" :label="__('Years of Experience')" />
+			<!-- Customization for Smart Learning App: Clean read-only layout replacing disabled FormControl inputs -->
+			<div v-if="activeTab === 'profile'" class="space-y-8 max-w-3xl pb-8">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div class="space-y-1.5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Display Name') }}</label>
+						<div class="text-sm font-medium text-ink-gray-9">{{ tutor.tutor_name }}</div>
 					</div>
+					<div class="space-y-1.5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Timezone') }}</label>
+						<div class="text-sm font-medium text-ink-gray-9">{{ tutor.timezone || systemTimezone }}</div>
+					</div>
+					<div class="space-y-1.5">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Years of Experience') }}</label>
+						<div class="text-sm font-medium text-ink-gray-9">{{ tutor.years_of_experience || 0 }}</div>
+					</div>
+				</div>
 
-					<FormControl :modelValue="tutor.bio" :disabled="true" type="textarea" rows="4" :label="__('Biography')" />
-
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
 					<!-- Subjects -->
-					<div class="border-t pt-5">
-						<div class="space-y-2">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
-							<div class="flex flex-wrap gap-2">
-								<Badge
-									v-for="sub in tutor.subjects"
-									:key="sub.subject"
-									theme="gray"
-									size="md"
-								>
-									{{ sub.subject }}
-								</Badge>
-								<p v-if="!tutor.subjects?.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
-							</div>
+					<div class="space-y-3">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
+						<div class="flex flex-wrap gap-2">
+							<Badge v-for="sub in tutor.subjects" :key="sub.subject" theme="gray" size="md">
+								{{ sub.subject }}
+							</Badge>
+							<p v-if="!tutor.subjects?.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
 						</div>
 					</div>
 
 					<!-- Boards -->
-					<div class="border-t pt-5">
-						<div class="space-y-2">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
-							<div class="flex flex-wrap gap-2">
-								<Badge
-									v-for="brd in tutor.boards"
-									:key="brd.board"
-									theme="gray"
-									size="md"
-								>
-									{{ brd.board }}
-								</Badge>
-								<p v-if="!tutor.boards?.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
-							</div>
+					<div class="space-y-3">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
+						<div class="flex flex-wrap gap-2">
+							<Badge v-for="brd in tutor.boards" :key="brd.board" theme="gray" size="md">
+								{{ brd.board }}
+							</Badge>
+							<p v-if="!tutor.boards?.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
 						</div>
 					</div>
 
 					<!-- Classes -->
-					<div class="border-t pt-5">
-						<div class="space-y-2">
-							<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
-							<div class="flex flex-wrap gap-2">
-								<Badge
-									v-for="cls in tutor.classes"
-									:key="cls.class"
-									theme="gray"
-									size="md"
-								>
-									{{ cls.class }}
-								</Badge>
-								<p v-if="!tutor.classes?.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
-							</div>
-						</div>
-					</div>
-
-					<!-- Qualifications -->
-					<div class="border-t pt-5 space-y-4">
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Qualifications') }}</label>
-
-						<div v-if="tutor.qualifications?.length" class="space-y-2.5">
-							<div v-for="(q, idx) in tutor.qualifications" :key="idx"
-								class="flex items-start justify-between border border-outline-gray-2 rounded-md px-4 py-3 text-sm text-ink-gray-7 bg-surface-white hover:border-outline-gray-3">
-								<div class="space-y-1">
-									<div class="flex flex-wrap gap-2 items-center text-ink-gray-9">
-										<span class="font-semibold">{{ q.qualification }}</span>
-										<span class="text-ink-gray-4">·</span>
-										<span>{{ q.institution }}</span>
-										<span class="text-ink-gray-4">·</span>
-										<span class="font-medium text-ink-gray-5">{{ q.year_of_passing }}</span>
-									</div>
-									<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
-										<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
-										<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
-										<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div v-else
-							class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-outline-gray-2 border-dashed rounded-md p-4 text-center">
-							{{ __('No qualifications specified.') }}
+					<div class="space-y-3">
+						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
+						<div class="flex flex-wrap gap-2">
+							<Badge v-for="cls in tutor.classes" :key="cls.class" theme="gray" size="md">
+								{{ cls.class }}
+							</Badge>
+							<p v-if="!tutor.classes?.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- TAB: Book Session -->
-			<div v-show="activeTab === 'book'" class="space-y-6 mt-6 pb-10">
-				<!-- Session filters: Subject / Board / Class -->
-				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-					<div>
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
-							{{ __('Subject') }}
-						</label>
-						<Select v-model="filters.subject" :options="subjectOptions" :placeholder="__('Select Subject')" />
-					</div>
-					<div>
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
-							{{ __('Board') }}
-						</label>
-						<Select v-model="filters.board" :options="boardOptions" :placeholder="__('Select Board')" />
-					</div>
-					<div>
-						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1">
-							{{ __('Class') }}
-						</label>
-						<Select v-model="filters.class_name" :options="classOptions" :placeholder="__('Select Class')" />
-					</div>
+			<!-- TAB: Additional Details -->
+			<!-- Customization for Smart Learning App: Clean read-only layout replacing biography text block input -->
+			<div v-if="activeTab === 'additional'" class="space-y-8 max-w-3xl pb-8">
+				<div class="space-y-1.5">
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Biography') }}</label>
+					<div class="text-sm text-ink-gray-9 whitespace-pre-line leading-relaxed">{{ tutor.bio || __('No biography provided.') }}</div>
 				</div>
 
-				<!-- Slot picker -->
-				<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
-					<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+				<!-- Qualifications -->
+				<div class="space-y-4">
+					<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2">{{ __('Qualifications') }}</label>
+
+					<div v-if="tutor.qualifications?.length" class="space-y-3">
+						<div v-for="(q, idx) in tutor.qualifications" :key="idx"
+							class="flex items-start justify-between rounded-lg px-4 py-3 bg-surface-gray-2">
+							<div class="space-y-1">
+								<div class="flex flex-wrap gap-2 items-center text-sm">
+									<span class="font-medium text-ink-gray-9">{{ q.qualification }}</span>
+									<span class="text-ink-gray-4">·</span>
+									<span class="text-ink-gray-7">{{ q.institution }}</span>
+									<span class="text-ink-gray-4">·</span>
+									<span class="text-ink-gray-5">{{ q.year_of_passing }}</span>
+								</div>
+								<div class="text-xs text-ink-gray-5 flex flex-wrap gap-x-3 gap-y-1">
+									<span v-if="q.level"><strong>Level:</strong> {{ q.level }}</span>
+									<span v-if="q.class_per"><strong>Class/Pct:</strong> {{ q.class_per }}</span>
+									<span v-if="q.maj_opt_subj"><strong>Subjects:</strong> {{ q.maj_opt_subj }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div v-else
+						class="text-sm text-ink-gray-5 bg-surface-gray-2 border border-outline-gray-2 border-dashed rounded-lg p-4 text-center">
+						{{ __('No qualifications specified.') }}
+					</div>
 				</div>
-				<div v-else>
-					<SlotPicker
-						:slots="slots"
-						:selectedSlotName="selectedSlot?.name"
-						:systemTimezone="systemTimezone"
-						:loading-more="slotsList.loading"
-						:has-more="tutorStore.hasMoreSlotsBackend"
-						@selectSlot="onSelectSlot"
-						@loadMore="tutorStore.loadMoreSlotsBackend"
+			</div>
+
+			<!-- ── Book Session Card ── -->
+			<div class="max-w-3xl mb-10 bg-surface-white rounded-xl shadow-sm p-6 space-y-6">
+				<div class="border-b border-outline-gray-2 pb-4">
+					<h3 class="text-xl font-bold text-ink-gray-9">{{ __('Book a Session') }}</h3>
+					<p class="text-sm text-ink-gray-5 mt-1">{{ __('Select your preferred subject, board, class and time slot to book a live tutoring session.') }}</p>
+				</div>
+				
+				<!-- Session filters: Subject / Board / Class -->
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+					<FormControl
+						type="select"
+						:label="__('Subject')"
+						v-model="filters.subject"
+						:options="subjectOptions"
+					/>
+					<FormControl
+						type="select"
+						:label="__('Board')"
+						v-model="filters.board"
+						:options="boardOptions"
+					/>
+					<FormControl
+						type="select"
+						:label="__('Class')"
+						v-model="filters.class_name"
+						:options="classOptions"
 					/>
 				</div>
 
-				<!-- Booking review bar -->
+				<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
+					<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+				</div>
+				<div v-else class="mt-6 pt-6">
+					<SlotPicker :slots="slots" :selected-slot-name="selectedSlot?.name"
+						:system-timezone="systemTimezone" :loading-more="slotsList.loading"
+						:has-more="tutorStore.hasMoreSlotsBackend" @select-slot="onSelectSlot"
+						@loadMore="tutorStore.loadMoreSlotsBackend" />
+				</div>
+
+				<!-- Booking review card -->
 				<div v-if="selectedSlot"
-					class="bg-surface-gray-2 border border-outline-gray-2 rounded-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-					<div class="space-y-1">
-						<h4 class="font-semibold text-xs text-ink-gray-9 uppercase tracking-wider">
+					class="mt-8 bg-surface-gray-2 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+					<div class="space-y-4 w-full md:w-auto">
+						<h4 class="text-lg font-semibold text-ink-gray-9">
 							{{ __('Booking Review') }}
 						</h4>
-						<p class="text-xs text-ink-gray-7">
-							<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Selected Slot') }}:</span>
-							<span class="font-medium text-ink-gray-9">{{ selectedSlotHighlight }}</span>
-						</p>
-						<p class="text-xs text-ink-gray-7">
-							<span class="font-semibold text-ink-gray-5 mr-1 uppercase">{{ __('Price') }}:</span>
-							<span class="font-medium text-ink-gray-9">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
-						</p>
+						<div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+							<div>
+								<span class="block text-sm font-medium text-ink-gray-5 mb-1">{{ __('Selected Date') }}</span>
+								<span class="text-base font-medium text-ink-gray-9">{{ selectedSlotDateFormatted }}</span>
+							</div>
+							<div>
+								<span class="block text-sm font-medium text-ink-gray-5 mb-1">{{ __('Selected Time') }}</span>
+								<span class="text-base font-medium text-ink-gray-9">{{ selectedSlotTimeFormatted }}</span>
+							</div>
+							<div>
+								<span class="block text-sm font-medium text-ink-gray-5 mb-1">{{ __('Timezone') }}</span>
+								<span class="text-base font-medium text-ink-gray-9">{{ browserTimezone }}</span>
+							</div>
+							<div>
+								<span class="block text-sm font-medium text-ink-gray-5 mb-1">{{ __('Price') }}</span>
+								<span class="text-xl font-bold text-ink-gray-9 leading-none">{{ TEST_BOOKING_AMOUNT }} {{ currency }}</span>
+							</div>
+						</div>
 					</div>
-
-					<Button :loading="bookingStore.loading" variant="solid" @click="startBooking">
+					<Button :loading="bookingStore.loading" variant="solid" theme="gray"
+						class="w-full sm:w-auto h-9 px-5 rounded-lg font-semibold shadow-sm shrink-0" @click="startBooking">
 						{{ __('Proceed to Pay') }}
 					</Button>
 				</div>
 
 				<!-- Payment verifying overlay -->
-				<div
-					v-if="verifyingPayment"
-					class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
-				>
-					<LoadingIndicator class="w-10 h-10 text-blue-600" />
+				<div v-if="verifyingPayment"
+					class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4">
+					<LoadingIndicator class="w-10 h-10 text-ink-blue-3" />
 					<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
 					<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
 				</div>
 
 				<!-- Razorpay headless — kept mounted until success or explicit dismiss -->
-				<RazorpayCheckout
-					v-if="checkoutDetails"
-					:checkoutDetails="checkoutDetails"
-					@success="onPaymentSuccess"
-					@dismissed="onPaymentDismissed"
-				/>
+				<RazorpayCheckout v-if="checkoutDetails" :checkoutDetails="checkoutDetails"
+					@success="onPaymentSuccess" @dismissed="onPaymentDismissed" />
 			</div>
 		</div>
 	</div>
@@ -266,8 +247,8 @@ import { formatTimeRangeLocal, convertToLocal, getBrowserTimezone } from '@/util
 // Tabs definition
 const activeTab = ref('profile')
 const profileTabs = computed(() => [
-	{ value: 'profile', label: __('Profile Details') },
-	{ value: 'book', label: __('Book Session') },
+	{ label: __('Profile Details'), value: 'profile' },
+	{ label: __('Additional Details'), value: 'additional' },
 ])
 
 // Temporary: centralized test booking amount — restore to tutor.hourly_rate when live
@@ -320,6 +301,21 @@ const selectedSlotHighlight = computed(() => {
 	const tz = getBrowserTimezone()
 	return `date - ${startLocal.format('DD MMM YYYY')}, time - ${startLocal.format('hh:mm A')} – ${endLocal.format('hh:mm A')} (${tz})`
 })
+
+const selectedSlotDateFormatted = computed(() => {
+	if (!selectedSlot.value) return ''
+	const startLocal = convertToLocal(selectedSlot.value.start_datetime)
+	return startLocal ? startLocal.format('DD MMM YYYY') : ''
+})
+
+const selectedSlotTimeFormatted = computed(() => {
+	if (!selectedSlot.value) return ''
+	const startLocal = convertToLocal(selectedSlot.value.start_datetime)
+	const endLocal = convertToLocal(selectedSlot.value.end_datetime)
+	return startLocal && endLocal ? `${startLocal.format('hh:mm A')} – ${endLocal.format('hh:mm A')}` : ''
+})
+
+const browserTimezone = computed(() => getBrowserTimezone())
 const checkoutDetails = ref(null)
 
 /**

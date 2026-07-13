@@ -12,14 +12,6 @@
 						:buttons="viewButtons"
 						v-model="activeView"
 					/>
-					<Button
-						:loading="regenerating"
-						v-if="profile"
-						@click="triggerRegenerate"
-						variant="outline"
-					>
-						{{ __('Regenerate Slots') }}
-					</Button>
 				</div>
 			</template>
 		</LayoutHeader>
@@ -78,82 +70,89 @@
 
 				<!-- ══════════════ WEEK VIEW ══════════════ -->
 				<div v-if="activeView === 'calendar'" class="space-y-3">
-					<!-- Week Navigation -->
-					<div class="flex items-center justify-between">
-						<Button variant="outline" class="text-xs font-semibold" @click="prevWeek">
-							← {{ __('Prev') }}
-						</Button>
-						<span class="text-sm font-semibold text-ink-gray-9">
-							{{ weekRangeLabel }}
-						</span>
-						<Button variant="outline" class="text-xs font-semibold" @click="nextWeek">
-							{{ __('Next') }} →
-						</Button>
-					</div>
-
-					<!-- Calendar Grid -->
-					<div class="border rounded-md bg-surface-white overflow-hidden">
-						<!-- Day header row -->
-						<div class="grid border-b" :style="gridStyle">
-							<!-- Gutter -->
-							<div class="border-r bg-surface-gray-2 py-2 px-1 text-center text-[10px] text-ink-gray-4 uppercase tracking-wider">
-								{{ __('Time') }}
-							</div>
-							<div
-								v-for="day in weekDays"
-								:key="day.format('YYYY-MM-DD')"
-								class="py-2 px-1 text-center border-r last:border-r-0"
-								:class="day.isSame(today, 'day') ? 'bg-surface-gray-3' : 'bg-surface-gray-2'"
-							>
-								<div class="text-[10px] uppercase tracking-wider" :class="day.isSame(today, 'day') ? 'text-ink-gray-9 font-semibold' : 'text-ink-gray-4'">
-									{{ day.format('ddd') }}
-								</div>
-								<div class="text-sm font-semibold mt-0.5" :class="day.isSame(today, 'day') ? 'text-ink-gray-9' : 'text-ink-gray-8'">
-									{{ day.format('D') }}
-								</div>
-							</div>
-						</div>
-
-						<!-- Time rows — scroll wrapper for mobile -->
-						<div class="overflow-x-auto">
-							<div class="min-w-[640px]">
-								<div
-									v-for="hour in displayHours"
-									:key="hour"
-									class="grid border-b last:border-b-0"
-									:style="gridStyle"
-								>
-									<!-- Hour label -->
-									<div class="border-r py-1.5 px-1 text-[10px] text-ink-gray-4 text-right pr-2 min-h-[3.5rem] flex items-start pt-2 shrink-0">
-										{{ formatHourLabel(hour) }}
-									</div>
-									<!-- Day cells -->
-									<div
-										v-for="day in weekDays"
-										:key="day.format('YYYY-MM-DD') + '-' + hour"
-										class="border-r last:border-r-0 py-0.5 px-0.5 min-h-[3.5rem] space-y-0.5"
-										:class="day.isSame(today, 'day') ? 'bg-surface-gray-1' : ''"
-									>
-										<button
-											v-for="slot in getSlotsForCell(day, hour)"
-											:key="slot.name"
-											@click="openSlotDetail(slot)"
-											class="w-full text-left rounded px-1.5 py-1 text-[10px] font-semibold leading-tight transition-opacity hover:opacity-80 truncate"
-											:class="slotChipClass(slot.status)"
-											:title="formatTime(slot.start_datetime) + ' – ' + formatTime(slot.end_datetime)"
-										>
-											{{ formatTime(slot.start_datetime) }}
-											<span class="opacity-70 font-normal block truncate">{{ slot.status }}</span>
+					<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white">
+						<Calendar
+							:events="calendarEvents"
+							:config="calendarConfig"
+						>
+							<template #event-popover-content="{ calendarEvent, close }">
+								<div v-if="getSlotByName(calendarEvent.id)" class="w-80 rounded-lg bg-surface-white p-4 border border-outline-gray-2 shadow-xl text-ink-gray-8 space-y-4">
+									<!-- Header with Close button -->
+									<div class="flex justify-between items-start">
+										<Badge :theme="getStatusTheme(getSlotByName(calendarEvent.id).status)" size="sm">
+											{{ getSlotByName(calendarEvent.id).status }}
+										</Badge>
+										<button class="p-1 rounded-md hover:bg-surface-gray-2 text-ink-gray-4 hover:text-ink-gray-9 transition-colors" @click.stop="close">
+											<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+											</svg>
 										</button>
 									</div>
-								</div>
-							</div>
-						</div>
-					</div>
 
-					<!-- Empty week state -->
-					<div v-if="slotsInCurrentWeek.length === 0" class="text-center py-10 text-ink-gray-5 border rounded-md bg-surface-white">
-						{{ __('No slots found in this week. Try navigating to another week or regenerating slots.') }}
+									<!-- Slot Date & Time details -->
+									<div>
+										<p class="font-semibold text-base text-ink-gray-9">
+											{{ formatTime(getSlotByName(calendarEvent.id).start_datetime) }} – {{ formatTime(getSlotByName(calendarEvent.id).end_datetime) }}
+										</p>
+										<p class="text-xs text-ink-gray-5 mt-0.5">
+											{{ formatDateFriendly(convertToLocal(getSlotByName(calendarEvent.id).start_datetime)?.format('YYYY-MM-DD') || '') }}
+										</p>
+									</div>
+
+									<!-- Booking Info -->
+									<div v-if="getBookingForSlot(calendarEvent.id)" class="space-y-3 pt-3 border-t border-outline-gray-2 text-xs">
+										<div class="grid grid-cols-2 gap-2.5">
+											<div>
+												<span class="text-ink-gray-4 uppercase tracking-wider text-[9px] block mb-0.5">{{ __('Student') }}</span>
+												<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(calendarEvent.id).student }}</span>
+											</div>
+											<div>
+												<span class="text-ink-gray-4 uppercase tracking-wider text-[9px] block mb-0.5">{{ __('Subject') }}</span>
+												<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(calendarEvent.id).subject || '—' }}</span>
+											</div>
+											<div>
+												<span class="text-ink-gray-4 uppercase tracking-wider text-[9px] block mb-0.5">{{ __('Class') }}</span>
+												<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(calendarEvent.id).class || '—' }}</span>
+											</div>
+											<div>
+												<span class="text-ink-gray-4 uppercase tracking-wider text-[9px] block mb-0.5">{{ __('Board') }}</span>
+												<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(calendarEvent.id).board || '—' }}</span>
+											</div>
+										</div>
+										<div v-if="getBookingForSlot(calendarEvent.id)?.meeting_link" class="pt-1">
+											<Button
+												variant="solid"
+												size="sm"
+												class="w-full justify-center"
+												@click="goToMeeting(getBookingForSlot(calendarEvent.id).meeting_link)"
+											>
+												{{ __('Join Class') }}
+											</Button>
+										</div>
+									</div>
+
+									<!-- Actions / Timezone -->
+									<div class="pt-3 border-t border-outline-gray-2 flex flex-col gap-2">
+										<p class="text-[10px] text-ink-gray-4">
+											{{ __('Times shown in local timezone') }}: {{ browserTimezone }}
+										</p>
+										<div v-if="getSlotByName(calendarEvent.id).status === 'Available'" class="flex justify-end pt-1">
+											<Button
+												variant="outline"
+												theme="red"
+												size="sm"
+												@click="deleteSlotFromPopover(calendarEvent.id, close)"
+											>
+												{{ __('Mark Unavailable') }}
+											</Button>
+										</div>
+										<div v-else-if="getSlotByName(calendarEvent.id).status === 'Temporarily Locked'" class="text-xs text-ink-gray-4 italic pt-1">
+											{{ __('Awaiting student payment...') }}
+										</div>
+									</div>
+								</div>
+							</template>
+						</Calendar>
 					</div>
 				</div>
 
@@ -171,7 +170,7 @@
 							<h3 class="font-semibold text-sm text-ink-gray-9 border-b pb-2">
 								{{ formatDateFriendly(date) }}
 							</h3>
-							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+							<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 								<div
 									v-for="slot in groupedSlots[date]"
 									:key="slot.name"
@@ -214,8 +213,15 @@
 										</div>
 									</div>
 
-									<!-- Action Button -->
-									<div class="flex justify-end pt-2 border-t mt-2">
+									<!-- Action Button Row (Hidden for Blocked / Expired with no actions) -->
+									<div
+										v-if="
+											slot.status === 'Available' ||
+											(slot.status === 'Booked' && getBookingForSlot(slot.name)?.meeting_link) ||
+											slot.status === 'Temporarily Locked'
+										"
+										class="flex justify-end pt-2 border-t mt-2"
+									>
 										<Button
 											v-if="slot.status === 'Available'"
 											@click="deleteSlot(slot.name)"
@@ -235,7 +241,6 @@
 										<span v-else-if="slot.status === 'Temporarily Locked'" class="text-xs text-ink-gray-4 italic">
 											{{ __('Awaiting Payment...') }}
 										</span>
-										<span v-else class="text-xs text-ink-gray-4 italic">—</span>
 									</div>
 								</div>
 							</div>
@@ -248,91 +253,11 @@
 			</div>
 		</div>
 
-		<!-- ══════════════ SLOT DETAIL DIALOG ══════════════ -->
-		<Dialog
-			v-model="showSlotDialog"
-			:options="{ title: __('Slot Details'), size: 'sm' }"
-		>
-			<template #body-content v-if="selectedSlot">
-				<div class="space-y-4 text-sm p-1">
-					<!-- Time & Status -->
-					<div class="flex justify-between items-center border-b pb-3">
-						<div>
-							<p class="font-semibold text-ink-gray-9">
-								{{ formatTime(selectedSlot.start_datetime) }} – {{ formatTime(selectedSlot.end_datetime) }}
-							</p>
-							<p class="text-xs text-ink-gray-5 mt-0.5">{{ formatDateFriendly(convertToLocal(selectedSlot.start_datetime)?.format('YYYY-MM-DD') || '') }}</p>
-						</div>
-						<Badge :theme="getStatusTheme(selectedSlot.status)" size="md">
-							{{ selectedSlot.status }}
-						</Badge>
-					</div>
-
-					<!-- Booking Info -->
-					<div v-if="getBookingForSlot(selectedSlot.name)" class="space-y-2 text-xs">
-						<div class="grid grid-cols-2 gap-3">
-							<div>
-								<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] block mb-0.5">{{ __('Student') }}</span>
-								<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(selectedSlot.name).student }}</span>
-							</div>
-							<div>
-								<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] block mb-0.5">{{ __('Subject') }}</span>
-								<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(selectedSlot.name).subject || '—' }}</span>
-							</div>
-							<div>
-								<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] block mb-0.5">{{ __('Class') }}</span>
-								<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(selectedSlot.name).class || '—' }}</span>
-							</div>
-							<div>
-								<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] block mb-0.5">{{ __('Board') }}</span>
-								<span class="font-semibold text-ink-gray-8">{{ getBookingForSlot(selectedSlot.name).board || '—' }}</span>
-							</div>
-						</div>
-						<div v-if="getBookingForSlot(selectedSlot.name)?.meeting_link" class="pt-2 border-t">
-							<Button
-								variant="solid"
-								@click="goToMeeting(getBookingForSlot(selectedSlot.name).meeting_link)"
-							>
-								{{ __('Join Class') }}
-							</Button>
-						</div>
-					</div>
-
-					<!-- Timezone note -->
-					<p class="text-[10px] text-ink-gray-4 border-t pt-2">
-						{{ __('Times shown in your local timezone') }}: {{ browserTimezone }}
-					</p>
-
-					<!-- Actions -->
-					<div v-if="selectedSlot.status === 'Available'" class="flex justify-end border-t pt-3">
-						<Button
-							variant="outline"
-							theme="red"
-							@click="deleteSlotFromDialog(selectedSlot.name)"
-						>
-							{{ __('Mark Unavailable') }}
-						</Button>
-					</div>
-					<div v-else-if="selectedSlot.status === 'Temporarily Locked'" class="text-xs text-ink-gray-4 italic border-t pt-3">
-						{{ __('Awaiting student payment...') }}
-					</div>
-				</div>
-			</template>
-		</Dialog>
-
 		<Dialog
 			v-model="showDeleteConfirmDialog"
 			:options="{
 				title: __('Mark Unavailable'),
 				size: 'sm',
-				actions: [
-					{
-						label: __('Confirm'),
-						variant: 'solid',
-						theme: 'red',
-						onClick: confirmDeleteSlot,
-					},
-				],
 			}"
 		>
 			<template #body-content>
@@ -340,13 +265,23 @@
 					{{ __('Are you sure you want to mark this available slot as unavailable?') }}
 				</p>
 			</template>
+			<template #actions="{ close }">
+				<div class="flex justify-end gap-3 w-full">
+					<Button variant="outline" @click="close">
+						{{ __('Cancel') }}
+					</Button>
+					<Button variant="solid" theme="red" @click="confirmDeleteSlot">
+						{{ __('Confirm') }}
+					</Button>
+				</div>
+			</template>
 		</Dialog>
 	</div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { Breadcrumbs, Button, LoadingIndicator, Badge, TabButtons, Dialog, call, toast } from 'frappe-ui'
+import { Breadcrumbs, Button, LoadingIndicator, Badge, TabButtons, Dialog, Calendar, call, toast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
@@ -364,51 +299,38 @@ const viewButtons = computed(() => [
 	{ value: 'list', label: __('List') },
 ])
 
-// ── Dialog state ──────────────────────────────────────────────────────────
-const showSlotDialog = ref(false)
-const selectedSlot = ref(null)
+const getSlotByName = (name) => slots.value.find(s => s.name === name)
 
-function openSlotDetail(slot) {
-	selectedSlot.value = slot
-	showSlotDialog.value = true
+// ── Frappe UI Calendar integration ────────────────────────────────────────
+const calendarConfig = {
+	defaultMode: 'Week',
+	disableModes: [],
+	timeFormat: '12h',
+	hourHeight: 60,
+	scrollToHour: 8,
 }
 
-// ── Week navigation ───────────────────────────────────────────────────────
-const today = dayjs()
-// Start on Monday of the current week (ISO week)
-const currentWeekStart = ref(dayjs().startOf('isoWeek'))
-
-const weekDays = computed(() =>
-	Array.from({ length: 7 }, (_, i) => currentWeekStart.value.add(i, 'day'))
-)
-
-const weekRangeLabel = computed(() => {
-	const start = currentWeekStart.value
-	const end = start.add(6, 'day')
-	if (start.month() === end.month()) {
-		return `${start.format('MMMM D')} – ${end.format('D, YYYY')}`
-	}
-	return `${start.format('MMM D')} – ${end.format('MMM D, YYYY')}`
+const calendarEvents = computed(() => {
+	return slots.value.map(slot => {
+		const startLocal = convertToLocal(slot.start_datetime)
+		const endLocal = convertToLocal(slot.end_datetime)
+		if (!startLocal || !endLocal) return null
+		return {
+			id: slot.name,
+			title: slot.status,
+			fromDate: startLocal.format('YYYY-MM-DD'),
+			toDate: endLocal.format('YYYY-MM-DD'),
+			fromTime: startLocal.format('HH:mm:ss'),
+			toTime: endLocal.format('HH:mm:ss'),
+			color: getStatusTheme(slot.status),
+		}
+	}).filter(Boolean)
 })
 
-function prevWeek() {
-	currentWeekStart.value = currentWeekStart.value.subtract(1, 'week')
+function deleteSlotFromPopover(name, close) {
+	if (close) close()
+	deleteSlot(name)
 }
-function nextWeek() {
-	currentWeekStart.value = currentWeekStart.value.add(1, 'week')
-}
-
-// ── Display hours: 06:00 → 21:00 ─────────────────────────────────────────
-const displayHours = Array.from({ length: 16 }, (_, i) => i + 6)   // [6,7,...,21]
-
-function formatHourLabel(hour) {
-	return dayjs().hour(hour).minute(0).format('hh A')
-}
-
-// Grid CSS: 1 gutter column + 7 equal day columns
-const gridStyle = computed(() => ({
-	gridTemplateColumns: `3.5rem repeat(7, 1fr)`,
-}))
 
 // ── Data ──────────────────────────────────────────────────────────────────
 const regenerating = ref(false)
@@ -432,33 +354,7 @@ function countByStatus(status) {
 	return slots.value.filter(s => s.status === status).length
 }
 
-// ── Week view: slot lookup per cell ──────────────────────────────────────
-const slotsInCurrentWeek = computed(() => {
-	const weekEnd = currentWeekStart.value.add(7, 'day')
-	return slots.value.filter(s => {
-		const d = convertToLocal(s.start_datetime)
-		if (!d) return false
-		return d.isSame(currentWeekStart.value, 'day') || (d.isAfter(currentWeekStart.value) && d.isBefore(weekEnd))
-	})
-})
 
-function getSlotsForCell(day, hour) {
-	return slotsInCurrentWeek.value.filter(s => {
-		const d = convertToLocal(s.start_datetime)
-		if (!d) return false
-		return d.isSame(day, 'day') && d.hour() === hour
-	})
-}
-
-function slotChipClass(status) {
-	switch (status) {
-		case 'Available':         return 'bg-green-100 text-green-800 hover:bg-green-200'
-		case 'Booked':            return 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-		case 'Temporarily Locked': return 'bg-amber-100 text-amber-800 hover:bg-amber-200'
-		case 'Blocked':            return 'bg-red-100 text-red-800 hover:bg-red-200'
-		default:                  return 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-	}
-}
 
 // ── List view ─────────────────────────────────────────────────────────────
 const tabButtons = computed(() => {
@@ -573,11 +469,6 @@ async function confirmDeleteSlot() {
 		console.error('Failed to mark slot unavailable:', e)
 		toast.error(__('Failed to mark slot unavailable.'))
 	}
-}
-
-async function deleteSlotFromDialog(name) {
-	showSlotDialog.value = false
-	deleteSlot(name)
 }
 
 function goToMeeting(link) {

@@ -1,19 +1,18 @@
 <template>
-	<form @submit.prevent="submitForm" novalidate class="space-y-6 text-gray-800">
+	<form @submit.prevent="submitForm" novalidate class="space-y-6">
 		<div class="grid grid-cols-1 gap-4">
 			<div>
-				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">{{
+				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-2.5">{{
 					__('Weekdays') }}</label>
-				<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 border border-gray-100 rounded-lg p-4 transition-colors"
+				<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-surface-gray-1 border border-outline-gray-2 rounded-md p-4 transition-colors"
 					:class="{ 'has-error-weekdays': errors.weekdays }">
-					<Checkbox v-for="day in weekdays" :key="day" :value="day"
-						:modelValue="form.weekdays.includes(day)"
-						@update:modelValue="val => { if (val) { form.weekdays.push(day) } else { form.weekdays = form.weekdays.filter(d => d !== day) } }"
-						:label="day"
-						class="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900" />
+					<div v-for="day in weekdays" :key="day" class="flex items-center">
+						<Checkbox :value="day" :modelValue="form.weekdays.includes(day)"
+							@update:modelValue="val => { if (val) { form.weekdays.push(day) } else { form.weekdays = form.weekdays.filter(d => d !== day) } }"
+							:label="day" />
+					</div>
 				</div>
-				<p v-if="errors.weekdays" class="text-xs text-red-500 mt-1.5">{{ __('Please select at least one weekday.')
-					}}</p>
+				<p v-if="errors.weekdays" class="text-xs text-red-500 mt-1.5">{{ __('Please select at least one weekday.') }}</p>
 			</div>
 		</div>
 
@@ -33,23 +32,23 @@
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div>
-				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{ __('Timezone') }}</label>
-				<div class="text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg p-2.5">
+				<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider mb-1.5">{{
+					__('Timezone') }}</label>
+				<div class="text-sm text-ink-gray-6 bg-surface-gray-1 border border-outline-gray-2 rounded-lg p-2.5">
 					{{ profileTimezone || 'Asia/Kolkata' }}
 				</div>
 			</div>
 
-			<div class="flex items-center pt-5">
-				<Checkbox v-model="form.active" :label="__('Active')"
-					class="cursor-pointer text-sm font-medium text-gray-700" />
+			<div class="flex items-end pb-3">
+				<Checkbox v-model="form.active" :label="__('Active')" />
 			</div>
 		</div>
 
-		<div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
-			<Button @click="$emit('cancel')" variant="outline" type="button" class="rounded-lg text-xs px-4 py-2">
+		<div class="flex justify-end gap-3 pt-6 border-t border-outline-gray-2">
+			<Button @click="$emit('cancel')" variant="outline" type="button" class="h-9 px-5 rounded-lg font-semibold">
 				{{ __('Cancel') }}
 			</Button>
-			<Button :loading="loading" variant="solid" type="submit" class="rounded-lg text-xs px-4 py-2">
+			<Button :loading="loading" variant="solid" type="submit" class="h-9 px-5 rounded-lg font-semibold">
 				{{ __('Save Rule') }}
 			</Button>
 		</div>
@@ -191,11 +190,12 @@ function submitForm() {
 
 <style scoped>
 .has-error :deep(input) {
-	border-color: #ef4444 !important;
-	background-color: #fef2f2 !important;
+	border-color: var(--outline-red-2);
+	background-color: var(--surface-red-1);
 }
+
 .has-error-weekdays {
-	border-color: #ef4444 !important;
-	background-color: #fef2f2 !important;
+	border-color: var(--outline-red-2);
+	background-color: var(--surface-red-1);
 }
 </style>

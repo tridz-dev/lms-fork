@@ -1,14 +1,14 @@
 <template>
-	<div class="flex flex-col border rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors">
-		<div class="flex items-start justify-between pb-3 border-b">
+	<div class="flex flex-col border border-outline-gray-1 rounded-md p-5 bg-surface-base hover:border-outline-gray-2 transition-colors">
+		<div class="flex items-start justify-between pb-3 border-b border-outline-gray-1">
 			<div>
-				<h4 class="font-semibold text-base text-ink-gray-9">
+				<h4 class="font-semibold text-sm text-ink-gray-9">
 					{{ recommendation.lesson_title || recommendation.lesson }}
 				</h4>
-				<p v-if="recommendation.course_title" class="text-xs text-ink-gray-6 font-medium mt-0.5">
-					Course: {{ recommendation.course_title }}
+				<p v-if="recommendation.course_title" class="text-xs text-ink-gray-7 font-medium mt-0.5">
+					{{ __('Course') }}: {{ recommendation.course_title }}
 				</p>
-				<p class="text-[10px] text-ink-gray-4 mt-1 uppercase tracking-wider font-semibold">
+				<p class="text-xs text-ink-gray-5 mt-1 font-semibold">
 					{{ __('Recommended') }}: {{ formatDate(recommendation.recommended_on) }}
 				</p>
 			</div>
@@ -26,20 +26,21 @@
 			</div>
 		</div>
 
-		<div class="text-sm text-ink-gray-8 space-y-4 py-4">
+		<div class="text-sm text-ink-gray-9 space-y-4 py-4">
 			<div>
-				<span class="font-semibold text-[10px] uppercase tracking-wider text-ink-gray-4 block mb-1.5">{{ __('Reason') }}</span>
-				<p class="leading-relaxed bg-surface-gray-2 p-3 border rounded-md text-ink-gray-7 text-xs font-normal">
+				<span class="font-semibold text-xs text-ink-gray-5 block mb-1.5">{{ __('Reason') }}</span>
+				<p class="leading-relaxed bg-surface-gray-2 p-3 rounded-md text-ink-gray-7 text-xs font-normal">
 					{{ recommendation.recommendation_reason }}
 				</p>
 			</div>
 		</div>
 
-		<div class="flex gap-2 pt-4 border-t">
+		<div class="flex gap-2 pt-4 border-t border-outline-gray-1">
 			<Button
 				:loading="resolving"
 				@click="handleRevise"
 				variant="solid"
+				theme="gray"
 				class="flex-1"
 			>
 				{{ __('Revise Lesson') }}
@@ -49,6 +50,7 @@
 				:loading="completing"
 				@click="markCompleted"
 				variant="outline"
+				theme="gray"
 			>
 				{{ __('Complete') }}
 			</Button>
@@ -57,6 +59,7 @@
 				:loading="dismissing"
 				@click="dismiss"
 				variant="outline"
+				theme="gray"
 			>
 				{{ __('Dismiss') }}
 			</Button>
@@ -64,12 +67,13 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject, ref } from 'vue'
-import { Button, Badge, call } from 'frappe-ui'
+import { Button, Badge } from 'frappe-ui'
 import { useRouter } from 'vue-router'
 import { useRevisionStore } from '@/stores/useRevisionStore'
 
+// Customization for Smart Learning App: Dashboard card displaying revision recommendations
 const props = defineProps({
 	recommendation: {
 		type: Object,
