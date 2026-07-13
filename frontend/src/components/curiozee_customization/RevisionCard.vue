@@ -99,7 +99,7 @@ const priorityTheme = computed(() => {
 		case 'High':
 			return 'red'
 		case 'Medium':
-			return 'amber'
+			return 'orange'
 		case 'Low':
 		default:
 			return 'gray'
@@ -118,7 +118,7 @@ const statusTheme = computed(() => {
 			return 'gray'
 		case 'Pending':
 		default:
-			return 'amber'
+			return 'orange'
 	}
 })
 

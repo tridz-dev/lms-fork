@@ -48,23 +48,19 @@
 						<h2 class="text-2xl font-semibold text-ink-gray-9">{{ __('Generated Availability Slots') }}</h2>
 						<p class="text-sm text-ink-gray-5 mt-0.5">{{ __('Manage your available slots and view linked booking states.') }}</p>
 					</div>
-					<div class="flex items-center gap-3 text-xs text-ink-gray-5 shrink-0">
-						<span class="flex items-center gap-1.5">
-							<span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+					<div class="flex flex-wrap items-center gap-2 shrink-0">
+						<Badge theme="green">
 							{{ __('Available') }} ({{ countByStatus('Available') }})
-						</span>
-						<span class="flex items-center gap-1.5">
-							<span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
+						</Badge>
+						<Badge theme="gray">
 							{{ __('Booked') }} ({{ countByStatus('Booked') }})
-						</span>
-						<span class="flex items-center gap-1.5">
-							<span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+						</Badge>
+						<Badge theme="orange">
 							{{ __('Locked') }} ({{ countByStatus('Temporarily Locked') }})
-						</span>
-						<span class="flex items-center gap-1.5">
-							<span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+						</Badge>
+						<Badge theme="red">
 							{{ __('Blocked') }} ({{ countByStatus('Blocked') }})
-						</span>
+						</Badge>
 					</div>
 				</div>
 
@@ -82,11 +78,11 @@
 										<Badge :theme="getStatusTheme(getSlotByName(calendarEvent.id).status)" size="sm">
 											{{ getSlotByName(calendarEvent.id).status }}
 										</Badge>
-										<button class="p-1 rounded-md hover:bg-surface-gray-2 text-ink-gray-4 hover:text-ink-gray-9 transition-colors" @click.stop="close">
-											<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-											</svg>
-										</button>
+										<Button
+											variant="ghost"
+											icon="x"
+											@click.stop="close"
+										/>
 									</div>
 
 									<!-- Slot Date & Time details -->
@@ -281,7 +277,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { Breadcrumbs, Button, LoadingIndicator, Badge, TabButtons, Dialog, Calendar, call, toast } from 'frappe-ui'
+import { Breadcrumbs, Button, LoadingIndicator, Badge, TabButtons, Dialog, Calendar, FeatherIcon, call, toast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
@@ -295,7 +291,7 @@ const activeView = ref('calendar')        // 'week' | 'list'
 const activeTab = ref('available')    // list view filter
 
 const viewButtons = computed(() => [
-	{ value: 'calendar', label: __('Calender') },
+	{ value: 'calendar', label: __('Calendar') },
 	{ value: 'list', label: __('List') },
 ])
 

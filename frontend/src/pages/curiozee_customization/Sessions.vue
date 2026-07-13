@@ -30,7 +30,7 @@
 				</div>
 
 				<!-- Sessions List -->
-				<div v-if="filteredSessions.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div v-if="filteredSessions.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 					<SessionCard
 						v-for="session in filteredSessions"
 						:key="session.name"

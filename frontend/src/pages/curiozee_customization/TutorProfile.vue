@@ -145,20 +145,11 @@
 							placeholder="Write a short summary about your background, credentials and tutoring approach..."
 							:label="__('Biography')" />
 
-						<!-- Subjects -->
 						<div class="space-y-1.5">
-							<div v-if="isReadOnly" class="space-y-2">
+							<div v-if="isReadOnly" class="space-y-1.5">
 								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
-								<div class="flex flex-wrap gap-2">
-									<Badge
-										v-for="sub in selectedSubjects"
-										:key="sub"
-										theme="gray"
-										size="md"
-									>
-										{{ sub }}
-									</Badge>
-									<p v-if="!selectedSubjects.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
+								<div class="text-sm font-medium text-ink-gray-9">
+									{{ selectedSubjects.length ? selectedSubjects.join(', ') : __('No subjects specified.') }}
 								</div>
 							</div>
 							<div v-else class="space-y-1.5">
@@ -173,20 +164,11 @@
 							</div>
 						</div>
 
-						<!-- Boards -->
 						<div class="space-y-1.5">
-							<div v-if="isReadOnly" class="space-y-2">
+							<div v-if="isReadOnly" class="space-y-1.5">
 								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
-								<div class="flex flex-wrap gap-2">
-									<Badge
-										v-for="brd in selectedBoards"
-										:key="brd"
-										theme="gray"
-										size="md"
-									>
-										{{ brd }}
-									</Badge>
-									<p v-if="!selectedBoards.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
+								<div class="text-sm font-medium text-ink-gray-9">
+									{{ selectedBoards.length ? selectedBoards.join(', ') : __('No boards specified.') }}
 								</div>
 							</div>
 							<div v-else class="space-y-1.5">
@@ -201,20 +183,11 @@
 							</div>
 						</div>
 
-						<!-- Classes -->
 						<div class="space-y-1.5">
-							<div v-if="isReadOnly" class="space-y-2">
+							<div v-if="isReadOnly" class="space-y-1.5">
 								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
-								<div class="flex flex-wrap gap-2">
-									<Badge
-										v-for="cls in selectedClasses"
-										:key="cls"
-										theme="gray"
-										size="md"
-									>
-										{{ cls }}
-									</Badge>
-									<p v-if="!selectedClasses.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
+								<div class="text-sm font-medium text-ink-gray-9">
+									{{ selectedClasses.length ? selectedClasses.join(', ') : __('No classes specified.') }}
 								</div>
 							</div>
 							<div v-else class="space-y-1.5">

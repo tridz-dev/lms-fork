@@ -11,9 +11,9 @@
 			<!-- Loading State (Skeleton) -->
 			<div v-if="tutorDetails.loading" class="w-full">
 				<!-- Banner Cover Skeleton -->
-				<div class="h-[130px] w-full bg-surface-gray-2 animate-pulse"></div>
+				<div class="h-20 w-full bg-surface-gray-2 animate-pulse"></div>
 				<!-- Content Skeleton -->
-				<div class="mx-auto -mt-10 max-w-4xl w-full px-5 space-y-8 animate-pulse">
+				<div class="mx-auto -mt-8 max-w-6xl w-full px-5 space-y-8 animate-pulse">
 					<div class="flex flex-col md:flex-row justify-between items-center gap-6">
 						<div class="flex flex-col md:flex-row items-center">
 							<div class="h-[100px] w-[100px] rounded-full bg-surface-gray-3 border-4 border-white shrink-0 shadow-sm"></div>

@@ -112,7 +112,7 @@
 										{{ form.full_name || __('Student Profile') }}
 									</h2>
 									<Badge
-										theme="blue"
+										theme="gray"
 										size="md"
 										:label="__('Student')"
 									/>
