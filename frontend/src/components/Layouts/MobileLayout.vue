@@ -78,7 +78,7 @@ const menu = ref(null)
 const isModerator = ref(false)
 const isInstructor = ref(false)
 
-const handleOutsideClick = (e) => {
+function handleOutsideClick(e) {
 	if (menu.value && !menu.value.contains(e.target)) {
 		showMenu.value = false
 	}
@@ -94,7 +94,7 @@ watch(showMenu, (val) => {
 	}
 })
 
-const destructureSidebarLinks = () => {
+function destructureSidebarLinks() {
 	let links = []
 	sidebarLinks.value.forEach((link) => {
 		link.items?.forEach((item) => {
@@ -104,7 +104,7 @@ const destructureSidebarLinks = () => {
 	sidebarLinks.value = links
 }
 
-const filterLinksToShow = (data) => {
+function filterLinksToShow(data) {
 	Object.keys(data).forEach((key) => {
 		if (!parseInt(data[key])) {
 			sidebarLinks.value = sidebarLinks.value.filter(
@@ -114,7 +114,7 @@ const filterLinksToShow = (data) => {
 	})
 }
 
-const addOtherLinks = () => {
+function addOtherLinks() {
 	otherLinks.value = []
 	if (user) {
 		// Customization for Smart Learning App: Inject role-based links for Tutors and Students
@@ -141,7 +141,7 @@ const addOtherLinks = () => {
 	}
 }
 
-const addLink = (label, icon, to = '') => {
+function addLink(label, icon, to = '') {
 	if (otherLinks.value.some((link) => link.label === label)) return
 	otherLinks.value.push({
 		label: label,
@@ -150,7 +150,7 @@ const addLink = (label, icon, to = '') => {
 	})
 }
 
-const updateSidebarLinks = () => {
+function updateSidebarLinks() {
 	sidebarLinks.value = getSidebarLinks(true)
 	destructureSidebarLinks()
 	if (sidebarSettings.data) {
@@ -164,7 +164,7 @@ const updateSidebarLinks = () => {
 	}
 }
 
-const processSidebarLinks = async (data) => {
+async function processSidebarLinks(data) {
 	filterLinksToShow(data)
 	await addPrograms()
 	if (isModerator.value || isInstructor.value) {
@@ -175,19 +175,19 @@ const processSidebarLinks = async (data) => {
 	addOtherLinks()
 }
 
-const addQuizzes = () => {
+function addQuizzes() {
 	addLink('Quizzes', 'CircleHelp', 'Quizzes')
 }
 
-const addAssignments = () => {
+function addAssignments() {
 	addLink('Assignments', 'Pencil', 'Assignments')
 }
 
-const addProgrammingExercises = () => {
+function addProgrammingExercises() {
 	addLink('Programming Exercises', 'Code', 'ProgrammingExercises')
 }
 
-const addPrograms = async () => {
+async function addPrograms() {
 	if (sidebarLinks.value.some((link) => link.label === 'Programs')) return
 	let canAddProgram = await checkIfCanAddProgram()
 	if (!canAddProgram) return
@@ -203,7 +203,7 @@ const addPrograms = async () => {
 }
 
 
-const checkIfCanAddProgram = async () => {
+async function checkIfCanAddProgram() {
 	if (!userResource.data) return false
 	if (isModerator.value || isInstructor.value) {
 		return true
@@ -212,11 +212,11 @@ const checkIfCanAddProgram = async () => {
 	return programs.enrolled.length > 0 || programs.published.length > 0
 }
 
-let isActive = (tab) => {
+function isActive(tab) {
 	return tab.activeFor?.includes(router.currentRoute.value.name)
 }
 
-const handleClick = (tab) => {
+function handleClick(tab) {
 	if (tab.label == 'Log in') window.location.href = '/login'
 	else if (tab.label == 'Log out')
 		logout.submit().then(() => {
@@ -232,7 +232,7 @@ const handleClick = (tab) => {
 	else router.push({ name: tab.to })
 }
 
-const isVisible = (tab) => {
+function isVisible(tab) {
 	if (tab.label == 'Log in') return !isLoggedIn
 	else if (tab.label == 'Log out') return isLoggedIn
 	else return true
@@ -251,7 +251,7 @@ watch(
 	{ immediate: true }
 )
 
-const toggleMenu = () => {
+function toggleMenu() {
 	showMenu.value = !showMenu.value
 }
 </script>

@@ -199,8 +199,8 @@
 						</router-link>
 					</div>
 
-					<div v-if="dashboardData.data?.recommended_tutors?.length" class="divide-y">
-						<TutorMatchCard
+					<div v-if="dashboardData.data?.recommended_tutors?.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 p-4">
+						<TutorCard
 							v-for="tutor in dashboardData.data.recommended_tutors"
 							:key="tutor.name"
 							:tutor="tutor"
@@ -234,7 +234,7 @@ import {
 } from 'frappe-ui'
 import { useRouter } from 'vue-router'
 import RevisionCard from '@/components/curiozee_customization/RevisionCard.vue'
-import TutorMatchCard from '@/components/curiozee_customization/TutorMatchCard.vue'
+import TutorCard from '@/components/curiozee_customization/TutorCard.vue'
 import Streak from '@/pages/Home/Streak.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { useStudentProfileStore } from '@/stores/useStudentProfileStore'

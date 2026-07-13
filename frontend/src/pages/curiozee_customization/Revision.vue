@@ -11,151 +11,155 @@
 
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Header Section -->
-			<div class="border-b pb-4 mb-6">
-				<h2 class="text-2xl font-semibold text-ink-gray-9">
+			<div class="border-b pb-5 mb-6">
+				<h2 class="text-2xl font-bold text-ink-gray-9 leading-tight">
 					{{ __('Smart Revision Dashboard') }}
 				</h2>
-				<p class="text-sm text-ink-gray-5 mt-1">
+				<p class="text-sm text-ink-gray-5 mt-1.5 leading-relaxed">
 					{{ __('Structured concept review based on your learning activity, quiz scores, and tutoring history.') }}
 				</p>
 			</div>
 
-			<!-- Main 2-Column Layout -->
-			<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+			<!-- Single Column Stacked Layout -->
+			<div class="space-y-6 w-full">
 				
-				<!-- Left Column: Feed & Recommendations -->
-				<div class="lg:col-span-2 space-y-6">
-					
-					<!-- Status Filter Tabs -->
-					<div class="mb-4">
-						<TabButtons
-							class="w-full flex"
-							:buttons="tabButtons"
-							v-model="activeTab"
-						/>
-					</div>
+				<!-- Status Filter Tabs -->
+				<div class="mb-4">
+					<TabButtons
+						:buttons="tabButtons"
+						v-model="activeTab"
+					/>
+				</div>
 
-					<!-- List of recommendations -->
-					<div v-if="revisionStore.revisionFetcher.loading" class="flex justify-center py-20 bg-surface-white border border-outline-gray-2 rounded-md">
-						<LoadingIndicator class="w-10 h-10 text-gray-400" />
+				<!-- List of recommendations -->
+				<div v-if="revisionStore.revisionFetcher.loading" class="flex justify-center py-20 bg-surface-white border border-outline-gray-2 rounded-xl">
+					<LoadingIndicator class="w-10 h-10 text-ink-gray-4" />
+				</div>
+				
+				<div v-else-if="filteredRecommendations && filteredRecommendations.length" class="space-y-4">
+					<RevisionCard
+						v-for="rec in filteredRecommendations"
+						:key="rec.name"
+						:recommendation="rec"
+						@status-updated="onStatusUpdated"
+					/>
+				</div>
+				
+				<div v-else class="text-center py-20 border border-outline-gray-2 rounded-xl bg-surface-white px-6">
+					<span class="lucide-sparkles size-10 text-ink-gray-4 mx-auto block mb-3" aria-hidden="true" />
+					<h3 class="font-semibold text-base text-ink-gray-8 mb-1">{{ __('All caught up!') }}</h3>
+					<p class="text-xs text-ink-gray-5 max-w-md mx-auto">
+						{{ __('No recommendations match this status. Keep studying new lessons or check other tabs!') }}
+					</p>
+				</div>
+
+				<!-- Pending Count Card -->
+				<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-xl shadow-sm space-y-2">
+					<div class="flex items-center justify-between mb-1">
+						<span class="text-xs font-bold uppercase tracking-wider text-ink-gray-5">
+							{{ __('Pending Revisions') }}
+						</span>
+						<span class="lucide-clock size-5 text-ink-orange-5" aria-hidden="true" />
 					</div>
-					
-					<div v-else-if="filteredRecommendations && filteredRecommendations.length" class="space-y-4">
-						<RevisionCard
-							v-for="rec in filteredRecommendations"
-							:key="rec.name"
-							:recommendation="rec"
-						/>
-					</div>
-					
-					<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white px-6">
-						<div class="text-4xl mb-3">🎉</div>
-						<h3 class="font-semibold text-base text-ink-gray-8 mb-1">{{ __('All caught up!') }}</h3>
-						<p class="text-xs text-ink-gray-5 max-w-md mx-auto">
-							{{ __('No recommendations match this status. Keep studying new lessons or check other tabs!') }}
-						</p>
+					<div class="flex items-baseline gap-2">
+						<span class="text-4xl font-extrabold text-ink-gray-9 leading-none">{{ pendingCount }}</span>
+						<span class="text-xs text-ink-gray-5 font-normal">{{ __('lessons to revisit') }}</span>
 					</div>
 				</div>
 
-				<!-- Right Column: Analytics Sidebar -->
-				<div class="space-y-6">
-					
-					<!-- Pending Count Card -->
-					<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-md space-y-2">
-						<span class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5 block mb-1">
-							{{ __('Pending Revisions') }}
-						</span>
-						<div class="flex items-baseline gap-2">
-							<span class="text-4xl font-extrabold text-ink-gray-9">{{ pendingCount }}</span>
-							<span class="text-xs text-ink-gray-5 font-normal">{{ __('lessons to revisit') }}</span>
-						</div>
-					</div>
-
-					<!-- Weak Subjects widget -->
-					<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5">
-						<h3 class="font-semibold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
+				<!-- Weak Subjects widget -->
+				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
+					<div class="flex items-center justify-between border-b pb-3 mb-1">
+						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-5 flex items-center gap-2">
+							<span class="lucide-award size-4 text-ink-red-5" aria-hidden="true" />
 							{{ __('Weak Subjects & Topics') }}
 						</h3>
-						<div v-if="revisionStore.dashboardSummary.weak_subjects && revisionStore.dashboardSummary.weak_subjects.length">
-							<div
-								v-for="sub in revisionStore.dashboardSummary.weak_subjects"
-								:key="sub.subject"
-								class="flex justify-between items-center py-2 border-b last:border-0 text-xs"
-							>
-								<div class="min-w-0 pr-2">
-									<p class="font-semibold text-ink-gray-8 truncate">{{ sub.subject }}</p>
-									<p class="text-[10px] text-ink-gray-5">{{ sub.attempts_count }} {{ __('attempts') }}</p>
-								</div>
+					</div>
+					<div v-if="revisionStore.dashboardSummary.weak_subjects && revisionStore.dashboardSummary.weak_subjects.length" class="divide-y divide-outline-gray-1">
+						<div
+							v-for="sub in revisionStore.dashboardSummary.weak_subjects"
+							:key="sub.subject"
+							class="flex justify-between items-center py-2.5 first:pt-0 last:pb-0 text-xs"
+						>
+							<div class="min-w-0 pr-2 space-y-0.5">
+								<p class="font-semibold text-ink-gray-8 truncate">{{ sub.subject }}</p>
+								<p class="text-[10px] text-ink-gray-5 font-medium">{{ sub.attempts_count }} {{ __('attempts') }}</p>
+							</div>
+							<Badge
+								:label="`${sub.average_score}%`"
+								:theme="sub.average_score < 50 ? 'red' : 'amber'"
+								size="sm"
+							/>
+						</div>
+					</div>
+					<div v-else class="text-center py-6 text-xs text-ink-gray-5">
+						<span class="lucide-sparkles size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
+						{{ __('No quiz data available yet.') }}
+					</div>
+				</div>
+
+				<!-- Recommended Topics widget -->
+				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
+					<div class="flex items-center justify-between border-b pb-3 mb-1">
+						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-5 flex items-center gap-2">
+							<span class="lucide-book-open size-4 text-ink-blue-5" aria-hidden="true" />
+							{{ __('Recommended Topics') }}
+						</h3>
+					</div>
+					<div v-if="revisionStore.dashboardSummary.recommended_topics && revisionStore.dashboardSummary.recommended_topics.length" class="divide-y divide-outline-gray-1">
+						<div
+							v-for="topic in revisionStore.dashboardSummary.recommended_topics"
+							:key="topic.lesson"
+							class="py-2.5 first:pt-0 last:pb-0 text-xs"
+						>
+							<div class="flex items-start justify-between gap-2">
+								<p class="font-semibold text-ink-gray-8 leading-tight truncate-2-lines flex-1">
+									{{ topic.lesson_title || topic.lesson }}
+								</p>
 								<Badge
-									:label="`${sub.average_score}%`"
-									:theme="sub.average_score < 50 ? 'red' : 'amber'"
+									:label="topic.priority"
+									:theme="topic.priority === 'High' ? 'red' : 'gray'"
 									size="sm"
 								/>
 							</div>
-						</div>
-						<div v-else class="text-center py-6 text-xs text-ink-gray-5">
-							{{ __('No quiz data available yet.') }}
+							<p v-if="topic.course_title" class="text-[10px] text-ink-gray-5 mt-1 truncate">
+								{{ topic.course_title }}
+							</p>
 						</div>
 					</div>
+					<div v-else class="text-center py-6 text-xs text-ink-gray-5">
+						<span class="lucide-check-circle size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
+						{{ __('All recommendations completed!') }}
+					</div>
+				</div>
 
-					<!-- Recommended Topics widget -->
-					<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5">
-						<h3 class="font-semibold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
-							{{ __('Recommended Topics') }}
+				<!-- Recently Completed Lessons widget -->
+				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
+					<div class="flex items-center justify-between border-b pb-3 mb-1">
+						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-5 flex items-center gap-2">
+							<span class="lucide-check-square size-4 text-ink-green-5" aria-hidden="true" />
+							{{ __('Recently Completed') }}
 						</h3>
-						<div v-if="revisionStore.dashboardSummary.recommended_topics && revisionStore.dashboardSummary.recommended_topics.length">
-							<div
-								v-for="topic in revisionStore.dashboardSummary.recommended_topics"
-								:key="topic.lesson"
-								class="py-2.5 border-b last:border-0 text-xs"
-							>
-								<div class="flex items-start justify-between gap-2">
-									<p class="font-semibold text-ink-gray-8 leading-tight truncate-2-lines flex-1">
-										{{ topic.lesson_title || topic.lesson }}
-									</p>
-									<Badge
-										:label="topic.priority"
-										:theme="topic.priority === 'High' ? 'red' : 'gray'"
-										size="sm"
-									/>
-								</div>
-								<p v-if="topic.course_title" class="text-[10px] text-ink-gray-5 mt-0.5 truncate">
-									{{ topic.course_title }}
-								</p>
+					</div>
+					<div v-if="revisionStore.dashboardSummary.recently_completed && revisionStore.dashboardSummary.recently_completed.length" class="divide-y divide-outline-gray-1">
+						<div
+							v-for="act in revisionStore.dashboardSummary.recently_completed"
+							:key="act.lesson"
+							class="py-2.5 first:pt-0 last:pb-0 text-xs"
+						>
+							<p class="font-semibold text-ink-gray-8 truncate">
+								{{ act.lesson_title || act.lesson }}
+							</p>
+							<div class="flex justify-between items-center text-[10px] text-ink-gray-5 mt-1">
+								<span class="truncate pr-2">{{ act.course_title }}</span>
+								<span class="shrink-0 font-medium">{{ formatDateShort(act.completed_on) }}</span>
 							</div>
 						</div>
-						<div v-else class="text-center py-6 text-xs text-ink-gray-5">
-							{{ __('All recommendations completed!') }}
-						</div>
 					</div>
-
-
-
-					<!-- Recently Completed Lessons widget -->
-					<div class="bg-surface-white border border-outline-gray-2 rounded-md p-5">
-						<h3 class="font-semibold text-xs uppercase tracking-wider text-ink-gray-4 border-b pb-2 mb-3">
-							{{ __('Recently Completed Lessons') }}
-						</h3>
-						<div v-if="revisionStore.dashboardSummary.recently_completed && revisionStore.dashboardSummary.recently_completed.length">
-							<div
-								v-for="act in revisionStore.dashboardSummary.recently_completed"
-								:key="act.lesson"
-								class="py-2 border-b last:border-0 text-xs"
-							>
-								<p class="font-semibold text-ink-gray-8 truncate">
-									{{ act.lesson_title || act.lesson }}
-								</p>
-								<div class="flex justify-between items-center text-[10px] text-ink-gray-5 mt-0.5">
-									<span class="truncate pr-2">{{ act.course_title }}</span>
-									<span class="shrink-0 font-medium">{{ formatDateShort(act.completed_on) }}</span>
-								</div>
-							</div>
-						</div>
-						<div v-else class="text-center py-6 text-xs text-ink-gray-5">
-							{{ __('No lessons completed recently.') }}
-						</div>
+					<div v-else class="text-center py-6 text-xs text-ink-gray-5">
+						<span class="lucide-edit-3 size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
+						{{ __('No lessons completed recently.') }}
 					</div>
-
 				</div>
 
 			</div>
@@ -207,6 +211,11 @@ const filteredRecommendations = computed(() => {
 	}
 	return recs
 })
+
+function onStatusUpdated() {
+	revisionStore.fetchRecommendations()
+	revisionStore.fetchDashboardSummary()
+}
 
 function formatDateShort(dateStr) {
 	if (!dateStr || !dayjs) return 'N/A'

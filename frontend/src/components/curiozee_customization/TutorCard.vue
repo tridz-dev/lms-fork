@@ -1,11 +1,11 @@
 <template>
 	<div
-		class="flex flex-col h-full border rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors cursor-pointer"
+		class="flex flex-col h-full rounded-xl p-5 bg-surface-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 		@click="navigateToBooking"
 	>
 		<div class="flex flex-col flex-auto">
 			<!-- Header: name + score badge (if matched) or timezone -->
-			<div class="flex items-start justify-between gap-4 mb-4 pb-3 border-b">
+			<div class="flex items-start justify-between gap-4 mb-4">
 				<div class="min-w-0">
 					<h3 class="text-base font-semibold text-ink-gray-9 leading-tight">
 						{{ tutor.tutor_name }}
@@ -39,11 +39,11 @@
 
 			<!-- Match reasons (only when matched) -->
 			<div
-				v-if="tutor.match_reasons && tutor.match_reasons.length"
+				v-if="filteredMatchReasons.length"
 				class="mb-3 space-y-0.5"
 			>
 				<div
-					v-for="(reason, idx) in tutor.match_reasons"
+					v-for="(reason, idx) in filteredMatchReasons"
 					:key="idx"
 					class="flex items-center gap-1.5 text-xs text-ink-gray-6"
 				>
@@ -61,7 +61,7 @@
 			</p>
 
 			<!-- Tags: subjects + boards + classes -->
-			<div class="mt-auto space-y-2 pt-3 border-t">
+			<div class="mt-auto space-y-2 pt-2">
 				<div v-if="tutor.subjects?.length" class="flex flex-wrap items-center gap-1">
 					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 mr-1">
 						{{ __('Subjects') }}:
@@ -89,12 +89,12 @@
 			</div>
 
 			<!-- Footer: price + book button -->
-			<div class="flex items-center justify-between mt-4 pt-4 border-t">
+			<div class="flex items-center justify-between mt-4 pt-2">
 				<div class="text-sm font-semibold text-ink-gray-9">
 					{{ TEST_BOOKING_AMOUNT }} {{ currency }}
 					<span class="text-xs font-normal text-ink-gray-5">/ hr</span>
 				</div>
-				<Button variant="solid" size="sm" @click.stop="navigateToBooking">
+				<Button variant="subtle" theme="gray" size="sm" @click.stop="navigateToBooking">
 					{{ __('Book') }}
 				</Button>
 			</div>
@@ -128,6 +128,11 @@ const scoreTheme = computed(() => {
 	if (s >= 70) return 'green'
 	if (s >= 40) return 'amber'
 	return 'gray'
+})
+
+const filteredMatchReasons = computed(() => {
+	if (!props.tutor.match_reasons) return []
+	return props.tutor.match_reasons.filter(r => !r.includes('slot(s) available'))
 })
 
 function navigateToBooking() {
