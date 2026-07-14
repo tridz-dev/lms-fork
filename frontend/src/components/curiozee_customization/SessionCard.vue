@@ -3,7 +3,7 @@
 		@click="showDetails = true"
 		class="flex flex-col border rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors cursor-pointer"
 	>
-		<div class="flex items-start justify-between pb-3 border-b">
+		<div class="flex items-start justify-between pb-3">
 			<div>
 				<h4 class="font-semibold text-base text-ink-gray-9">
 					{{ session.tutor_name || __('Tutor') }}
@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-		<div class="grid grid-cols-2 gap-4 text-xs py-4 border-b">
+		<div class="grid grid-cols-2 gap-4 text-xs py-4">
 			<div class="col-span-2">
 				<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Slot') }}</span>
 				<span class="font-semibold text-ink-gray-8">
@@ -84,7 +84,7 @@
 			<template #body-content>
 				<div class="space-y-4 text-sm text-ink-gray-7 p-1">
 					<!-- Tutor and Status Header -->
-					<div class="flex justify-between items-start border-b pb-3">
+					<div class="flex justify-between items-start pb-3">
 						<div>
 							<h4 class="font-semibold text-base text-ink-gray-9">{{ session.tutor_name || __('Tutor') }}</h4>
 							<p class="text-xs text-ink-gray-4 mt-0.5">ID: {{ session.name }}</p>
@@ -186,7 +186,8 @@
 						</Button>
 					</div>
 					<Button
-						variant="minimal"
+						variant="solid"
+						theme="red"
 						@click="showDetails = false"
 					>
 						{{ __('Close') }}

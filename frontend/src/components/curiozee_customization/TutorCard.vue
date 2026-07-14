@@ -86,7 +86,7 @@
 					{{ TEST_BOOKING_AMOUNT }} {{ currency }}
 					<span class="text-xs font-normal text-ink-gray-5">/ hr</span>
 				</div>
-				<Button variant="subtle" theme="gray" size="sm" @click.stop="navigateToBooking">
+				<Button variant="solid" theme="gray" size="sm" @click.stop="navigateToBooking">
 					{{ __('Book') }}
 				</Button>
 			</div>
