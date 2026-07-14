@@ -132,18 +132,44 @@
 					<!-- TAB: Profile Details -->
 					<div v-if="activeTab === 'profile'" class="space-y-8 max-w-2xl">
 						<form @submit.prevent="saveProfile" class="space-y-8">
-							<div class="space-y-4">
-							<FormControl v-model="form.tutor_name" :disabled="isReadOnly" type="text"
-								:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
-							<FormControl v-model="form.timezone" :disabled="isReadOnly" type="select"
-								:options="tzOptions" :label="__('Timezone')" :required="true" />
-							<FormControl v-model.number="form.years_of_experience" :disabled="isReadOnly" type="number"
-								min="0" :required="true" placeholder="e.g. 5" :label="__('Years of Experience')" />
-						</div>
+							<!-- Profile Fields: Read Only Mode -->
+							<div v-if="isReadOnly" class="space-y-6">
+								<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12 pt-4">
+									<div class="space-y-1">
+										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Display Name') }}</div>
+										<div class="text-base font-semibold text-ink-gray-9">{{ form.tutor_name || '—' }}</div>
+									</div>
+									<div class="space-y-1">
+										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Timezone') }}</div>
+										<div class="text-base font-semibold text-ink-gray-9">{{ form.timezone || '—' }}</div>
+									</div>
+									<div class="space-y-1">
+										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Years of Experience') }}</div>
+										<div class="text-base font-semibold text-ink-gray-9">{{ form.years_of_experience || 0 }}</div>
+									</div>
+								</div>
+								
+								<div class="space-y-1">
+									<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Biography') }}</div>
+									<div class="text-sm font-normal text-ink-gray-7 whitespace-pre-line leading-relaxed">{{ form.bio || __('No biography specified.') }}</div>
+								</div>
+							</div>
 
-						<FormControl v-model="form.bio" :disabled="isReadOnly" type="textarea" rows="4"
-							placeholder="Write a short summary about your background, credentials and tutoring approach..."
-							:label="__('Biography')" />
+							<!-- Profile Fields: Edit Mode -->
+							<div v-else class="space-y-4">
+								<div class="space-y-4 pt-4">
+									<FormControl v-model="form.tutor_name" type="text"
+										:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
+									<FormControl v-model="form.timezone" type="select"
+										:options="tzOptions" :label="__('Timezone')" :required="true" />
+									<FormControl v-model.number="form.years_of_experience" type="number"
+										min="0" :required="true" placeholder="e.g. 5" :label="__('Years of Experience')" />
+								</div>
+
+								<FormControl v-model="form.bio" type="textarea" rows="4"
+									placeholder="Write a short summary about your background, credentials and tutoring approach..."
+									:label="__('Biography')" />
+							</div>
 
 						<div class="space-y-1.5">
 							<div v-if="isReadOnly" class="space-y-1.5">
@@ -302,7 +328,7 @@
  						</div>
  
  						<div class="space-y-1.5 pt-4">
- 							<FormControl
+							<FormControl
  								id="activeToggle"
  								v-model="form.active"
  								:disabled="isReadOnly"
