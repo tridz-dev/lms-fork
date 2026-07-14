@@ -311,7 +311,7 @@ import {
 	Breadcrumbs,
 	Button,
 	FormControl,
-	LoadingIndicator,
+	Spinner,
 	Popover,
 	Select,
 	createResource,

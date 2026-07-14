@@ -1122,3 +1122,8 @@ export const getColor = (color, shade) => {
 		localStorage.getItem('theme') == 'light' ? 'lightMode' : 'darkMode'
 	return colorsJSON[theme][color][shade]
 }
+
+export const isSmartLearning = () => {
+	return true
+}
+

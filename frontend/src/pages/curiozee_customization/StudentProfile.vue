@@ -10,7 +10,7 @@
 			<!-- Loading State -->
 			<div v-if="profileStore.profile.loading" class="flex justify-center py-20">
 				<div class="flex flex-col items-center gap-3">
-					<LoadingIndicator class="w-8 h-8 text-ink-gray-5" />
+					<Spinner class="w-8 h-8 text-ink-gray-5" />
 					<p class="text-sm text-ink-gray-5">{{ __('Loading profile...') }}</p>
 				</div>
 			</div>
@@ -268,7 +268,7 @@
 
 <script setup>
 import { computed, inject, reactive, ref, onMounted } from 'vue'
-import { Breadcrumbs, Button, FormControl, TabButtons, Badge, FileUploader, call, toast as frappeToast, usePageMeta, LoadingIndicator } from 'frappe-ui'
+import { Breadcrumbs, Button, FormControl, TabButtons, Badge, FileUploader, call, toast as frappeToast, usePageMeta, Spinner } from 'frappe-ui'
 import { useStudentProfileStore } from '@/stores/useStudentProfileStore'
 import { usersStore } from '@/stores/user'
 import { getTimezones, validateFile } from '@/utils'

@@ -71,7 +71,7 @@
 			v-if="verifyingPayment"
 			class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4"
 		>
-			<LoadingIndicator class="w-10 h-10 text-ink-blue-3" />
+			<Spinner class="w-10 h-10 text-ink-blue-3" />
 			<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
 			<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
 		</div>
@@ -87,7 +87,7 @@
 
 <script setup>
 import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import { Breadcrumbs, Button, TabButtons, LoadingIndicator, toast } from 'frappe-ui'
+import { Breadcrumbs, Button, TabButtons, Spinner, toast } from 'frappe-ui'
 import { useSessionStore } from '@/stores/useSessionStore'
 import { useBookingStore } from '@/stores/useBookingStore'
 import SessionCard from '@/components/curiozee_customization/SessionCard.vue'

@@ -9,7 +9,7 @@
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
-				<LoadingIndicator class="w-10 h-10 text-ink-gray-4" />
+				<Spinner class="w-10 h-10 text-ink-gray-4" />
 			</div>
 
 			<!-- Empty State: No Profile -->
@@ -233,7 +233,7 @@
 
 <script setup>
 import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import { Breadcrumbs, LoadingIndicator, Badge, TabButtons, Button, Dialog, Dropdown, FormControl, toast } from 'frappe-ui'
+import { Breadcrumbs, Spinner, Badge, TabButtons, Button, Dialog, Dropdown, FormControl, toast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import { sessionStore } from '@/stores/session'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'

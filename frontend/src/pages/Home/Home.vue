@@ -45,6 +45,7 @@ import StudentDashboard from '@/pages/curiozee_customization/StudentDashboard.vu
 import AdminHome from '@/pages/Home/AdminHome.vue'
 import Streak from '@/pages/Home/Streak.vue'
 import { useStudentProfileStore } from '@/stores/useStudentProfileStore'
+import { isSmartLearning } from '@/utils'
 
 const user = inject<any>('$user')
 const { brand } = sessionStore()
@@ -91,6 +92,7 @@ const isPersonaCaptured = async () => {
 }
 
 const identifyUserPersona = async () => {
+	if (isSmartLearning()) return
 	if (user.data?.is_system_manager && !user.data?.developer_mode) {
 		let personaCaptured = await isPersonaCaptured()
 		if (personaCaptured) return

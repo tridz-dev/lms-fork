@@ -22,7 +22,7 @@
 
 				<!-- Tutor Grid -->
 				<div v-if="tutorStore.tutorsList.loading" class="flex justify-center py-20">
-					<LoadingIndicator class="w-10 h-10 text-gray-400" />
+					<Spinner class="w-10 h-10 text-gray-400" />
 				</div>
 				<div v-else-if="tutors && tutors.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					<TutorCard
@@ -41,7 +41,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { Breadcrumbs, LoadingIndicator } from 'frappe-ui'
+import { Breadcrumbs, Spinner } from 'frappe-ui'
 import { useTutorStore } from '@/stores/useTutorStore'
 import TutorCard from '@/components/curiozee_customization/TutorCard.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
