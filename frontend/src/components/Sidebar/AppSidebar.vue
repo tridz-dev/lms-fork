@@ -95,7 +95,7 @@
 			</div>
 			<div
 				v-if="
-					isStudent && !profileIsComplete && !sidebarStore.isSidebarCollapsed
+					!isSmartLearning() && isStudent && !profileIsComplete && !sidebarStore.isSidebarCollapsed
 				"
 				class="flex flex-col gap-3 text-ink-gray-9 py-2.5 px-3 bg-surface-white shadow-sm rounded-md"
 			>
@@ -127,7 +127,7 @@
 			</div>
 			<Tooltip
 				v-if="
-					isStudent && !profileIsComplete && sidebarStore.isSidebarCollapsed
+					!isSmartLearning() && isStudent && !profileIsComplete && sidebarStore.isSidebarCollapsed
 				"
 				:text="__('Complete your profile')"
 			>
@@ -145,12 +145,12 @@
 			</Tooltip>
 			<TrialBanner
 				v-if="
-					userResource.data?.is_system_manager && userResource.data?.is_fc_site
+					!isSmartLearning() && userResource.data?.is_system_manager && userResource.data?.is_fc_site
 				"
 				:isSidebarCollapsed="sidebarStore.isSidebarCollapsed"
 			/>
 			<GettingStartedBanner
-				v-if="showOnboarding && !isOnboardingStepsCompleted"
+				v-if="!isSmartLearning() && showOnboarding && !isOnboardingStepsCompleted"
 				:isSidebarCollapsed="sidebarStore.isSidebarCollapsed"
 				appName="learning"
 			/>
@@ -190,7 +190,7 @@
 							@click="redirectToAppointmentScreen()"
 						/>
 					</Tooltip>
-					<Tooltip v-if="showOnboarding" :text="__('Help')">
+					<Tooltip v-if="!isSmartLearning() && showOnboarding" :text="__('Help')">
 						<CircleHelp
 							class="size-4 stroke-1.5 text-ink-gray-7 cursor-pointer"
 							@click="
@@ -228,7 +228,7 @@
 		</div>
 		<HelpModal
 			data-testid="onboarding-help-modal"
-			v-if="showOnboarding && showHelpModal"
+			v-if="!isSmartLearning() && showOnboarding && showHelpModal"
 			v-model="showHelpModal"
 			v-model:articles="articles"
 			appName="learning"
@@ -241,6 +241,7 @@
 			docsLink="https://docs.frappe.io/learning"
 		/>
 		<IntermediateStepModal
+			v-if="!isSmartLearning()"
 			v-model="showIntermediateModal"
 			:currentStep="currentStep"
 		/>
@@ -254,7 +255,7 @@
 </template>
 
 <script setup>
-import { getSidebarLinks } from '@/utils'
+import { getSidebarLinks, isSmartLearning } from '@/utils'
 import { usersStore } from '@/stores/user'
 import { sessionStore } from '@/stores/session'
 import { useSidebar } from '@/stores/sidebar'
@@ -659,6 +660,10 @@ const updateSidebarLinks = () => {
 }
 
 const setUpOnboarding = () => {
+	if (isSmartLearning()) {
+		showOnboarding.value = false
+		return
+	}
 	if (userResource.data?.is_system_manager) {
 		onboardingDetails = useOnboarding('learning')
 		onboardingDetails.setUp(steps)

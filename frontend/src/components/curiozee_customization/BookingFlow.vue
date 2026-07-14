@@ -167,7 +167,7 @@
 				</div>
 
 				<div v-if="slotsList.loading && slots.length === 0" class="flex justify-center py-10">
-					<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+					<Spinner class="w-8 h-8 text-ink-gray-4" />
 				</div>
 				<div v-else class="mt-6 pt-6">
 					<SlotPicker :slots="slots" :selected-slot-name="selectedSlot?.name"
@@ -211,7 +211,7 @@
 				<!-- Payment verifying overlay -->
 				<div v-if="verifyingPayment"
 					class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm gap-4">
-					<LoadingIndicator class="w-10 h-10 text-ink-blue-3" />
+					<Spinner class="w-10 h-10 text-ink-blue-3" />
 					<p class="text-sm font-medium text-ink-gray-7">{{ __('Verifying payment…') }}</p>
 					<p class="text-xs text-ink-gray-4">{{ __('Please do not close this tab.') }}</p>
 				</div>
@@ -226,7 +226,7 @@
 
 <script setup>
 import { computed, inject, reactive, ref, watch } from 'vue'
-import { Avatar, Badge, Button, FormControl, LoadingIndicator, Select, TabButtons, toast } from 'frappe-ui'
+import { Avatar, Badge, Button, FormControl, Spinner, Select, TabButtons, toast } from 'frappe-ui'
 import { useTutorStore } from '@/stores/useTutorStore'
 import { useBookingStore } from '@/stores/useBookingStore'
 import { systemSettings } from '@/resources/bookTutor'

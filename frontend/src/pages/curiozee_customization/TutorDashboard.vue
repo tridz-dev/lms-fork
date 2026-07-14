@@ -7,7 +7,7 @@
 		</LayoutHeader>
 
 		<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
-			<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+			<Spinner class="w-8 h-8 text-ink-gray-4" />
 		</div>
 
 		<!-- No profile state -->
@@ -244,7 +244,7 @@
 import { computed, inject, onMounted, onBeforeUnmount } from 'vue'
 import {
 	Breadcrumbs,
-	LoadingIndicator,
+	Spinner,
 	Button,
 	Badge,
 	NumberChart,

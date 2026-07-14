@@ -67,7 +67,7 @@
 import { sessionStore } from '@/stores/session'
 import { call, Dropdown, toast } from 'frappe-ui'
 import { useRouter } from 'vue-router'
-import { convertToTitleCase } from '@/utils'
+import { convertToTitleCase, isSmartLearning } from '@/utils'
 import { applyTheme, toggleTheme, theme } from '@/utils/theme'
 import { usersStore } from '@/stores/user'
 import { useSettings } from '@/stores/settings'
@@ -203,6 +203,7 @@ const userDropdownOptions = computed(() => {
 					},
 					condition: () => {
 						return (
+							!isSmartLearning() &&
 							userResource.data?.is_system_manager &&
 							userResource.data?.is_fc_site
 						)
