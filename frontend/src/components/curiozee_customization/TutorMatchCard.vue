@@ -85,7 +85,7 @@ const currency = computed(
 const scoreTheme = computed(() => {
 	const s = props.tutor.score ?? 0
 	if (s >= 70) return 'green'
-	if (s >= 40) return 'amber'
+	if (s >= 40) return 'orange'
 	return 'gray'
 })
 </script>

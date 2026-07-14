@@ -132,33 +132,50 @@
 					<!-- TAB: Profile Details -->
 					<div v-if="activeTab === 'profile'" class="space-y-8 max-w-2xl">
 						<form @submit.prevent="saveProfile" class="space-y-8">
-							<div class="space-y-4">
-							<FormControl v-model="form.tutor_name" :disabled="isReadOnly" type="text"
-								:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
-							<FormControl v-model="form.timezone" :disabled="isReadOnly" type="select"
-								:options="tzOptions" :label="__('Timezone')" :required="true" />
-							<FormControl v-model.number="form.years_of_experience" :disabled="isReadOnly" type="number"
-								min="0" :required="true" placeholder="e.g. 5" :label="__('Years of Experience')" />
-						</div>
+							<!-- Profile Fields: Read Only Mode -->
+							<div v-if="isReadOnly" class="space-y-6">
+								<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12 pt-4">
+									<div class="space-y-1">
+										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Display Name') }}</div>
+										<div class="text-base font-semibold text-ink-gray-9">{{ form.tutor_name || '—' }}</div>
+									</div>
+									<div class="space-y-1">
+										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Timezone') }}</div>
+										<div class="text-base font-semibold text-ink-gray-9">{{ form.timezone || '—' }}</div>
+									</div>
+									<div class="space-y-1">
+										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Years of Experience') }}</div>
+										<div class="text-base font-semibold text-ink-gray-9">{{ form.years_of_experience || 0 }}</div>
+									</div>
+								</div>
+								
+								<div class="space-y-1">
+									<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Biography') }}</div>
+									<div class="text-sm font-normal text-ink-gray-7 whitespace-pre-line leading-relaxed">{{ form.bio || __('No biography specified.') }}</div>
+								</div>
+							</div>
 
-						<FormControl v-model="form.bio" :disabled="isReadOnly" type="textarea" rows="4"
-							placeholder="Write a short summary about your background, credentials and tutoring approach..."
-							:label="__('Biography')" />
+							<!-- Profile Fields: Edit Mode -->
+							<div v-else class="space-y-4">
+								<div class="space-y-4 pt-4">
+									<FormControl v-model="form.tutor_name" type="text"
+										:label="__('Display Name')" :required="true" placeholder="e.g. Dr. John Doe" />
+									<FormControl v-model="form.timezone" type="select"
+										:options="tzOptions" :label="__('Timezone')" :required="true" />
+									<FormControl v-model.number="form.years_of_experience" type="number"
+										min="0" :required="true" placeholder="e.g. 5" :label="__('Years of Experience')" />
+								</div>
 
-						<!-- Subjects -->
+								<FormControl v-model="form.bio" type="textarea" rows="4"
+									placeholder="Write a short summary about your background, credentials and tutoring approach..."
+									:label="__('Biography')" />
+							</div>
+
 						<div class="space-y-1.5">
-							<div v-if="isReadOnly" class="space-y-2">
+							<div v-if="isReadOnly" class="space-y-1.5">
 								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
-								<div class="flex flex-wrap gap-2">
-									<Badge
-										v-for="sub in selectedSubjects"
-										:key="sub"
-										theme="gray"
-										size="md"
-									>
-										{{ sub }}
-									</Badge>
-									<p v-if="!selectedSubjects.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
+								<div class="text-sm font-medium text-ink-gray-9">
+									{{ selectedSubjects.length ? selectedSubjects.join(', ') : __('No subjects specified.') }}
 								</div>
 							</div>
 							<div v-else class="space-y-1.5">
@@ -173,20 +190,11 @@
 							</div>
 						</div>
 
-						<!-- Boards -->
 						<div class="space-y-1.5">
-							<div v-if="isReadOnly" class="space-y-2">
+							<div v-if="isReadOnly" class="space-y-1.5">
 								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
-								<div class="flex flex-wrap gap-2">
-									<Badge
-										v-for="brd in selectedBoards"
-										:key="brd"
-										theme="gray"
-										size="md"
-									>
-										{{ brd }}
-									</Badge>
-									<p v-if="!selectedBoards.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
+								<div class="text-sm font-medium text-ink-gray-9">
+									{{ selectedBoards.length ? selectedBoards.join(', ') : __('No boards specified.') }}
 								</div>
 							</div>
 							<div v-else class="space-y-1.5">
@@ -201,20 +209,11 @@
 							</div>
 						</div>
 
-						<!-- Classes -->
 						<div class="space-y-1.5">
-							<div v-if="isReadOnly" class="space-y-2">
+							<div v-if="isReadOnly" class="space-y-1.5">
 								<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
-								<div class="flex flex-wrap gap-2">
-									<Badge
-										v-for="cls in selectedClasses"
-										:key="cls"
-										theme="gray"
-										size="md"
-									>
-										{{ cls }}
-									</Badge>
-									<p v-if="!selectedClasses.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
+								<div class="text-sm font-medium text-ink-gray-9">
+									{{ selectedClasses.length ? selectedClasses.join(', ') : __('No classes specified.') }}
 								</div>
 							</div>
 							<div v-else class="space-y-1.5">
@@ -329,7 +328,7 @@
  						</div>
  
  						<div class="space-y-1.5 pt-4">
- 							<FormControl
+							<FormControl
  								id="activeToggle"
  								v-model="form.active"
  								:disabled="isReadOnly"
@@ -481,7 +480,7 @@
 </template>
 
 <script setup>
-import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
+import { computed, inject, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Breadcrumbs, LoadingIndicator, Button, Badge, TabButtons, Dialog, FormControl, FormLabel, MultiSelect, FileUploader, TextInput, Select, call, toast as frappeToast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
@@ -495,6 +494,7 @@ const route = useRoute()
 const router = useRouter()
 const dashboardStore = useTutorDashboardStore()
 const $user = inject('$user')
+const socket = inject('$socket')
 
 const activeTab = ref(route.query.tab || 'profile')
 
@@ -591,6 +591,29 @@ const settings_slot_duration = computed(() => {
 onMounted(async () => {
 	await dashboardStore.dashboardData.submit()
 	syncForm()
+
+	if (socket) {
+		socket.on('tutor_verification_updated', (data) => {
+			if (data && dashboardStore.dashboardData.data?.profile) {
+				if (dashboardStore.dashboardData.data.profile.name === data.tutor_profile) {
+					dashboardStore.dashboardData.data.profile.verification_status = data.verification_status
+					dashboardStore.dashboardData.data.profile.workflow_state = data.workflow_state
+					dashboardStore.dashboardData.data.profile.rejection_reason = data.rejection_reason
+					dashboardStore.dashboardData.data.profile.modified = data.modified
+					
+					// Re-sync form so readonly state updates
+					syncForm()
+					frappeToast.success(__('Your verification status has been updated to: {0}', [data.verification_status]))
+				}
+			}
+		})
+	}
+})
+
+onBeforeUnmount(() => {
+	if (socket) {
+		socket.off('tutor_verification_updated')
+	}
 })
 
 watch(profile, () => {

@@ -87,7 +87,7 @@
 							</div>
 							<Badge
 								:label="`${sub.average_score}%`"
-								:theme="sub.average_score < 50 ? 'red' : 'amber'"
+								:theme="sub.average_score < 50 ? 'red' : 'orange'"
 								size="sm"
 							/>
 						</div>

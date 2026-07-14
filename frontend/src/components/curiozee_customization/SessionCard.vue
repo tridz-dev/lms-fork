@@ -8,10 +8,6 @@
 				<h4 class="font-semibold text-base text-ink-gray-9">
 					{{ session.tutor_name || __('Tutor') }}
 				</h4>
-				<p class="text-xs text-ink-gray-5 mt-1.5 flex items-center">
-					<span class="font-semibold text-ink-gray-4 mr-1.5 uppercase tracking-wider text-[10px]">{{ __('SLOT') }}:</span>
-					{{ formatSlotTime(session.start_datetime, session.end_datetime) }}
-				</p>
 			</div>
 			<div class="flex items-center">
 				<Badge
@@ -23,6 +19,12 @@
 		</div>
 
 		<div class="grid grid-cols-2 gap-4 text-xs py-4 border-b">
+			<div class="col-span-2">
+				<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Slot') }}</span>
+				<span class="font-semibold text-ink-gray-8">
+					{{ formatSlotTime(session.start_datetime, session.end_datetime) }}
+				</span>
+			</div>
 			<div>
 				<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Amount') }}</span>
 				<span class="font-semibold text-ink-gray-8">{{ session.amount }} {{ session.currency }}</span>
@@ -143,7 +145,7 @@
 							class="shadow-none border border-outline-gray-2 bg-surface-gray-1"
 						>
 							<template #actions>
-								<Badge label="Google Meet" theme="blue" size="sm" />
+								<Badge label="Google Meet" theme="gray" size="sm" />
 							</template>
 							<div class="flex items-center justify-between">
 								<p class="text-xs text-ink-gray-5">{{ __('Online live tutoring session') }}</p>
@@ -308,16 +310,16 @@ async function confirmCancellation() {
 const statusTheme = computed(() => {
 	switch (props.session.booking_status) {
 		case 'Confirmed':
-			return 'blue'
+			return 'gray'
 		case 'Payment Success':
 		case 'Completed':
 			return 'green'
 		case 'Pending Payment':
 		case 'Cancellation Requested':
 		case 'Refund Requested':
-			return 'amber'
+			return 'orange'
 		case 'Refunded':
-			return 'blue'
+			return 'gray'
 		case 'Cancelled':
 		case 'Expired':
 		case 'Failed':
