@@ -52,7 +52,7 @@
 						<Badge theme="green">
 							{{ __('Available') }} ({{ countByStatus('Available') }})
 						</Badge>
-						<Badge theme="gray">
+						<Badge theme="blue">
 							{{ __('Booked') }} ({{ countByStatus('Booked') }})
 						</Badge>
 						<Badge theme="orange">
@@ -66,7 +66,7 @@
 
 				<!-- ══════════════ WEEK VIEW ══════════════ -->
 				<div v-if="activeView === 'calendar'" class="space-y-3">
-					<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white">
+					<div class="border border-outline-gray-2 rounded-xl p-6 bg-surface-white h-[750px]">
 						<Calendar
 							:events="calendarEvents"
 							:config="calendarConfig"
@@ -318,7 +318,7 @@ const calendarEvents = computed(() => {
 			toDate: endLocal.format('YYYY-MM-DD'),
 			fromTime: startLocal.format('HH:mm:ss'),
 			toTime: endLocal.format('HH:mm:ss'),
-			color: getStatusTheme(slot.status),
+			color: getCalendarEventColor(slot.status),
 		}
 	}).filter(Boolean)
 })
@@ -415,6 +415,16 @@ function getStatusTheme(status) {
 		case 'Temporarily Locked': return 'orange'
 		case 'Blocked':             return 'red'
 		default:                   return 'gray'
+	}
+}
+
+function getCalendarEventColor(status) {
+	switch (status) {
+		case 'Available':          return 'green'
+		case 'Booked':             return 'blue'
+		case 'Temporarily Locked': return 'orange'
+		case 'Blocked':             return 'pink' // maps to pink (red-ish)
+		default:                   return 'violet' // maps to violet/gray
 	}
 }
 
