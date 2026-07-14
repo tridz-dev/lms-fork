@@ -174,15 +174,15 @@
 								<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12 pt-4">
 									<div class="space-y-1">
 										<div class="text-[11px] font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Full Name') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.full_name || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.full_name || '—' }}</div>
 									</div>
 									<div class="space-y-1">
 										<div class="text-[11px] font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Timezone') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.time_zone || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.time_zone || '—' }}</div>
 									</div>
 									<div class="space-y-1">
 										<div class="text-[11px] font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Phone Number') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.phone_number || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.phone_number || '—' }}</div>
 									</div>
 								</div>
 
@@ -220,15 +220,15 @@
 								<div v-if="isReadOnly" class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12 pt-4">
 									<div class="space-y-1">
 										<div class="text-[11px] font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Board') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.board || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.board || '—' }}</div>
 									</div>
 									<div class="space-y-1">
 										<div class="text-[11px] font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Class') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.class || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.class || '—' }}</div>
 									</div>
 									<div class="space-y-1 sm:col-span-2">
 										<div class="text-[11px] font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('School') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.school || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.school || '—' }}</div>
 									</div>
 								</div>
 

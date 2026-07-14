@@ -56,22 +56,22 @@
 				<!-- Pending Count Card -->
 				<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-xl shadow-sm space-y-2">
 					<div class="flex items-center justify-between mb-1">
-						<span class="text-xs font-bold uppercase tracking-wider text-ink-gray-5">
+						<span class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 							{{ __('Pending Revisions') }}
 						</span>
-						<span class="lucide-clock size-5 text-ink-orange-5" aria-hidden="true" />
+						<span class="size-5 text-ink-orange-5" aria-hidden="true" />
 					</div>
 					<div class="flex items-baseline gap-2">
-						<span class="text-4xl font-extrabold text-ink-gray-9 leading-none">{{ pendingCount }}</span>
+						<span class="text-xs font-extrabold text-ink-gray-9 leading-none">{{ pendingCount }}</span>
 						<span class="text-xs text-ink-gray-5 font-normal">{{ __('lessons to revisit') }}</span>
 					</div>
 				</div>
 
 				<!-- Weak Subjects widget -->
 				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
-					<div class="flex items-center justify-between border-b pb-3 mb-1">
-						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-5 flex items-center gap-2">
-							<span class="lucide-award size-4 text-ink-red-5" aria-hidden="true" />
+					<div class="flex items-center justify-between pb-3 mb-1">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
+							<span class=" size-4 text-ink-red-5" aria-hidden="true" />
 							{{ __('Weak Subjects & Topics') }}
 						</h3>
 					</div>
@@ -93,16 +93,16 @@
 						</div>
 					</div>
 					<div v-else class="text-center py-6 text-xs text-ink-gray-5">
-						<span class="lucide-sparkles size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
+						<span class=" size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
 						{{ __('No quiz data available yet.') }}
 					</div>
 				</div>
 
 				<!-- Recommended Topics widget -->
 				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
-					<div class="flex items-center justify-between border-b pb-3 mb-1">
-						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-5 flex items-center gap-2">
-							<span class="lucide-book-open size-4 text-ink-blue-5" aria-hidden="true" />
+					<div class="flex items-center justify-between pb-3 mb-1">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
+							<span class="size-4 text-ink-blue-5" aria-hidden="true" />
 							{{ __('Recommended Topics') }}
 						</h3>
 					</div>
@@ -128,16 +128,16 @@
 						</div>
 					</div>
 					<div v-else class="text-center py-6 text-xs text-ink-gray-5">
-						<span class="lucide-check-circle size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
+						<span class="size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
 						{{ __('All recommendations completed!') }}
 					</div>
 				</div>
 
 				<!-- Recently Completed Lessons widget -->
 				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
-					<div class="flex items-center justify-between border-b pb-3 mb-1">
-						<h3 class="font-bold text-xs uppercase tracking-wider text-ink-gray-5 flex items-center gap-2">
-							<span class="lucide-check-square size-4 text-ink-green-5" aria-hidden="true" />
+					<div class="flex items-center justify-between pb-3 mb-1">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
+							<span class="size-4 text-ink-green-5" aria-hidden="true" />
 							{{ __('Recently Completed') }}
 						</h3>
 					</div>
@@ -157,7 +157,7 @@
 						</div>
 					</div>
 					<div v-else class="text-center py-6 text-xs text-ink-gray-5">
-						<span class="lucide-edit-3 size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
+						<span class="size-6 text-ink-gray-3 mx-auto block mb-2" aria-hidden="true" />
 						{{ __('No lessons completed recently.') }}
 					</div>
 				</div>

@@ -249,16 +249,13 @@
 							</div>
 						</div>
 
-						<div class="space-y-1.5 pt-4">
-							<FormControl
-								id="activeToggle"
+						<div class="pt-4">
+							<Switch
 								v-model="form.active"
-								type="checkbox"
 								:label="__('Not on Vacation')"
+								:description="__('Toggle this to enable or disable your profile in the tutor marketplace directory.')"
+								size="md"
 							/>
-							<p class="text-xs text-ink-gray-5 pl-6">
-								{{ __('Toggle this to enable or disable your profile in the tutor marketplace directory.') }}
-							</p>
 						</div>
 
 						<!-- Form Actions -->
@@ -291,7 +288,7 @@
 <script setup>
 import { computed, inject, reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Breadcrumbs, Button, FormControl, FormLabel, MultiSelect, FileUploader, call, toast as frappeToast, usePageMeta } from 'frappe-ui'
+import { Breadcrumbs, Button, FormControl, FormLabel, MultiSelect, FileUploader, call, toast as frappeToast, usePageMeta, Switch } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import { getTimezones, validateFile } from '@/utils'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
