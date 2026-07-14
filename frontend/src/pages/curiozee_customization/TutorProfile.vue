@@ -137,15 +137,15 @@
 								<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12 pt-4">
 									<div class="space-y-1">
 										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Display Name') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.tutor_name || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.tutor_name || '—' }}</div>
 									</div>
 									<div class="space-y-1">
 										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Timezone') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.timezone || '—' }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.timezone || '—' }}</div>
 									</div>
 									<div class="space-y-1">
 										<div class="text-xs font-semibold uppercase tracking-wider text-ink-gray-5">{{ __('Years of Experience') }}</div>
-										<div class="text-base font-semibold text-ink-gray-9">{{ form.years_of_experience || 0 }}</div>
+										<div class="text-base font-medium text-ink-gray-9">{{ form.years_of_experience || 0 }}</div>
 									</div>
 								</div>
 								

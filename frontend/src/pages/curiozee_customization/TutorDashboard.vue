@@ -88,7 +88,7 @@
 						<h3 class="text-base font-semibold text-ink-gray-9">
 							{{ __('Recent booked sessions') }}
 						</h3>
-						<router-link :to="{ name: 'TutorSessions' }" class="tflex items-center gap-x-1 text-ink-gray-5 text-xs">
+						<router-link :to="{ name: 'TutorSessions' }" class="flex items-center gap-x-1 text-ink-gray-5 text-xs">
 							{{ __('View all') }}
 							<span class="lucide-move-right size-3 rtl:rotate-180" aria-hidden="true" />
 						</router-link>
@@ -146,7 +146,7 @@
 				<div class="space-y-4">
 					<!-- Profile Status -->
 					<div class="border rounded-md">
-						<div class="px-5 py-4 border-b">
+						<div class="px-5 py-4">
 							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Profile status') }}</h3>
 						</div>
 						<div class="px-5 py-4 space-y-3">
@@ -171,7 +171,7 @@
 
 					<!-- Quick Actions -->
 					<div class="border rounded-md">
-						<div class="px-5 py-4 border-b">
+						<div class="px-5 py-4">
 							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Quick actions') }}</h3>
 						</div>
 						<div class="px-5 py-4 space-y-2">
@@ -207,7 +207,7 @@
 
 					<!-- Upcoming Sessions Preview -->
 					<div class="border rounded-md">
-						<div class="px-5 py-4 border-b">
+						<div class="px-5 py-4">
 							<h3 class="text-base font-semibold text-ink-gray-9">{{ __('Upcoming sessions') }}</h3>
 						</div>
 
