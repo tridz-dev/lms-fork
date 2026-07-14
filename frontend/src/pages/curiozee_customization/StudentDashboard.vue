@@ -167,7 +167,7 @@
 							<span class="lucide-calendar size-8 text-ink-gray-4 mx-auto block mb-3" aria-hidden="true" />
 							<p class="text-sm text-ink-gray-6">{{ __('No upcoming sessions.') }}</p>
 							<router-link :to="{ name: 'TutorSearch' }">
-								<Button variant="ghost" theme="gray" size="sm" class="mt-3" :label="__('Book a session')" />
+								<Button variant="solid" theme="gray" size="sm" class="mt-3" :label="__('Book a session')" />
 							</router-link>
 						</div>
 					</div>

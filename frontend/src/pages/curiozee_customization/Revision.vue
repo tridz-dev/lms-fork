@@ -56,7 +56,7 @@
 				<!-- Pending Count Card -->
 				<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-xl shadow-sm space-y-2">
 					<div class="flex items-center justify-between mb-1">
-						<span class="text-xs font-bold uppercase tracking-wider text-ink-gray-5">
+						<span class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 							{{ __('Pending Revisions') }}
 						</span>
 						<span class="size-5 text-ink-orange-5" aria-hidden="true" />
@@ -70,7 +70,7 @@
 				<!-- Weak Subjects widget -->
 				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
 					<div class="flex items-center justify-between pb-3 mb-1">
-						<h3 class="text-xs font-bold uppercase tracking-wider text-ink-gray-5">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 							<span class=" size-4 text-ink-red-5" aria-hidden="true" />
 							{{ __('Weak Subjects & Topics') }}
 						</h3>
@@ -101,7 +101,7 @@
 				<!-- Recommended Topics widget -->
 				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
 					<div class="flex items-center justify-between pb-3 mb-1">
-						<h3 class="text-xs font-bold uppercase tracking-wider text-ink-gray-5">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 							<span class="size-4 text-ink-blue-5" aria-hidden="true" />
 							{{ __('Recommended Topics') }}
 						</h3>
@@ -136,7 +136,7 @@
 				<!-- Recently Completed Lessons widget -->
 				<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
 					<div class="flex items-center justify-between pb-3 mb-1">
-						<h3 class="text-xs font-bold uppercase tracking-wider text-ink-gray-5">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 							<span class="size-4 text-ink-green-5" aria-hidden="true" />
 							{{ __('Recently Completed') }}
 						</h3>
