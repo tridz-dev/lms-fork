@@ -33,7 +33,7 @@
 
 				<!-- List of recommendations -->
 				<div v-if="revisionStore.revisionFetcher.loading" class="flex justify-center py-20 bg-surface-white border border-outline-gray-2 rounded-xl">
-					<LoadingIndicator class="w-10 h-10 text-ink-gray-4" />
+					<Spinner class="w-8 h-8 text-ink-gray-4" />
 				</div>
 				
 				<div v-else-if="filteredRecommendations && filteredRecommendations.length" class="space-y-4">
@@ -169,7 +169,7 @@
 
 <script setup>
 import { computed, onMounted, ref, inject } from 'vue'
-import { Breadcrumbs, LoadingIndicator, TabButtons, Badge } from 'frappe-ui'
+import { Breadcrumbs, Spinner, TabButtons, Badge } from 'frappe-ui'
 import { useRevisionStore } from '@/stores/useRevisionStore'
 import RevisionCard from '@/components/curiozee_customization/RevisionCard.vue'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
