@@ -69,18 +69,18 @@
 							</div>
 
 							<!-- Subject/Board/Class Details -->
-							<div class="grid grid-cols-3 gap-2 text-xs py-4 border-b text-ink-gray-7">
-								<div>
-									<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Subject') }}</span>
-									<span class="font-semibold text-ink-gray-8">{{ b.subject || '—' }}</span>
+							<div class="flex flex-col gap-2 text-xs py-4 border-b text-ink-gray-7">
+								<div class="flex justify-between items-center gap-4">
+									<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] shrink-0">{{ __('Subject') }}</span>
+									<span class="font-semibold text-ink-gray-8 text-right break-words">{{ b.subject || '—' }}</span>
 								</div>
-								<div>
-									<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Board') }}</span>
-									<span class="font-semibold text-ink-gray-8">{{ b.board || '—' }}</span>
+								<div class="flex justify-between items-center gap-4">
+									<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] shrink-0">{{ __('Board') }}</span>
+									<span class="font-semibold text-ink-gray-8 text-right break-words">{{ b.board || '—' }}</span>
 								</div>
-								<div>
-									<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Class') }}</span>
-									<span class="font-semibold text-ink-gray-8">{{ b.class || '—' }}</span>
+								<div class="flex justify-between items-center gap-4">
+									<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] shrink-0">{{ __('Class') }}</span>
+									<span class="font-semibold text-ink-gray-8 text-right break-words">{{ b.class || '—' }}</span>
 								</div>
 							</div>
 						</div>
