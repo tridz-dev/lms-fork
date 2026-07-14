@@ -252,41 +252,6 @@ const showCancelDialog = ref(false)
 const selectedBookingForCancellation = ref(null)
 const cancelReason = ref('')
 
-let pollInterval = null
-
-function startPollingIfNeeded() {
-	if (pollInterval) return
-
-	const currentSessions = dashboardStore.dashboardData.data?.sessions || []
-	const hasPendingMeeting = currentSessions.some(
-		s => s.booking_status === 'Confirmed' && !s.meeting_link && isSessionUpcoming(s.start_datetime)
-	)
-
-	if (hasPendingMeeting) {
-		pollInterval = setInterval(async () => {
-			await dashboardStore.dashboardData.submit()
-			
-			const stillPending = (dashboardStore.dashboardData.data?.sessions || []).some(
-				s => s.booking_status === 'Confirmed' && !s.meeting_link && isSessionUpcoming(s.start_datetime)
-			)
-			if (!stillPending) {
-				stopPolling()
-			}
-		}, 5000)
-	}
-}
-
-function stopPolling() {
-	if (pollInterval) {
-		clearInterval(pollInterval)
-		pollInterval = null
-	}
-}
-
-watch(() => dashboardStore.dashboardData.data?.sessions, () => {
-	startPollingIfNeeded()
-}, { deep: true })
-
 onMounted(async () => {
 	await dashboardStore.dashboardData.submit()
 	
@@ -295,7 +260,12 @@ onMounted(async () => {
 			if (data && data.booking && dashboardStore.dashboardData.data?.sessions) {
 				const found = dashboardStore.dashboardData.data.sessions.find(s => s.name === data.booking)
 				if (found) {
-					found.meeting_link = data.meeting_link
+					if (data.booking_status) found.booking_status = data.booking_status
+					if (data.meeting_link) found.meeting_link = data.meeting_link
+					if (data.calendar_event_id) found.meeting_event_id = data.calendar_event_id
+					if (data.modified) found.modified = data.modified
+					if (data.fireflies_sync_status) found.fireflies_sync_status = data.fireflies_sync_status
+					if (data.transcript_status) found.transcript_status = data.transcript_status
 				}
 			}
 		})
@@ -303,7 +273,6 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-	stopPolling()
 	if (socket) {
 		socket.off('booking_meeting_updated')
 	}

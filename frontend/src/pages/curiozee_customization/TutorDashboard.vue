@@ -88,9 +88,9 @@
 						<h3 class="text-base font-semibold text-ink-gray-9">
 							{{ __('Recent booked sessions') }}
 						</h3>
-						<router-link :to="{ name: 'TutorSessions' }" class="text-xs text-ink-blue-link hover:underline flex items-center gap-0.5">
+						<router-link :to="{ name: 'TutorSessions' }" class="tflex items-center gap-x-1 text-ink-gray-5 text-xs">
 							{{ __('View all') }}
-							<span class="lucide-chevron-right size-3" aria-hidden="true" />
+							<span class="lucide-move-right size-3 rtl:rotate-180" aria-hidden="true" />
 						</router-link>
 					</div>
 
@@ -241,7 +241,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, inject, onMounted, onBeforeUnmount } from 'vue'
 import {
 	Breadcrumbs,
 	LoadingIndicator,
@@ -257,9 +257,29 @@ import { convertToLocal, isSessionUpcoming } from '@/utils/timezone'
 
 // Customization for Smart Learning App: Tutor Dashboard — rebuilt to match Frappe LMS Statistics design
 const dashboardStore = useTutorDashboardStore()
+const socket = inject('$socket')
 
 onMounted(async () => {
 	await dashboardStore.dashboardData.submit()
+	
+	if (socket) {
+		socket.on('tutor_verification_updated', (data) => {
+			if (data && dashboardStore.dashboardData.data?.profile) {
+				if (dashboardStore.dashboardData.data.profile.name === data.tutor_profile) {
+					dashboardStore.dashboardData.data.profile.verification_status = data.verification_status
+					dashboardStore.dashboardData.data.profile.workflow_state = data.workflow_state
+					dashboardStore.dashboardData.data.profile.rejection_reason = data.rejection_reason
+					dashboardStore.dashboardData.data.profile.modified = data.modified
+				}
+			}
+		})
+	}
+})
+
+onBeforeUnmount(() => {
+	if (socket) {
+		socket.off('tutor_verification_updated')
+	}
 })
 
 const breadcrumbs = computed(() => [

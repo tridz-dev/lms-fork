@@ -454,7 +454,7 @@
 </template>
 
 <script setup>
-import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
+import { computed, inject, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Breadcrumbs, LoadingIndicator, Button, Badge, TabButtons, Dialog, FormControl, FormLabel, MultiSelect, FileUploader, TextInput, Select, call, toast as frappeToast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
@@ -468,6 +468,7 @@ const route = useRoute()
 const router = useRouter()
 const dashboardStore = useTutorDashboardStore()
 const $user = inject('$user')
+const socket = inject('$socket')
 
 const activeTab = ref(route.query.tab || 'profile')
 
@@ -564,6 +565,29 @@ const settings_slot_duration = computed(() => {
 onMounted(async () => {
 	await dashboardStore.dashboardData.submit()
 	syncForm()
+
+	if (socket) {
+		socket.on('tutor_verification_updated', (data) => {
+			if (data && dashboardStore.dashboardData.data?.profile) {
+				if (dashboardStore.dashboardData.data.profile.name === data.tutor_profile) {
+					dashboardStore.dashboardData.data.profile.verification_status = data.verification_status
+					dashboardStore.dashboardData.data.profile.workflow_state = data.workflow_state
+					dashboardStore.dashboardData.data.profile.rejection_reason = data.rejection_reason
+					dashboardStore.dashboardData.data.profile.modified = data.modified
+					
+					// Re-sync form so readonly state updates
+					syncForm()
+					frappeToast.success(__('Your verification status has been updated to: {0}', [data.verification_status]))
+				}
+			}
+		})
+	}
+})
+
+onBeforeUnmount(() => {
+	if (socket) {
+		socket.off('tutor_verification_updated')
+	}
 })
 
 watch(profile, () => {

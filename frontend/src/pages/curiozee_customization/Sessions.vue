@@ -104,40 +104,6 @@ const checkoutDetails = ref(null)
 const verifyingPayment = ref(false)
 const activeTab = ref('upcoming')
 
-let pollInterval = null
-
-function startPollingIfNeeded() {
-	if (pollInterval) return
-
-	const hasPendingMeeting = sessionStore.sessions.some(
-		s => s.booking_status === 'Confirmed' && !s.meeting_link
-	)
-
-	if (hasPendingMeeting) {
-		pollInterval = setInterval(async () => {
-			await sessionStore.fetchHistory()
-			
-			const stillPending = sessionStore.sessions.some(
-				s => s.booking_status === 'Confirmed' && !s.meeting_link
-			)
-			if (!stillPending) {
-				stopPolling()
-			}
-		}, 5000)
-	}
-}
-
-function stopPolling() {
-	if (pollInterval) {
-		clearInterval(pollInterval)
-		pollInterval = null
-	}
-}
-
-watch(() => sessionStore.sessions, () => {
-	startPollingIfNeeded()
-}, { deep: true })
-
 onMounted(() => {
 	sessionStore.fetchHistory()
 	
@@ -146,7 +112,12 @@ onMounted(() => {
 			if (data && data.booking) {
 				const found = sessionStore.sessions.find(s => s.name === data.booking)
 				if (found) {
-					found.meeting_link = data.meeting_link
+					if (data.booking_status) found.booking_status = data.booking_status
+					if (data.meeting_link) found.meeting_link = data.meeting_link
+					if (data.calendar_event_id) found.meeting_event_id = data.calendar_event_id
+					if (data.modified) found.modified = data.modified
+					if (data.fireflies_sync_status) found.fireflies_sync_status = data.fireflies_sync_status
+					if (data.transcript_status) found.transcript_status = data.transcript_status
 				}
 			}
 		})
@@ -154,7 +125,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-	stopPolling()
 	if (socket) {
 		socket.off('booking_meeting_updated')
 	}
