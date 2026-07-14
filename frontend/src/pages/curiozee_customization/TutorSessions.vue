@@ -55,7 +55,7 @@
 					>
 						<div>
 							<!-- Header: Student Name & Badges -->
-							<div class="flex justify-between items-start pb-3 border-b">
+							<div class="flex justify-between items-start pb-3">
 								<div>
 									<h4 class="font-semibold text-sm text-ink-gray-9">{{ b.student }}</h4>
 									<p class="text-xs text-ink-gray-5 mt-1">
@@ -69,7 +69,7 @@
 							</div>
 
 							<!-- Subject/Board/Class Details -->
-							<div class="flex flex-col gap-2 text-xs py-4 border-b text-ink-gray-7">
+							<div class="flex flex-col gap-2 text-xs py-4 text-ink-gray-7">
 								<div class="flex justify-between items-center gap-4">
 									<span class="text-ink-gray-4 uppercase tracking-wider text-[10px] shrink-0">{{ __('Subject') }}</span>
 									<span class="font-semibold text-ink-gray-8 text-right break-words">{{ b.subject || '—' }}</span>
