@@ -9,11 +9,11 @@
 		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
-				<LoadingIndicator class="w-10 h-10 text-gray-400" />
+				<LoadingIndicator class="w-10 h-10 text-ink-gray-4" />
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile" class="text-center py-20 border rounded-md space-y-4 bg-surface-white">
+			<div v-else-if="!profile" class="text-center py-20 space-y-4 bg-surface-white">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<Video class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
@@ -51,13 +51,13 @@
 					<div
 						v-for="b in filteredSessions"
 						:key="b.name"
-						class="border rounded-md p-4 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between"
+						class="border border-outline-gray-2 rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between"
 					>
 						<div class="space-y-3">
 							<!-- Header: Student Name & Badges -->
 							<div class="flex justify-between items-start pb-3 border-b">
 								<div>
-									<h4 class="font-semibold text-ink-gray-9 text-base">{{ b.student }}</h4>
+									<h4 class="font-semibold text-sm text-ink-gray-9">{{ b.student }}</h4>
 									<p class="text-xs text-ink-gray-5 mt-1">
 										<span class="font-semibold text-ink-gray-4 uppercase tracking-wider text-[10px] mr-1">{{ __('Scheduled') }}:</span>
 										{{ formatTime(b.start_datetime) }}
@@ -86,17 +86,20 @@
 						</div>
 
 						<!-- Action Buttons (Launch meeting & Mark Completed) -->
-						<div class="flex justify-end items-center pt-3 border-t mt-4">
+						<div class="flex justify-end items-center mt-3 pt-3 border-t">
 							<div class="flex items-center gap-2">
 								<template v-if="b.booking_status === 'Confirmed'">
 									<a
 										v-if="b.meeting_link"
 										:href="b.meeting_link"
 										target="_blank"
-										class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-150 animate-fade-in"
 									>
-										<Video class="w-3.5 h-3.5" />
-										{{ __('Launch Class') }}
+										<Button variant="solid" size="sm">
+											<template #prefix>
+												<Video class="w-3.5 h-3.5" />
+											</template>
+											{{ __('Launch Class') }}
+										</Button>
 									</a>
 									<span v-else class="text-xs text-ink-gray-4 italic mr-2">
 										{{ __('Meeting generating...') }}
@@ -124,10 +127,10 @@
 									</Dropdown>
 								</template>
 
-								<span v-else-if="b.booking_status === 'Completed'" class="text-xs text-green-600 font-medium italic">
+								<span v-else-if="b.booking_status === 'Completed'" class="text-xs text-ink-green-3 font-medium italic">
 									{{ __('Class concluded') }}
 								</span>
-								<span v-else-if="b.booking_status === 'Cancelled'" class="text-xs text-red-500 font-medium italic">
+								<span v-else-if="b.booking_status === 'Cancelled'" class="text-xs text-ink-red-3 font-medium italic">
 									{{ __('Cancelled') }}
 								</span>
 							</div>
@@ -135,7 +138,7 @@
 					</div>
 				</div>
 
-				<div v-else class="text-center py-20 text-ink-gray-5 border rounded-md bg-surface-white">
+				<div v-else class="text-center py-20 text-ink-gray-5 bg-surface-white">
 					{{ __('No sessions found matching this status filter.') }}
 				</div>
 			</div>
@@ -153,7 +156,7 @@
 				<p class="text-sm text-ink-gray-7 leading-relaxed">
 					{{ __('Are you sure you want to mark this session as completed?') }}
 					<br />
-					<span class="text-red-500 font-semibold mt-1 block">{{ __('This action cannot be undone.') }}</span>
+					<span class="text-ink-red-3 font-semibold mt-1 block">{{ __('This action cannot be undone.') }}</span>
 				</p>
 			</template>
 			<template #actions>
@@ -188,20 +191,20 @@
 					<p class="text-sm text-ink-gray-7 leading-relaxed">
 						{{ __('Are you sure you want to cancel this session?') }}
 						<br />
-						<span class="text-red-500 font-semibold mt-1 block">
+						<span class="text-ink-red-3 font-semibold mt-1 block">
 							{{ __('This action will cancel the booking and release the slot.') }}
 						</span>
 					</p>
 					<div>
 						<label class="text-xs font-medium text-ink-gray-5 block mb-1">
-							{{ __('Reason for Cancellation') }} <span class="text-red-500">*</span>
+							{{ __('Reason for Cancellation') }} <span class="text-ink-red-3">*</span>
 						</label>
-						<textarea
+						<FormControl
 							v-model="cancelReason"
-							class="w-full text-sm border rounded p-2 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"
+							type="textarea"
 							rows="3"
 							:placeholder="__('Please provide a reason...')"
-						></textarea>
+						/>
 					</div>
 				</div>
 			</template>
@@ -230,7 +233,7 @@
 
 <script setup>
 import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import { Breadcrumbs, LoadingIndicator, Badge, TabButtons, Button, Dialog, Dropdown, toast } from 'frappe-ui'
+import { Breadcrumbs, LoadingIndicator, Badge, TabButtons, Button, Dialog, Dropdown, FormControl, toast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import { sessionStore } from '@/stores/session'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
@@ -249,41 +252,6 @@ const showCancelDialog = ref(false)
 const selectedBookingForCancellation = ref(null)
 const cancelReason = ref('')
 
-let pollInterval = null
-
-function startPollingIfNeeded() {
-	if (pollInterval) return
-
-	const currentSessions = dashboardStore.dashboardData.data?.sessions || []
-	const hasPendingMeeting = currentSessions.some(
-		s => s.booking_status === 'Confirmed' && !s.meeting_link && isSessionUpcoming(s.start_datetime)
-	)
-
-	if (hasPendingMeeting) {
-		pollInterval = setInterval(async () => {
-			await dashboardStore.dashboardData.submit()
-			
-			const stillPending = (dashboardStore.dashboardData.data?.sessions || []).some(
-				s => s.booking_status === 'Confirmed' && !s.meeting_link && isSessionUpcoming(s.start_datetime)
-			)
-			if (!stillPending) {
-				stopPolling()
-			}
-		}, 5000)
-	}
-}
-
-function stopPolling() {
-	if (pollInterval) {
-		clearInterval(pollInterval)
-		pollInterval = null
-	}
-}
-
-watch(() => dashboardStore.dashboardData.data?.sessions, () => {
-	startPollingIfNeeded()
-}, { deep: true })
-
 onMounted(async () => {
 	await dashboardStore.dashboardData.submit()
 	
@@ -292,7 +260,12 @@ onMounted(async () => {
 			if (data && data.booking && dashboardStore.dashboardData.data?.sessions) {
 				const found = dashboardStore.dashboardData.data.sessions.find(s => s.name === data.booking)
 				if (found) {
-					found.meeting_link = data.meeting_link
+					if (data.booking_status) found.booking_status = data.booking_status
+					if (data.meeting_link) found.meeting_link = data.meeting_link
+					if (data.calendar_event_id) found.meeting_event_id = data.calendar_event_id
+					if (data.modified) found.modified = data.modified
+					if (data.fireflies_sync_status) found.fireflies_sync_status = data.fireflies_sync_status
+					if (data.transcript_status) found.transcript_status = data.transcript_status
 				}
 			}
 		})
@@ -300,7 +273,6 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-	stopPolling()
 	if (socket) {
 		socket.off('booking_meeting_updated')
 	}

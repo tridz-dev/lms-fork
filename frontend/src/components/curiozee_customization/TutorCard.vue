@@ -61,30 +61,22 @@
 			</p>
 
 			<!-- Tags: subjects + boards + classes -->
-			<div class="mt-auto space-y-2 pt-2">
-				<div v-if="tutor.subjects?.length" class="flex flex-wrap items-center gap-1">
+			<div class="mt-auto space-y-1.5 pt-2 text-xs">
+				<div v-if="tutor.subjects?.length" class="flex items-center gap-1">
 					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 mr-1">
 						{{ __('Subjects') }}:
 					</span>
-					<Badge
-						v-for="sub in tutor.subjects"
-						:key="typeof sub === 'string' ? sub : sub.subject"
-						:label="typeof sub === 'string' ? sub : sub.subject"
-						theme="gray"
-						size="sm"
-					/>
+					<span class="font-medium text-ink-gray-7">
+						{{ tutor.subjects.map(s => typeof s === 'string' ? s : s.subject).join(', ') }}
+					</span>
 				</div>
-				<div v-if="tutor.classes?.length" class="flex flex-wrap items-center gap-1">
+				<div v-if="tutor.classes?.length" class="flex items-center gap-1">
 					<span class="text-[10px] uppercase tracking-wider text-ink-gray-4 mr-1">
 						{{ __('Classes') }}:
 					</span>
-					<Badge
-						v-for="cls in tutor.classes"
-						:key="typeof cls === 'string' ? cls : cls.class"
-						:label="typeof cls === 'string' ? cls : cls.class"
-						theme="blue"
-						size="sm"
-					/>
+					<span class="font-medium text-ink-gray-7">
+						{{ tutor.classes.map(c => typeof c === 'string' ? c : c.class).join(', ') }}
+					</span>
 				</div>
 			</div>
 
@@ -126,7 +118,7 @@ const currency = computed(
 const scoreTheme = computed(() => {
 	const s = props.tutor.score ?? 0
 	if (s >= 70) return 'green'
-	if (s >= 40) return 'amber'
+	if (s >= 40) return 'orange'
 	return 'gray'
 })
 

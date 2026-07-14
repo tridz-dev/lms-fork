@@ -74,35 +74,26 @@
 
 				<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
 					<!-- Subjects -->
-					<div class="space-y-3">
+					<div class="space-y-1.5">
 						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Subjects Taught') }}</label>
-						<div class="flex flex-wrap gap-2">
-							<Badge v-for="sub in tutor.subjects" :key="sub.subject" theme="gray" size="md">
-								{{ sub.subject }}
-							</Badge>
-							<p v-if="!tutor.subjects?.length" class="text-sm text-ink-gray-5">{{ __('No subjects specified.') }}</p>
+						<div class="text-sm font-medium text-ink-gray-9">
+							{{ tutor.subjects?.length ? tutor.subjects.map(s => s.subject).join(', ') : __('No subjects specified.') }}
 						</div>
 					</div>
 
 					<!-- Boards -->
-					<div class="space-y-3">
+					<div class="space-y-1.5">
 						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Boards Supported') }}</label>
-						<div class="flex flex-wrap gap-2">
-							<Badge v-for="brd in tutor.boards" :key="brd.board" theme="gray" size="md">
-								{{ brd.board }}
-							</Badge>
-							<p v-if="!tutor.boards?.length" class="text-sm text-ink-gray-5">{{ __('No boards specified.') }}</p>
+						<div class="text-sm font-medium text-ink-gray-9">
+							{{ tutor.boards?.length ? tutor.boards.map(b => b.board).join(', ') : __('No boards specified.') }}
 						</div>
 					</div>
 
 					<!-- Classes -->
-					<div class="space-y-3">
+					<div class="space-y-1.5">
 						<label class="block text-xs font-semibold text-ink-gray-5 uppercase tracking-wider">{{ __('Classes Target') }}</label>
-						<div class="flex flex-wrap gap-2">
-							<Badge v-for="cls in tutor.classes" :key="cls.class" theme="gray" size="md">
-								{{ cls.class }}
-							</Badge>
-							<p v-if="!tutor.classes?.length" class="text-sm text-ink-gray-5">{{ __('No classes specified.') }}</p>
+						<div class="text-sm font-medium text-ink-gray-9">
+							{{ tutor.classes?.length ? tutor.classes.map(c => c.class).join(', ') : __('No classes specified.') }}
 						</div>
 					</div>
 				</div>
@@ -261,7 +252,7 @@ const props = defineProps({
 const scoreTheme = computed(() => {
 	const s = props.tutor.score ?? 0
 	if (s >= 70) return 'green'
-	if (s >= 40) return 'amber'
+	if (s >= 40) return 'orange'
 	return 'gray'
 })
 
