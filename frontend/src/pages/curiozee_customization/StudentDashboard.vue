@@ -20,7 +20,7 @@
 		</LayoutHeader>
 
 		<div v-if="dashboardData.loading" class="flex justify-center py-20">
-			<LoadingIndicator class="w-8 h-8 text-ink-gray-4" />
+			<Spinner class="w-8 h-8 text-ink-gray-4" />
 		</div>
 
 		<div v-else-if="dashboardData.error" class="p-5">
@@ -276,7 +276,7 @@ import {
 	usePageMeta,
 	Button,
 	Badge,
-	LoadingIndicator,
+	Spinner,
 	Tooltip,
 	Progress,
 } from 'frappe-ui'

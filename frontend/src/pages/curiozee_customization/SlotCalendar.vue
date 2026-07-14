@@ -19,7 +19,7 @@
 		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
-				<LoadingIndicator class="w-10 h-10 text-gray-400" />
+				<Spinner class="w-10 h-10 text-gray-400" />
 			</div>
 
 			<!-- Empty State: No Profile -->
@@ -277,7 +277,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { Breadcrumbs, Button, LoadingIndicator, Badge, TabButtons, Dialog, Calendar, FeatherIcon, call, toast } from 'frappe-ui'
+import { Breadcrumbs, Button, Spinner, Badge, TabButtons, Dialog, Calendar, FeatherIcon, call, toast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'

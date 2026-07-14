@@ -9,7 +9,7 @@
 		<div class="flex min-h-0 w-full flex-1 flex-col pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading || loadingOptions" class="flex justify-center py-20">
-				<LoadingIndicator class="w-10 h-10 text-ink-gray-4" />
+				<Spinner class="w-10 h-10 text-ink-gray-4" />
 			</div>
 
 			<!-- Empty State: No Profile -->
@@ -482,7 +482,7 @@
 <script setup>
 import { computed, inject, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Breadcrumbs, LoadingIndicator, Button, Badge, TabButtons, Dialog, FormControl, FormLabel, MultiSelect, FileUploader, TextInput, Select, call, toast as frappeToast } from 'frappe-ui'
+import { Breadcrumbs, Spinner, Button, Badge, TabButtons, Dialog, FormControl, FormLabel, MultiSelect, FileUploader, TextInput, Select, call, toast as frappeToast } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import { getTimezones, validateFile } from '@/utils'
 import AvailabilityForm from '@/components/curiozee_customization/AvailabilityForm.vue'
