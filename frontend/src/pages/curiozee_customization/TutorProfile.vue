@@ -401,7 +401,7 @@
 								</div>
 
 								<!-- Details List using CSS Grid 1fr auto -->
-								<div class="space-y-3 pt-4 border-t">
+								<div class="space-y-3 pt-4">
 									<div class="grid grid-cols-[1fr_auto] items-center gap-x-4">
 										<span class="text-[11px] font-medium uppercase tracking-wider text-ink-gray-4">{{ __('Time Range') }}</span>
 										<span class="text-sm font-medium text-ink-gray-9">{{ formatTime(rule.start_time) }} – {{ formatTime(rule.end_time) }}</span>
@@ -418,7 +418,7 @@
 							</div>
 
 							<!-- Actions: Draft rules show Edit + Delete; Submitted rules show read-only indicator -->
-							<div class="flex justify-end items-center gap-2.5 pt-4 border-t mt-4">
+							<div class="flex justify-end items-center gap-2.5 pt-4 mt-4">
 								<!-- Draft-only actions -->
 								<template v-if="rule.docstatus === 0">
 									<Button @click.stop="openEditModal(rule)" variant="outline" class="h-9 px-5 rounded-lg font-semibold">
