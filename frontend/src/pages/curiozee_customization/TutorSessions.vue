@@ -6,7 +6,7 @@
 			</template>
 		</LayoutHeader>
 
-		<div class="mx-auto flex min-h-0 w-full flex-1 flex-col p-5 max-w-6xl">
+		<div class="flex min-h-0 w-full flex-1 flex-col p-5 pb-10">
 			<!-- Loading State -->
 			<div v-if="dashboardStore.dashboardData.loading" class="flex justify-center py-20">
 				<LoadingIndicator class="w-10 h-10 text-ink-gray-4" />
@@ -47,13 +47,13 @@
 				</div>
 
 				<!-- Sessions List -->
-				<div v-if="filteredSessions.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div v-if="filteredSessions.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 					<div
 						v-for="b in filteredSessions"
 						:key="b.name"
 						class="border border-outline-gray-2 rounded-md p-5 bg-surface-white hover:border-outline-gray-3 transition-colors flex flex-col justify-between"
 					>
-						<div class="space-y-3">
+						<div>
 							<!-- Header: Student Name & Badges -->
 							<div class="flex justify-between items-start pb-3 border-b">
 								<div>
@@ -69,7 +69,7 @@
 							</div>
 
 							<!-- Subject/Board/Class Details -->
-							<div class="grid grid-cols-3 gap-2 text-xs pt-1 text-ink-gray-7">
+							<div class="grid grid-cols-3 gap-2 text-xs py-4 border-b text-ink-gray-7">
 								<div>
 									<span class="text-ink-gray-4 block mb-0.5 uppercase tracking-wider text-[10px]">{{ __('Subject') }}</span>
 									<span class="font-semibold text-ink-gray-8">{{ b.subject || '—' }}</span>
@@ -86,54 +86,54 @@
 						</div>
 
 						<!-- Action Buttons (Launch meeting & Mark Completed) -->
-						<div class="flex justify-end items-center mt-3 pt-3 border-t">
-							<div class="flex items-center gap-2">
-								<template v-if="b.booking_status === 'Confirmed'">
-									<a
-										v-if="b.meeting_link"
-										:href="b.meeting_link"
-										target="_blank"
-									>
-										<Button variant="solid" size="sm">
-											<template #prefix>
-												<Video class="w-3.5 h-3.5" />
-											</template>
-											{{ __('Launch Class') }}
-										</Button>
-									</a>
-									<span v-else class="text-xs text-ink-gray-4 italic mr-2">
-										{{ __('Meeting generating...') }}
-									</span>
-
-									<!-- Actions Dropdown -->
-									<Dropdown
-										v-if="profile"
-										:options="[
-											{
-												label: __('Mark Completed'),
-												onClick: () => promptCompletion(b),
-											},
-											{
-												label: __('Cancel Session'),
-												onClick: () => promptCancellation(b),
-											},
-										]"
-									>
-										<template v-slot="{ open }">
-											<Button class="p-2 hover:bg-surface-gray-2 rounded-md transition-colors border border-outline-gray-2 flex items-center justify-center">
-												<MoreHorizontal class="w-4 h-4 text-ink-gray-7" />
-											</Button>
+						<div class="flex items-center justify-between pt-3">
+							<div v-if="b.booking_status === 'Confirmed'">
+								<a
+									v-if="b.meeting_link"
+									:href="b.meeting_link"
+									target="_blank"
+								>
+									<Button variant="solid">
+										<template #prefix>
+											<Video class="w-3.5 h-3.5" />
 										</template>
-									</Dropdown>
-								</template>
-
-								<span v-else-if="b.booking_status === 'Completed'" class="text-xs text-ink-green-3 font-medium italic">
-									{{ __('Class concluded') }}
-								</span>
-								<span v-else-if="b.booking_status === 'Cancelled'" class="text-xs text-ink-red-3 font-medium italic">
-									{{ __('Cancelled') }}
+										{{ __('Launch Class') }}
+									</Button>
+								</a>
+								<span v-else class="text-xs text-ink-gray-5 italic">
+									{{ __('Generating class link...') }}
 								</span>
 							</div>
+							<div v-else-if="b.booking_status === 'Completed'">
+								<span class="text-xs text-ink-gray-4 uppercase tracking-wider text-[10px]">{{ __('Class Concluded') }}</span>
+							</div>
+							<div v-else-if="b.booking_status === 'Cancelled'">
+								<span class="text-xs text-ink-gray-4 uppercase tracking-wider text-[10px]">{{ __('Cancelled') }}</span>
+							</div>
+							<div v-else>
+								<span class="text-xs text-ink-gray-4 uppercase tracking-wider text-[10px]">{{ __('No Active Class') }}</span>
+							</div>
+
+							<!-- Actions Dropdown -->
+							<Dropdown
+								v-if="profile && b.booking_status === 'Confirmed'"
+								:options="[
+									{
+										label: __('Mark Completed'),
+										onClick: () => promptCompletion(b),
+									},
+									{
+										label: __('Cancel Session'),
+										onClick: () => promptCancellation(b),
+									},
+								]"
+							>
+								<template v-slot="{ open }">
+									<Button class="p-2 hover:bg-surface-gray-2 rounded-md transition-colors border border-outline-gray-2 flex items-center justify-center">
+										<MoreHorizontal class="w-4 h-4 text-ink-gray-7" />
+									</Button>
+								</template>
+							</Dropdown>
 						</div>
 					</div>
 				</div>
