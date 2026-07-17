@@ -184,9 +184,9 @@
 							</router-link>
 						</div>
 
-						<div v-if="dashboardData.data?.revision_suggestions?.length" class="divide-y">
+						<div v-if="dashboardData.data?.revision_suggestions?.length" class="space-y-3 p-4">
 							<RevisionCard
-								v-for="rec in dashboardData.data.revision_suggestions"
+								v-for="rec in dashboardData.data.revision_suggestions.slice(0, 2)"
 								:key="rec.name"
 								:recommendation="rec"
 								@status-updated="dashboardData.reload()"
