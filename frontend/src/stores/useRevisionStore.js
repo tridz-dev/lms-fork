@@ -54,6 +54,6 @@ export const useRevisionStore = defineStore('revision-store', () => {
 		statusUpdater,
 		fetchRecommendations,
 		fetchDashboardSummary,
-		updateRecommendationStatus
+		updateRecommendationStatus,
 	}
 })
