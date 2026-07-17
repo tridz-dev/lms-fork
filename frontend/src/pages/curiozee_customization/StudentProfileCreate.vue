@@ -39,11 +39,11 @@
 									<img
 										v-if="form.profile_photo || $user?.data?.user_image"
 										:src="form.profile_photo || $user?.data?.user_image"
-										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm"
+										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white"
 									/>
 									<div
 										v-else
-										class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm"
+										class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7"
 									>
 										{{ (form.full_name || $user?.data?.full_name || 'S').charAt(0).toUpperCase() }}
 									</div>

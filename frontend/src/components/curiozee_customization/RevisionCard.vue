@@ -49,7 +49,7 @@
 		</div>
 
 		<!-- Card Footer: Revision CTA -->
-		<div class="flex gap-3 pt-4 border-t border-outline-gray-1 mt-auto">
+		<div class="flex gap-3 pt-4 border-outline-gray-1 mt-auto">
 			<Button
 				:loading="navigating"
 				@click="handleRevise"

@@ -16,13 +16,13 @@
 				<div class="mx-auto -mt-8 max-w-6xl w-full px-5 space-y-8 animate-pulse">
 					<div class="flex flex-col md:flex-row justify-between items-center gap-6">
 						<div class="flex flex-col md:flex-row items-center">
-							<div class="h-[100px] w-[100px] rounded-full bg-surface-gray-3 border-4 border-white shrink-0 shadow-sm"></div>
+							<div class="h-[100px] w-[100px] rounded-full bg-surface-gray-3 border-4 border-white shrink-0"></div>
 							<div class="text-center md:text-left md:ms-6 mt-5 md:mt-0 space-y-3">
 								<div class="h-6 w-48 rounded bg-surface-gray-3 mx-auto md:mx-0"></div>
 								<div class="h-4 w-64 rounded bg-surface-gray-2 mx-auto md:mx-0"></div>
 							</div>
 						</div>
-						<div class="h-16 w-32 rounded bg-surface-gray-3 shrink-0 shadow-sm"></div>
+						<div class="h-16 w-32 rounded bg-surface-gray-3 shrink-0"></div>
 					</div>
 
 					<!-- Bio Skeleton -->
@@ -184,7 +184,7 @@
 				<!-- Skeleton -->
 				<div
 					v-if="recommendedTutors.loading"
-					class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
 				>
 					<div
 						v-for="i in 3"
@@ -216,7 +216,7 @@
 				<!-- Recommended grid -->
 				<div
 					v-else-if="recommendedTutorsList.length"
-					class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
 				>
 					<TutorCard
 						v-for="tutor in recommendedTutorsList"
@@ -242,7 +242,7 @@
 			<!-- Skeleton while loading -->
 			<div
 				v-if="tutorsList.loading"
-				class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+				class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
 			>
 				<div
 					v-for="i in 8"
@@ -274,7 +274,7 @@
 			<!-- Tutor grid -->
 			<div
 				v-else-if="allTutors.length"
-				class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+				class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
 			>
 				<TutorCard
 					v-for="tutor in allTutors"
