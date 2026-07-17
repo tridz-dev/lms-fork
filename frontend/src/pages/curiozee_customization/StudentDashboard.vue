@@ -36,55 +36,64 @@
 			</div>
 
 			<div class="space-y-6">
-				<!-- Continue Learning Banner -->
+				<!-- Continue Learning Banner (Half Width, Theme Blue Background) -->
 				<div
 					v-if="dashboardData.data?.continue_learning?.has_course"
-					class="border rounded-md p-5"
+					class="w-full lg:w-[calc(50%-12px)] bg-surface-blue-2 border border-outline-blue-2 hover:border-outline-gray-3 rounded-lg p-5 transition-all duration-200"
 				>
-					<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-						<div class="flex-1 space-y-2">
-							<Badge theme="gray" size="sm">
-								<template #prefix>
-									<span class="lucide-sparkles size-3" aria-hidden="true" />
-								</template>
-								{{ __('Continue Learning') }}
-							</Badge>
-							<div>
-								<h3 class="text-base font-semibold text-ink-gray-9">
+					<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+						<!-- Left Side: Content & Progress -->
+						<div class="flex-1 min-w-0 space-y-3">
+							<div class="flex">
+								<Badge theme="blue" size="sm" variant="subtle">
+									<template #prefix>
+										<span class="lucide-book-open size-3.5" aria-hidden="true" />
+									</template>
+									{{ __('Continue Learning') }}
+								</Badge>
+							</div>
+
+							<div class="space-y-1">
+								<h3 class="text-base font-bold text-ink-gray-9 leading-snug">
 									{{ dashboardData.data.continue_learning.course_title }}
 								</h3>
-								<p class="text-sm text-ink-gray-6 mt-0.5">
+								<p class="text-sm text-ink-gray-6 flex items-center gap-1.5">
 									<span class="font-medium text-ink-gray-8">{{ __('Next:') }}</span>
-									{{ ' ' + dashboardData.data.continue_learning.lesson_title }}
+									<span class="truncate">{{ dashboardData.data.continue_learning.lesson_title }}</span>
 								</p>
 							</div>
-							<div class="max-w-xs">
-								<div class="flex justify-between text-xs text-ink-gray-5 mb-1">
+
+							<div class="max-w-md w-full space-y-1.5">
+								<div class="flex justify-between text-xs text-ink-gray-5 font-medium">
 									<span>{{ __('Course progress') }}</span>
 									<span>{{ Math.round(dashboardData.data.continue_learning.progress) }}%</span>
 								</div>
-								<!-- Use frappe Progress component -->
 								<Progress
 									size="sm"
+									theme="blue"
 									:value="dashboardData.data.continue_learning.progress"
 								/>
 							</div>
 						</div>
-						<Button
-							variant="solid"
-							theme="gray"
-							size="lg"
-							icon-left="lucide-play"
-							:label="__('Resume lesson')"
-							@click="resumeLesson"
-						/>
+
+						<!-- Right Side: CTA Button -->
+						<div class="shrink-0 flex items-center">
+							<Button
+								variant="solid"
+								theme="gray"
+								size="sm"
+								icon-left="lucide-play"
+								:label="__('Resume lesson')"
+								@click="resumeLesson"
+							/>
+						</div>
 					</div>
 				</div>
 
 				<!-- Stats Grid — responsive cards with premium hover effects -->
 				<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
 					<Tooltip v-for="stat in analyticsStats" :key="stat.label" :text="stat.label">
-						<div class="flex flex-col justify-between p-4 bg-surface-base border rounded-lg hover:shadow-sm hover:border-ink-gray-3 transition-all duration-200 min-h-[96px]">
+						<div class="flex flex-col justify-between p-4 bg-surface-base border rounded-lg hover:border-ink-gray-3 transition-all duration-200 min-h-[96px]">
 							<span class="text-xs sm:text-sm font-medium text-ink-gray-5 leading-normal break-words">
 								{{ stat.label }}
 							</span>
@@ -184,7 +193,7 @@
 							</router-link>
 						</div>
 
-						<div v-if="dashboardData.data?.revision_suggestions?.length" class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+						<div v-if="dashboardData.data?.revision_suggestions?.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 p-4">
 							<RevisionCard
 								v-for="rec in dashboardData.data.revision_suggestions.slice(0, 2)"
 								:key="rec.name"

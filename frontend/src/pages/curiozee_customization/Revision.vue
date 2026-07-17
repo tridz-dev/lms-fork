@@ -41,7 +41,7 @@
 				<!-- LEFT COLUMN: Revision Queue -->
 				<div class="space-y-6">
 					<!-- List of recommendations -->
-					<div v-if="visibleRecommendations && visibleRecommendations.length" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div v-if="visibleRecommendations && visibleRecommendations.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
 						<RevisionCard
 							v-for="rec in visibleRecommendations"
 							:key="rec.name"
@@ -62,7 +62,7 @@
 				<!-- RIGHT COLUMN: Learning Insights -->
 				<div class="space-y-6">
 					<!-- Pending Count Card -->
-					<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-xl shadow-sm space-y-2">
+					<div class="bg-surface-white border border-outline-gray-2 p-5 rounded-xl space-y-2">
 						<div class="flex items-center justify-between mb-1">
 							<span class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 								{{ __('Pending Revisions') }}
@@ -76,7 +76,7 @@
 					</div>
 
 					<!-- Weak Subjects widget -->
-					<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
+					<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 space-y-3">
 						<div class="flex items-center justify-between pb-3 mb-1 border-b border-outline-gray-1">
 							<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 								{{ __('Weak Subjects & Topics') }}
@@ -105,7 +105,7 @@
 					</div>
 
 					<!-- Recommended Topics widget -->
-					<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
+					<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 space-y-3">
 						<div class="flex items-center justify-between pb-3 mb-1 border-b border-outline-gray-1">
 							<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 								{{ __('Recommended Topics') }}
@@ -139,7 +139,7 @@
 					</div>
 
 					<!-- Recently Completed Lessons widget -->
-					<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 shadow-sm space-y-3">
+					<div class="bg-surface-white border border-outline-gray-2 rounded-xl p-5 space-y-3">
 						<div class="flex items-center justify-between pb-3 mb-1 border-b border-outline-gray-1">
 							<h3 class="text-xs font-semibold uppercase tracking-wider text-ink-gray-9">
 								{{ __('Recently Completed') }}
