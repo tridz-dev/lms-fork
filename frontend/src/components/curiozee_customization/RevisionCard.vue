@@ -2,7 +2,7 @@
 	<!-- RevisionCard: displays a single revision recommendation in card format.
 	     Completion is automated by the backend (lesson progress). -->
 	<div
-		class="flex flex-col border border-outline-gray-2 rounded-lg p-5 bg-surface-white hover:border-outline-gray-3 hover:shadow-sm transition-all duration-150"
+		class="flex flex-col border rounded-lg p-5 bg-surface-white hover:border-outline-gray-3 transition-all duration-150"
 	>
 		<!-- Card Header: Title details on left, badges on right -->
 		<div class="flex items-start justify-between gap-4 pb-4 border-b border-outline-gray-1">

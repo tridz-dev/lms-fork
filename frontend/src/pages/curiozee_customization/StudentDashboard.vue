@@ -184,7 +184,7 @@
 							</router-link>
 						</div>
 
-						<div v-if="dashboardData.data?.revision_suggestions?.length" class="space-y-3 p-4">
+						<div v-if="dashboardData.data?.revision_suggestions?.length" class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
 							<RevisionCard
 								v-for="rec in dashboardData.data.revision_suggestions.slice(0, 2)"
 								:key="rec.name"

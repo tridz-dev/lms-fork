@@ -41,7 +41,7 @@
 				<!-- LEFT COLUMN: Revision Queue -->
 				<div class="space-y-6">
 					<!-- List of recommendations -->
-					<div v-if="visibleRecommendations && visibleRecommendations.length" class="space-y-4">
+					<div v-if="visibleRecommendations && visibleRecommendations.length" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<RevisionCard
 							v-for="rec in visibleRecommendations"
 							:key="rec.name"
