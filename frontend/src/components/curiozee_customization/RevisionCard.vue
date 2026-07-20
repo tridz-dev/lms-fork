@@ -55,7 +55,7 @@
 				@click="handleRevise"
 				variant="solid"
 				theme="gray"
-				class="flex-1 justify-center"
+				size="sm"
 			>
 				{{ __('Revise Lesson') }}
 			</Button>

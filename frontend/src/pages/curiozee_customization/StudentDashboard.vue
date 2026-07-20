@@ -54,16 +54,16 @@
 							</div>
 
 							<div class="space-y-1">
-								<h3 class="text-base font-bold text-ink-gray-9 leading-snug">
+								<h3 class="text-base font-bold text-ink-gray-9 leading-snug px-1.5">
 									{{ dashboardData.data.continue_learning.course_title }}
 								</h3>
-								<p class="text-sm text-ink-gray-6 flex items-center gap-1.5">
+								<p class="text-sm text-ink-gray-6 flex items-center gap-1.5 px-1.5">
 									<span class="font-medium text-ink-gray-8">{{ __('Next:') }}</span>
 									<span class="truncate">{{ dashboardData.data.continue_learning.lesson_title }}</span>
 								</p>
 							</div>
 
-							<div class="max-w-md w-full space-y-1.5">
+							<div class="max-w-md w-full space-y-1.5 px-1.5">
 								<div class="flex justify-between text-xs text-ink-gray-5 font-medium">
 									<span>{{ __('Course progress') }}</span>
 									<span>{{ Math.round(dashboardData.data.continue_learning.progress) }}%</span>
@@ -77,12 +77,11 @@
 						</div>
 
 						<!-- Right Side: CTA Button -->
-						<div class="shrink-0 flex items-center">
+						<div class="shrink-0 flex items-center px-1.5">
 							<Button
 								variant="solid"
 								theme="gray"
 								size="sm"
-								icon-left="lucide-play"
 								:label="__('Resume lesson')"
 								@click="resumeLesson"
 							/>
