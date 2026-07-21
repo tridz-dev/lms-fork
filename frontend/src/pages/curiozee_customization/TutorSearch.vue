@@ -24,7 +24,7 @@
 				<div v-if="tutorStore.tutorsList.loading" class="flex justify-center py-20">
 					<Spinner class="w-10 h-10 text-gray-400" />
 				</div>
-				<div v-else-if="tutors && tutors.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<div v-else-if="tutors && tutors.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 					<TutorCard
 						v-for="tutor in tutors"
 						:key="tutor.name"

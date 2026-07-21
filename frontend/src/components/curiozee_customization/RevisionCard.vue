@@ -2,14 +2,16 @@
 	<!-- RevisionCard: displays a single revision recommendation in card format.
 	     Completion is automated by the backend (lesson progress). -->
 	<div
-		class="flex flex-col border border-outline-gray-2 rounded-lg p-5 bg-surface-white hover:border-outline-gray-3 hover:shadow-sm transition-all duration-150"
+		class="flex flex-col border rounded-lg p-5 bg-surface-white hover:border-outline-gray-3 transition-all duration-150"
 	>
 		<!-- Card Header: Title details on left, badges on right -->
 		<div class="flex items-start justify-between gap-4 pb-4 border-b border-outline-gray-1">
 			<div class="min-w-0 flex-1">
-				<h4 class="font-semibold text-sm text-ink-gray-9 leading-snug">
-					{{ recommendation.lesson_title || recommendation.lesson }}
-				</h4>
+				<div class="h-10 flex items-start">
+					<h4 class="font-semibold text-sm text-ink-gray-9 leading-snug line-clamp-2">
+						{{ recommendation.lesson_title || recommendation.lesson }}
+					</h4>
+				</div>
 				<p v-if="recommendation.course_title" class="text-xs text-ink-gray-5 mt-1 font-medium">
 					{{ __('Course') }}: {{ recommendation.course_title }}
 				</p>
@@ -40,20 +42,20 @@
 		<div class="py-4">
 			<span class="font-semibold text-xs text-ink-gray-5 block mb-1.5">{{ __('Reason') }}</span>
 			<p
-				class="text-xs text-ink-gray-6 leading-relaxed bg-surface-gray-1 border border-outline-gray-1 p-3.5 rounded-md font-normal"
+				class="text-xs text-ink-gray-6 leading-relaxed rounded-md font-normal"
 			>
 				{{ recommendation.recommendation_reason }}
 			</p>
 		</div>
 
 		<!-- Card Footer: Revision CTA -->
-		<div class="flex gap-3 pt-4 border-t border-outline-gray-1">
+		<div class="flex gap-3 pt-4 border-outline-gray-1 mt-auto">
 			<Button
 				:loading="navigating"
 				@click="handleRevise"
 				variant="solid"
 				theme="gray"
-				class="flex-1 justify-center"
+				size="sm"
 			>
 				{{ __('Revise Lesson') }}
 			</Button>

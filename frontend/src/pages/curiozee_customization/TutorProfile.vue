@@ -68,11 +68,11 @@
 											<img
 												v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
 												:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
-												class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm"
+												class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white"
 											/>
 											<div
 												v-else
-												class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm"
+												class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7"
 											>
 												{{ (form.tutor_name || $user?.data?.full_name || 'T').charAt(0).toUpperCase() }}
 											</div>
@@ -91,11 +91,11 @@
 									<img
 										v-if="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
 										:src="form.profile_photo || profile?.profile_photo || $user?.data?.user_image"
-										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm"
+										class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white"
 									/>
 									<div
 										v-else
-										class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm"
+										class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7"
 									>
 										{{ (form.tutor_name || $user?.data?.full_name || 'T').charAt(0).toUpperCase() }}
 									</div>
@@ -377,7 +377,7 @@
 					<div v-if="rules.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div v-for="rule in rules" :key="rule.name"
 							@click="goToMySlots"
-							class="cursor-pointer border border-outline-gray-2 rounded-xl p-6 bg-surface-white hover:border-outline-gray-3 hover:shadow-sm transition-all duration-150 flex flex-col justify-between min-h-[180px]">
+							class="cursor-pointer border border-outline-gray-2 rounded-xl p-6 bg-surface-white hover:border-outline-gray-4 transition-all duration-150 flex flex-col justify-between min-h-[180px]">
 							<div class="space-y-4">
 								<!-- Header: Weekday & Active Status -->
 								<div class="flex justify-between items-start">

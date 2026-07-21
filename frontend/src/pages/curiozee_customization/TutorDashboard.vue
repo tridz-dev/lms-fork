@@ -22,7 +22,7 @@
 						{{ __('Create your tutor profile to access the dashboard.') }}
 					</p>
 				</div>
-				<router-link :to="{ name: 'TutorProfile' }" custom v-slot="{ navigate }">
+				<router-link :to="{ name: 'TutorProfileCreate' }" custom v-slot="{ navigate }">
 					<Button variant="solid" theme="gray" @click="navigate" :label="__('Create profile')" />
 				</router-link>
 			</div>
