@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex flex-col h-full rounded-xl p-5 bg-surface-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+		class="flex flex-col h-full rounded-xl p-5 border border-outline-gray-2 hover:border-outline-gray-4 hover:bg-surface-white cursor-pointer transition-all duration-200"
 		@click="navigateToBooking"
 	>
 		<div class="flex flex-col flex-auto">

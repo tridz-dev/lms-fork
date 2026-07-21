@@ -10,11 +10,11 @@
 				v-for="date in dates"
 				:key="date"
 				@click="selectedDate = date"
-				class="flex flex-col items-center justify-between w-[72px] h-[72px] p-3 border border-outline-gray-2 rounded-lg focus:outline-none cursor-pointer transition-all duration-200 shrink-0 shadow-sm focus-visible:ring-2 focus-visible:ring-outline-gray-3"
+				class="flex flex-col items-center justify-between w-[72px] h-[72px] p-3 border border-outline-gray-2 rounded-lg focus:outline-none cursor-pointer transition-all duration-200 shrink-0 focus-visible:ring-2 focus-visible:ring-outline-gray-3"
 				:class="
 					selectedDate === date
-						? 'bg-gray-900 border-gray-900 text-white font-semibold shadow-sm'
-						: 'bg-surface-white border-outline-gray-2 text-ink-gray-7 hover:bg-surface-gray-2 hover:border-outline-gray-3 hover:text-ink-gray-9'
+						? 'bg-gray-900 border-gray-900 text-white font-semibold'
+						: 'bg-surface-white border-outline-gray-2 text-ink-gray-7 hover:bg-surface-gray-2 hover:border-outline-gray-4 hover:text-ink-gray-9'
 				"
 			>
 				<span class="text-xs uppercase tracking-wider font-semibold text-ink-gray-5">
@@ -48,11 +48,11 @@
 					v-for="slot in groupedSlots[selectedDate]"
 					:key="slot.name"
 					@click="selectSlot(slot)"
-					class="h-[42px] px-4 border border-outline-gray-2 text-base font-medium transition-all duration-200 text-center rounded-md focus:outline-none cursor-pointer flex items-center justify-center shadow-sm focus-visible:ring-2 focus-visible:ring-outline-gray-3 disabled:opacity-50 disabled:cursor-not-allowed"
+					class="h-[42px] px-4 border border-outline-gray-2 text-base font-medium transition-all duration-200 text-center rounded-md focus:outline-none cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-outline-gray-3 disabled:opacity-50 disabled:cursor-not-allowed"
 					:class="
 						selectedSlotName === slot.name
 							? 'bg-gray-900 border-gray-900 text-white font-semibold'
-							: 'bg-surface-white border-outline-gray-2 text-ink-gray-7 hover:bg-surface-gray-2 hover:border-outline-gray-3 hover:text-ink-gray-9'
+							: 'bg-surface-white border-outline-gray-2 text-ink-gray-7 hover:bg-surface-gray-2 hover:border-outline-gray-4 hover:text-ink-gray-9'
 					"
 				>
 					{{ formatTime(slot.start_datetime) }}

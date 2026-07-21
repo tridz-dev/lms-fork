@@ -13,9 +13,9 @@
 				<div class="flex flex-col md:flex-row items-center gap-5">
 					<div class="relative flex shrink-0">
 						<img v-if="tutor.profile_photo" :src="tutor.profile_photo"
-							class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white shadow-sm" />
+							class="object-cover h-[100px] w-[100px] rounded-full border-4 border-white" />
 						<div v-else
-							class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7 shadow-sm">
+							class="flex items-center justify-center h-[100px] w-[100px] rounded-full border-4 border-white bg-surface-gray-2 text-3xl font-semibold text-ink-gray-7">
 							{{ (tutor.tutor_name || 'T').charAt(0).toUpperCase() }}
 						</div>
 					</div>
@@ -39,7 +39,7 @@
 
 				<!-- Match Score Card -->
 				<div v-if="tutor.score != null"
-					class="flex flex-col items-center justify-center border border-outline-gray-2 rounded-lg p-4 bg-surface-gray-1 min-w-[100px] text-center shadow-sm">
+					class="flex flex-col items-center justify-center border border-outline-gray-2 rounded-lg p-4 bg-surface-gray-1 min-w-[100px] text-center">
 					<span class="text-xs font-medium text-ink-gray-5 block mb-1">
 						{{ __('Match Score') }}
 					</span>
@@ -138,7 +138,7 @@
 			</div>
 
 			<!-- ── Book Session Card ── -->
-			<div class="max-w-3xl mb-10 bg-surface-white rounded-xl shadow-sm p-6 space-y-6">
+			<div class="max-w-3xl mb-10 bg-surface-white rounded-xl border border-outline-gray-2 p-6 space-y-6">
 				<div class="border-b border-outline-gray-2 pb-4">
 					<h3 class="text-xl font-bold text-ink-gray-9">{{ __('Book a Session') }}</h3>
 					<p class="text-sm text-ink-gray-5 mt-1">{{ __('Select your preferred subject, board, class and time slot to book a live tutoring session.') }}</p>
@@ -178,7 +178,7 @@
 
 				<!-- Booking review card -->
 				<div v-if="selectedSlot"
-					class="mt-8 bg-surface-gray-2 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+					class="mt-8 bg-surface-gray-2 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-outline-gray-2">
 					<div class="space-y-4 w-full md:w-auto">
 						<h4 class="text-lg font-semibold text-ink-gray-9">
 							{{ __('Booking Review') }}
@@ -203,7 +203,7 @@
 						</div>
 					</div>
 					<Button :loading="bookingStore.loading" variant="solid" theme="gray"
-						class="w-full sm:w-auto h-9 px-5 rounded-lg font-semibold shadow-sm shrink-0" @click="startBooking">
+						class="w-full sm:w-auto h-9 px-5 rounded-lg font-semibold shrink-0" @click="startBooking">
 						{{ __('Proceed to Pay') }}
 					</Button>
 				</div>
