@@ -42,7 +42,7 @@
 		<div class="py-4">
 			<span class="font-semibold text-xs text-ink-gray-5 block mb-1.5">{{ __('Reason') }}</span>
 			<p
-				class="text-xs text-ink-gray-6 leading-relaxed bg-surface-gray-1 border border-outline-gray-1 p-3.5 rounded-md font-normal"
+				class="text-xs text-ink-gray-6 leading-relaxed rounded-md font-normal"
 			>
 				{{ recommendation.recommendation_reason }}
 			</p>
