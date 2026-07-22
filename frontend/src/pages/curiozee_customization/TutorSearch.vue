@@ -31,7 +31,7 @@
 						:tutor="tutor"
 					/>
 				</div>
-				<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white">
+				<div v-else class="text-center py-20">
 					<p class="text-sm text-ink-gray-5">{{ __('No tutors match the criteria or are verified currently.') }}</p>
 				</div>
 			</div>
