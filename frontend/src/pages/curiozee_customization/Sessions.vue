@@ -40,7 +40,7 @@
 					/>
 				</div>
 
-				<div v-else class="text-center py-20 border border-outline-gray-2 rounded-md bg-surface-white">
+				<div v-else class="text-center py-20">
 					<div class="flex flex-col items-center justify-center space-y-4 px-6">
 						<div v-if="activeTab === 'upcoming'" class="p-3 bg-surface-gray-2 rounded-full text-ink-gray-5">
 							<Calendar class="w-8 h-8 stroke-1.5" />
