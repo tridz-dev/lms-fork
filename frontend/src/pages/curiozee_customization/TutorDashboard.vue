@@ -11,21 +11,21 @@
 		</div>
 
 		<!-- No profile state -->
-		<div v-else-if="!profile" class="p-5">
-			<div class="border rounded-md py-16 text-center space-y-4">
-				<span class="lucide-user-x size-10 text-ink-gray-4 mx-auto block" aria-hidden="true" />
-				<div>
-					<h3 class="text-base font-semibold text-ink-gray-9">
-						{{ __('No tutor profile found') }}
-					</h3>
-					<p class="text-sm text-ink-gray-6 mt-1 max-w-xs mx-auto">
-						{{ __('Create your tutor profile to access the dashboard.') }}
-					</p>
+		<div v-else-if="!profile" class="text-center py-20 space-y-4">
+			<div class="flex flex-col items-center justify-center space-y-2">
+				<div class="p-3 bg-surface-gray-2 rounded-full">
+					<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
 				</div>
-				<router-link :to="{ name: 'TutorProfileCreate' }" custom v-slot="{ navigate }">
-					<Button variant="solid" theme="gray" @click="navigate" :label="__('Create profile')" />
-				</router-link>
+				<h3 class="text-lg font-medium text-ink-gray-9">
+					{{ __('No tutor profile found') }}
+				</h3>
+				<p class="text-sm text-ink-gray-7 max-w-sm">
+					{{ __('Create your tutor profile to access the dashboard.') }}
+				</p>
 			</div>
+			<router-link :to="{ name: 'TutorProfileCreate' }" custom v-slot="{ navigate }">
+				<Button variant="solid" @click="navigate" class="mt-2" :label="__('Create profile')" />
+			</router-link>
 		</div>
 
 		<!-- Dashboard content -->
@@ -253,6 +253,7 @@ import {
 } from 'frappe-ui'
 import { useTutorDashboardStore } from '@/stores/useTutorDashboardStore'
 import LayoutHeader from '@/components/Layouts/LayoutHeader.vue'
+import { User } from 'lucide-vue-next'
 import { convertToLocal, isSessionUpcoming } from '@/utils/timezone'
 
 // Customization for Smart Learning App: Tutor Dashboard — rebuilt to match Frappe LMS Statistics design

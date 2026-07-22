@@ -23,7 +23,7 @@
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile" class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
+			<div v-else-if="!profile" class="text-center py-20 space-y-4">
 				<div class="flex flex-col items-center justify-center space-y-2">
 					<div class="p-3 bg-surface-gray-2 rounded-full">
 						<CalendarIcon class="w-8 h-8 text-ink-gray-5 stroke-1.5" />

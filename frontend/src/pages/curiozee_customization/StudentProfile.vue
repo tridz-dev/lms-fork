@@ -16,23 +16,21 @@
 			</div>
 
 			<!-- Empty State: No Profile -->
-			<div v-else-if="!profile" class="p-5">
-				<div class="text-center py-20 border border-outline-gray-2 rounded-md space-y-4 bg-surface-white">
-					<div class="flex flex-col items-center justify-center space-y-2">
-						<div class="p-3 bg-surface-gray-2 rounded-full">
-							<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
-						</div>
-						<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Student Profile Linked') }}</h3>
-						<p class="text-sm text-ink-gray-7 max-w-sm">
-							{{ __('Please setup your student profile to configure your academic details and start booking sessions.') }}
-						</p>
+			<div v-else-if="!profile" class="text-center py-20 space-y-4">
+				<div class="flex flex-col items-center justify-center space-y-2">
+					<div class="p-3 bg-surface-gray-2 rounded-full">
+						<User class="w-8 h-8 text-ink-gray-5 stroke-1.5" />
 					</div>
-					<router-link :to="{ name: 'StudentProfileCreate' }" custom v-slot="{ navigate }">
-						<Button variant="solid" @click="navigate" class="mt-2">
-							{{ __('Create Student Profile') }}
-						</Button>
-					</router-link>
+					<h3 class="text-lg font-medium text-ink-gray-9">{{ __('No Student Profile Linked') }}</h3>
+					<p class="text-sm text-ink-gray-7 max-w-sm">
+						{{ __('Please setup your student profile to configure your academic details and start booking sessions.') }}
+					</p>
 				</div>
+				<router-link :to="{ name: 'StudentProfileCreate' }" custom v-slot="{ navigate }">
+					<Button variant="solid" @click="navigate" class="mt-2">
+						{{ __('Create Student Profile') }}
+					</Button>
+				</router-link>
 			</div>
 
 			<!-- Profile Edit/View Section -->
